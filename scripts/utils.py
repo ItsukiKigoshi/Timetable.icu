@@ -182,44 +182,52 @@ def get_category_id_from_code(course_code):
 
 def save_course_update_metadata():
     """
-    コースデータの更新メタデータ（最新日時と全履歴）をUTCで保存する。
+    既存のcourseLastUpdatedAtをhistoryに移してから，
+    新しいcourseLastUpdatedAtをUTCで保存する．
     """
-    # 1. 現在時刻をUTCで取得 (ISO 8601形式)
+    # 1. 現在時刻をUTCで取得
     now_utc = datetime.now(timezone.utc).isoformat()
 
-    # 2. 既存の履歴を読み込み
+    # 2. 既存のデータを読み込み
     history = []
+    old_last_updated = None
+
     if os.path.exists(COURSE_UPDATE_INFO_PATH):
         try:
             with open(COURSE_UPDATE_INFO_PATH, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                # 過去のデータ形式との互換性を確保
+                # 前回の更新日時を取得
+                old_last_updated = data.get("courseLastUpdatedAt")
+                # 既存の履歴を取得
                 current_history = data.get("history", [])
                 if isinstance(current_history, list):
                     history = current_history
                 elif isinstance(current_history, str):
                     history = [current_history]
         except Exception as e:
-            print(f"Warning: 履歴の読み込みに失敗しました (新規作成します): {e}")
+            print(f"Warning: 履歴の読み込みに失敗しました: {e}")
 
-    # 3. 重複していなければ先頭に追加
-    if now_utc not in history:
-        history.insert(0, now_utc)
+    # 3. 既存の「最新日時」を「履歴」に移動する
+    # historyの先頭に、前回の時刻を追加（重複チェック付き）
+    if old_last_updated and old_last_updated not in history:
+        history.insert(0, old_last_updated)
 
-    # 4. 保存用データ構造
+    # 4. 保存用データ構造の作成
+    # courseLastUpdatedAt は今回の新しい時刻に更新
     update_data = {
         "courseLastUpdatedAt": now_utc,
         "history": history
     }
 
-    # 5. ディレクトリ作成と保存
+    # 5. 保存処理
     try:
         os.makedirs(os.path.dirname(COURSE_UPDATE_INFO_PATH), exist_ok=True)
         with open(COURSE_UPDATE_INFO_PATH, 'w', encoding='utf-8') as f:
             json.dump(update_data, f, ensure_ascii=False, indent=2)
 
         print(f"--- Metadata Updated ---")
-        print(f"Latest (UTC): {now_utc}")
-        print(f"History count: {len(history)}")
+        print(f"New Last Updated (UTC): {now_utc}")
+        print(f"Moved Old Update to History: {old_last_updated}")
+        print(f"Total History count: {len(history)}")
     except Exception as e:
         print(f"Error: メタデータの保存に失敗しました: {e}")
