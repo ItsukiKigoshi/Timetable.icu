@@ -291,7 +291,7 @@ const en = {
 
 	// 404
 	"404.title": "PageNotFound",
-	"404.message": 'Oops... You\'ve drifted into the Unknown Area.',
+	"404.message": "Oops... You've drifted into the Unknown Area.",
 	"404.secret":
 		"You've wandered off the map—but at ICU, that's where the real learning begins. Did you know students once built rafts on campus to recreate the ancient Pacific navigators' trade routes? Every detour is an opportunity for discovery.",
 	"404.closing": "Ready to set sail back to your course?",

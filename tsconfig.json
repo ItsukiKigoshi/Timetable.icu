@@ -3,16 +3,14 @@
 	"include": [".astro/types.d.ts", "**/*", "./worker-configuration.d.ts"],
 	"exclude": ["dist"],
 	"compilerOptions": {
-		"baseUrl": ".",
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": ["./src/*"]
 		},
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		// または "node"
 		"types": ["bun"],
 		"strict": true,
 		"skipLibCheck": true
