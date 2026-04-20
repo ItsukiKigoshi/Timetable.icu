@@ -543,13 +543,13 @@ export default function ExploreInterface({
 									</p>
 									<p className="mt-1">
 										（Co-Listing：他メジャー開講だが，自身のメジャー単位として認められる科目
-										[{" "}
+										[
 										<a
 											className="link"
 											href="https://sites.google.com/icu.ac.jp/icu-ehandbook/%E3%83%9B%E3%83%BC%E3%83%A0_japanese/%E5%B1%A5%E4%BF%AE%E6%A1%88%E5%86%85/%E5%8D%92%E6%A5%AD%E3%81%AE%E8%A6%81%E4%BB%B6"
 										>
 											出典
-										</a>{" "}
+										</a>
 										]）
 									</p>
 								</div>
@@ -573,13 +573,13 @@ export default function ExploreInterface({
 									<p>*Cancelled and Co-Listing courses are not shown here.</p>
 									<p className="mt-1">
 										(Co-Listing: Courses outside your major that count toward
-										major requirements [{" "}
+										major requirements [
 										<a
 											className="link"
 											href="https://sites.google.com/icu.ac.jp/icu-ehandbook/home_english/guide-to-academic-matters/graduation-requirements"
 										>
 											source
-										</a>{" "}
+										</a>
 										])
 									</p>
 								</div>
