@@ -111,7 +111,7 @@ ICU生の時間割・履修計画アプリの決定版
 # ライバル
 
 - [ICUrriculum](https://icu-courses.com)
-- [Timetable4ICU](https://www.timetable4icu.com/): 2025のスケジュールは更新されていない
+- [Timetable4ICU](https://www.timetable4icu.com/): 2026のスケジュールは更新されていない
 - すごい時間割
 - Penmark
 
