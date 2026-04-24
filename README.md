@@ -8,13 +8,12 @@ ICU生の時間割・履修計画アプリの決定版
 -  Long 4, 5, 6, 7など、ICUならではのコマ割りも表示
 ### 🔄マルチデバイス同期
 -  ログインしてすべてのデバイスで最新の時間割を共有
-
 ## Screenshots
 | Page | Screenshots |
 | :---: | :---: |
-| Home | ![Home](https://github.com/user-attachments/assets/d062fdb7-510c-4afc-a1c8-652ae829f114) |
-| Explore | ![Explore](https://github.com/user-attachments/assets/5437ed9d-1a27-4388-af14-3d7da11b1664) |
-| Timetable | ![Timetable](https://github.com/user-attachments/assets/85e6b9db-0b51-4e0a-b9dd-9c7ae13d9a74) |
+| Home | ![Home](/uploads/f15de3cae7b1d26157d90fe93865c1ad/Screen_Shot_2026-04-23_at_23.59.02.png){width=900 height=563} |
+| Explore | ![Explore](/uploads/9cc6a871a66a6ae2102d1c736075e34c/Screen_Shot_2026-04-23_at_23.58.59.png){width=900 height=563} |
+| Timetable | ![Timetable](/uploads/e1528b102b0561314df2642b05f54a64/Screen_Shot_2026-04-23_at_23.58.54.png){width=900 height=563} |
 
 # 目標
 
