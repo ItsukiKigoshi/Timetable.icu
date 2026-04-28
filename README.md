@@ -142,6 +142,8 @@ ICU生の時間割・履修計画アプリの決定版
 ### Runtime/Package Manager
 - [Bun](https://bun.sh/)
 
+技術構成はこちらの記事でも解説されています: [国際基督教大学の非公式時間割/履修計画アプリ「ICUのじかんわり」をAstro+Cloudflare Workers+D1でつくりました | Zenn](https://zenn.dev/itsukikigoshi/articles/timetable-icu)
+
 ## 🚀 Project Structure
 
 ```text
