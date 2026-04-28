@@ -21,18 +21,6 @@ ICU生の時間割・履修計画アプリの決定版
 <!-- - [ ] ようこに卒業までつかってもらう -->
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
-    - [x] ~~iOSアプリ/Androidを作る (?)~~: 見込める流入量，ユーザの需要（時間割を組むだけ，毎日えらく長い時間見るわけじゃ無い）に対して開発維持コストが見合ってない
-      - [ ] 過去のアプリが後輩に引き継がれなかったのも，アプリストアの維持費が一因？
-      - [ ] [Capacitor](https://capacitorjs.com/)+[Preferences API](https://capacitorjs.com/docs/apis/preferences)をつかえばWeb APIでアプリを作れる
-      - [ ] 懸念は個人開発者に対するGoogle Playのテスト厳格化とApple Developer Programへの登録100$/yrが高すぎること (絶対に収支がプラスにならない)
-        - [ ] どちらも，Non-Profitの学生団体を作れば免除の可能性があるので組織するのはアリ: Appleの[Waiver](https://developer.apple.com/jp/help/account/membership/fee-waivers/)
-        - [ ] ICUからAppleに[教育機関向けDeveloper Program](https://education-static.apple.com/geo/jp/AppleDeveloperProgram_FeeWaiverforEducation_OnboardingKit_JP.pdf)に登録してもらう
-          - [ ] これも, ITオフィスに掛け合う前にWebアプリとしての継続的な運用実績があった方がいいな．
-          - [ ] 団体としての登録にはDUNS Numberが必要．法人登記 (一般社団とか？)？
-          - [ ] とりあえずはWebアプリで続けて，将来的にiOS/Android化したいね: Twinte, Hupassとかみたいな．
-        - [ ] 本当に，問題は開発ではなくAppleとGoogleの壁だな
-          - [ ] 個人で100$払っちゃってもいいけど継続性がない
-          - [ ] 敷居が高いAppleは無視してとりあえずAndoidだけだしちゃうのはあり（依然としてテスター数確保は問題）
     - [ ] Share機能
       - [ ] 画像: 画面とロゴ，URL; アプリを知ってもらう機会にする
       - [ ] リンク: 「あなたもつくる？」の導線
