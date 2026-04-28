@@ -21,9 +21,6 @@ ICU生の時間割・履修計画アプリの決定版
 <!-- - [ ] ようこに卒業までつかってもらう -->
 - [ ] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
-    - [ ] Share機能
-      - [ ] 画像: 画面とロゴ，URL; アプリを知ってもらう機会にする
-      - [ ] リンク: 「あなたもつくる？」の導線
 -  [x] 私が卒業しても自動で更新される状態にする
   - [x] 授業データを公開情報のみで構築する
     - [x] 教室情報は各自に打ち込んでもらえるように
@@ -35,8 +32,8 @@ ICU生の時間割・履修計画アプリの決定版
 - [x] とにかく時間割作成に使いやすいものである
     - [x] long時間割対応 (しょうもないことだがアイデンティティ)
     - [x] 軽量 (めざせ 全ページPageSpeedInsights 100): 全ページ97点以上達成，充分だろう
-- [ ] ICUらしくある
-    - [ ] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
+- [x] ICUらしくある
+    - [x] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
     <!-- - [x] 隠し要素 --> 
 - [ ] プロジェクトとして持続可能なものである
     - [ ] 後輩に引き継ぐ前提で作る，その価値があるものにする
@@ -79,7 +76,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [ ] Instagram等でICU関連の団体/個人に宣伝してもらう
     - [ ] 受験生にリーチ
         - [ ] 「こんなサイトを学生が作る大学なんだ！」+入学後に使ってもらう
-- コンポーネントテスト
+- [ ] コンポーネントテスト
 - [x] ちゃんと[Webアナリティクス](https://www.cloudflare.com/application-services/products/analytics/)を取って開発の励みにする
 
 # ライバル
@@ -121,47 +118,62 @@ ICU生の時間割・履修計画アプリの決定版
 
 ### Frontend
 
-- Astro
-- React
-- Tailwindcss
-- DaisyUI
-- Typescript
+- [Astro](https://astro.build/)
+- [React](https://react.dev/)
+- [Tailwindcss](https://tailwindcss.com/)
+- [DaisyUI](https://daisyui.com/)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ### Backend
 
-- Astro
-- BetterAuth (Google OAuth/Passkey)
-- Drizzle ORM
-- Typescript
+- [Astro](https://astro.build/)
+- [BetterAuth](https://better-auth.com/) (Google OAuth/Passkey)
+- [Drizzle ORM](https://orm.drizzle.team/)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ### Infra
 
-- Cloudflare Workers
-- Cloudflare D1
+- [Cloudflare Workers](https://www.cloudflare.com/developer-platform/products/workers/)
+- [Cloudflare D1](https://developers.cloudflare.com/d1/)
 
 ### Test
-- Playwright
+- [Playwright](https://playwright.dev/)
+
+### Runtime/Package Manager
+- [Bun](https://bun.sh/)
 
 ## 🚀 Project Structure
 
 ```text
 /
-├── public/
-│   └── favicon.svg
 ├── migrations/
 │   └── migration.sql
-├── src
-│   ├── assets
+├── public/
+│   └── favicon.svg
+├── scripts/
+│   ├── data/
+│   │   ├── ehandbook/  // 一般公開されているシラバスページ（HTML）はここに入れる
+│   │   └── icumap/     // 学生向けのシラバスページ（HTML）はここに入れる
+│   └── parser.py
+├── src/
+│   ├── assets/
 │   │   └── astro.svg
-│   ├── components
+│   ├── components/
 │   │   └── Component.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   ├── lib
+│   ├── constants/
+│   │   └── config.ts // Constants used globally
+│   ├── db/
+│   │   ├── data/
+│   │   └── schema/
+│   ├── lib/
 │   │   └── server.ts // schema definitions, auth-related files
-│   ├── pages
-│   │   └── index.astro
-│   ├── styles
+│   ├── pages/
+│   │   ├── api/
+│   │   │   └── api.ts
+│   │   ├── index.astro
+│   │   └── en/
+│   │       └── index.astro
+│   ├── styles/
 │   │   └── global.css
 │   ├── env.d.ts // Type for Astro
 │   └── middleware.ts
