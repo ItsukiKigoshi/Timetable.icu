@@ -10,7 +10,6 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"generate-types": "wrangler types",
 		"db:scrape:icumap": "python3 scripts/parse_icumap.py",
 		"db:scrape:ehandbook": "python3 scripts/parse_ehandbook.py",
 		"db:scrape": "bun run db:scrape:icumap",
