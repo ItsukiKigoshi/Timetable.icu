@@ -8,6 +8,7 @@ ICU生の時間割・履修計画アプリの決定版
 -  Long 4, 5, 6, 7など、ICUならではのコマ割りも表示
 ### 🔄マルチデバイス同期
 -  ログインしてすべてのデバイスで最新の時間割を共有
+
 ## Screenshots
 | Page | Screenshots |
 | :---: | :---: |
@@ -39,7 +40,7 @@ ICU生の時間割・履修計画アプリの決定版
   - [x] 授業データを公開情報のみで構築する
     - [x] 教室情報は各自に打ち込んでもらえるように
     - [x] regnoはsyllabus公開後にリンクから取得
-  - [ ] GitHub CI/CD?
+  - [ ] GitLab CI/CD?
       
 # 大切にしたいこと
 
@@ -140,8 +141,210 @@ ICU生の時間割・履修計画アプリの決定版
     - [Twitter](https://x.com/timetable4icu)
 
 ---
-# 工程表
+# TODOs
+本格的にProductionが存在する状態になったので，新機能よりもユーザが安心して利用できる環境を整えることにフォーカス（2026/04/11-6月くらいまで）
+- [ ] 緊急時の対策
+  - [ ] フロントエンドに緊急メンテナンス通知とAPIが関わる操作を禁止するモードを入れて，いざと言うときに簡単にONにできるようにしておかなければ．
+  - [ ] ログイン済みのユーザもlocalStorageにバックアップしておき，サーバ側をsource of truthとしつつ通信障害時などにローカルでデータが参照されるように
+    - [ ] 「オフラインです，インターネットに接続されると同期されます」
+- [ ] Refactor
+    - [ ] 関数やComponentにコメント（JS Docs）をつける
+    - [ ] D1最適化: ユーザが増えたら多少のパフォーマンスを犠牲にしてもRows Readを減らすためにqueryを見直そう
+      - [ ] UserCoursesの読み込み時に不要なschedule読み取りをなくす
+      - [ ] Courses検索時にscheduleやカテゴリで全件走査がかからないように
+      - [ ] SQL EXPLAINで実行計画を最適化（READ数が爆発しないように）
+        - [ ] ユーザの使用状況を見てindexの張り方を検討
 
+## 課題
+- [ ] 卒業後にログインできなくなる
+    - [ ] 卒業後にアカウントが削除できなくなる
+    - [ ] 対策として， 最終ログイン後から数年/IDの卒業年によるアカウント削除や，第2メールアドレスを持たせる？
+    - [ ] 大学院進学でメールアドレスが変わると使えなくなる?
+- [ ] 逆に現状だと，Passkeyを持っていれば卒業後も在学生以外にアクセスさせたくない情報 (Room)が見られてしまう
+- [ ] 最終手段は，3月と6月に全パスキーを削除
+    - [ ] クライアント側にパスキーの残骸が残りよく無いので，卒業時期ごとにパスキーログイン後のGoogleアカウント認証を一度を求めるなどかな
+---
+
+# Development
+
+## 技術選定
+
+### Frontend
+
+- Astro
+- React
+- Tailwindcss
+- DaisyUI
+- Typescript
+
+### Backend
+
+- Astro
+- BetterAuth (Google OAuth/Passkey)
+- Drizzle ORM
+- Typescript
+
+### Infra
+
+- Cloudflare Workers
+- Cloudflare D1
+
+### Test
+- Playwright
+
+## 🚀 Project Structure
+
+```text
+/
+├── public/
+│   └── favicon.svg
+├── migrations/
+│   └── migration.sql
+├── src
+│   ├── assets
+│   │   └── astro.svg
+│   ├── components
+│   │   └── Component.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   ├── lib
+│   │   └── server.ts // schema definitions, auth-related files
+│   ├── pages
+│   │   └── index.astro
+│   ├── styles
+│   │   └── global.css
+│   ├── env.d.ts // Type for Astro
+│   └── middleware.ts
+└── package.json
+```
+
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command               | Action                                           |
+|:----------------------|:-------------------------------------------------|
+| `bun install`         | Installs dependencies                            |
+| `bun dev`             | Starts local dev server at `localhost:4321`      |
+| `bun run build`       | Build your production site to `./dist/`          |
+| `bun preview`         | Preview your build locally, before deploying     |
+| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `bun astro -- --help` | Get help using the Astro CLI                     |
+
+Run Test
+```bash
+bun x playwright test
+```
+
+Format Code
+```bash
+bun x biome check --write
+```
+
+Create types from wrangler.jsonc
+
+```bash
+bunx wrangler types
+```
+
+### Schema Definition, Migration
+
+Create schema for BetterAuth
+
+```bash
+bun x auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
+```
+
+Create migration file by Drizzle Kit
+
+```bash
+bun x drizzle-kit generate
+```
+
+一度生成したmigrationファイルをなかったことにする
+
+```bash
+bun x drizzle-kit drop
+```
+
+Migration to D1
+Remoteは1度目は通らないことがあるが2回目やればいけるときがある
+
+```bash
+bun db:migrate:local
+```
+
+```bash
+bun db:migrate:remote
+```
+
+もし外部キー制約が通らない場合
+
+```shell
+bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
+```
+
+などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
+sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
+-->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，bun wrangler d1 executeでやらなければいけない場面もありそう．
+
+Debug with Cloudflare Environment
+
+```bash
+bun run build && bun x wrangler dev
+```
+
+D1でのSQL文実行例
+```bash
+bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
+```
+
+### Corse data insertion
+
+Create JSON from HTML
+
+```bash
+bun db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
+bun db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
+```
+
+Local DBにJSONからcourses/categoriesを入れる
+
+```bash
+bun db:push:local
+```
+
+HTML->JSON->Local DBを一括で実行
+
+```bash
+bun db:sync:local
+```
+
+Remote DBにJSONからcourses/categoriesを入れる
+
+```bash
+bun db:push:remote
+```
+
+HTML->JSON->Remote DBを一括で実行
+
+```bash
+bun db:sync:remote
+```
+
+ライセンス出力
+
+```bash
+bun x generate-license-file --input package.json --output CREDITS
+```
+
+リモートのログ出力
+
+```bash
+bun wrangler tail
+```
+<!--
+# 工程表
 - [x] Astro App Initialise
 - [x] BetterAuth
     - [x] Google OAuth
@@ -338,7 +541,7 @@ ICU生の時間割・履修計画アプリの決定版
     - [x] [Bing Webmaster Tool](https://www.bing.com/webmasters): DuckDuckGo
         - [ ] IndexNow
 - [x] スケジュールがない授業を追加できない
-- [ ] SEO
+- [x] SEO
     - [x] meta description
     - [x] リッチリザルト
         - [x] パンくず
@@ -378,14 +581,14 @@ ICU生の時間割・履修計画アプリの決定版
         - [x] ~~選択肢を提示する意味でICUrriculumやTimetable4ICUも載せる？~~
     - [x] トップページのロード速度は落とさぬように．
 - [x] サポートボタンをログインボタンの下において分かりやすく
-- [ ] performance
+- [x] performance
     - [x] 画像最適化: 必要なピクセル数以下に抑える
-- [ ] PR
-    - [ ] Zenn記事
-        - [ ] Drizzle, BetterAuth, D1
+- [x] PR
+    - [x] Zenn記事
+        - [x] Drizzle, BetterAuth, D1
     - [ ] Weekly Giant寄稿
     - [ ] 対面
-      - [ ] ちらし
+      - [ ] ~~ちらし~~: 大学の認可が降りない
       - [ ] 部活
 - [x] Roomはicu.ac.jpを持つユーザのみ
     - [x] 未ログインユーザーにはAPIからも返さない!!
@@ -485,279 +688,4 @@ ICU生の時間割・履修計画アプリの決定版
 - [ ] 逆に現状だと，Passkeyを持っていれば卒業後も在学生以外にアクセスさせたくない情報 (Room)が見られてしまう
 - [ ] 最終手段は，3月と6月に全パスキーを削除
     - [ ] クライアント側にパスキーの残骸が残りよく無いので，卒業時期ごとにパスキーログイン後のGoogleアカウント認証を一度を求めるなどかな
----
-
-# Development
-
-## 技術選定
-
-### Frontend
-
-- Astro
-- React
-- Tailwindcss
-- DaisyUI
-- Typescript
-
-### Backend
-
-- Astro
-- BetterAuth (Google OAuth/Passkey)
-- Drizzle ORM
-- Typescript
-
-### Infra
-
-- Cloudflare Workers
-- Cloudflare D1
-
-### Test
-- Playwright
-
-## 🚀 Project Structure
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── migrations/
-│   └── migration.sql
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Component.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   ├── lib
-│   │   └── server.ts // schema definitions, auth-related files
-│   ├── pages
-│   │   └── index.astro
-│   ├── styles
-│   │   └── global.css
-│   ├── env.d.ts // Type for Astro
-│   └── middleware.ts
-└── package.json
-```
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command               | Action                                           |
-|:----------------------|:-------------------------------------------------|
-| `bun install`         | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun run build`       | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-Run Test
-```bash
-bun x playwright test
-```
-
-Format Code
-```bash
-bun x biome check --write
-```
-
-Create types from wrangler.jsonc
-
-```bash
-bunx wrangler types
-```
-
-### Schema Definition, Migration
-
-Create schema for BetterAuth
-
-```bash
-bun x auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
-```
-
-Create migration file by Drizzle Kit
-
-```bash
-bun x drizzle-kit generate
-```
-
-一度生成したmigrationファイルをなかったことにする
-
-```bash
-bun x drizzle-kit drop
-```
-
-Migration to D1
-Remoteは1度目は通らないことがあるが2回目やればいけるときがある
-
-```bash
-bun db:migrate:local
-```
-
-```bash
-bun db:migrate:remote
-```
-
-もし外部キー制約が通らない場合
-
-```shell
-bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
-```
-
-などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
-sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
--->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，bun wrangler d1 executeでやらなければいけない場面もありそう．
-
-Debug with Cloudflare Environment
-
-```bash
-bun run build && bun x wrangler dev
-```
-
-D1でのSQL文実行例
-```bash
-bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
-```
-
-### Corse data insertion
-
-Create JSON from HTML
-
-```bash
-bun db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
-bun db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
-```
-
-Local DBにJSONからcourses/categoriesを入れる
-
-```bash
-bun db:push:local
-```
-
-HTML->JSON->Local DBを一括で実行
-
-```bash
-bun db:sync:local
-```
-
-Remote DBにJSONからcourses/categoriesを入れる
-
-```bash
-bun db:push:remote
-```
-
-HTML->JSON->Remote DBを一括で実行
-
-```bash
-bun db:sync:remote
-```
-
-ライセンス出力
-
-```bash
-bun x generate-license-file --input package.json --output CREDITS
-```
-
-リモートのログ出力
-
-```bash
-bun wrangler tail
-```
-
-## Schema案
-
-- [x] auth関連 (BetterAuthに任せる)
-    - users
-- [x] user_courses (各ユーザの履修登録; もっと良いTable名は?)
-    - 登録した courseのid
-    - comment
-    - academic year
-    - term
-- [x] courses (授業情報)
-    - 複合キー (course_code, year, term) ?
-    - Title
-    - RegID
-    - Instructor
-    - Course Number
-    - Language
-    - academic year
-    - season
-    - room?
-- [x] course_schedule
-    - 別テーブルに予定を入れるため, 曜日毎の検索や1授業あたり複数の時間があるのを解決
-    - day
-    - start_at, end_at; or: period, isLong
-- schedule: 休校日など?
-  - [ ] exam?
-    - type (mid/final)
-    - date
-- [x] categories
-    - メジャー，教職過程など, 1授業に複数あるもの
-- [x] course_categories: courses-categoriesを繋げる
-
-# メモ
-
-## 名称案
-
-- Catalogue.icuはお名前comに奪われ3万の復旧費用. あくどい商売やで
-- timetable.icu $7.20 Renews at $14.20
-    - ICUのじかんわり
-    - Timetable.icu
-- icutime.com $10.46Renews at $10.46
-- table.icu $89.20 Renews at $178.20
-- syllabus.icu $12.20 Renews at $12.20
-- ICUのレシピサイト
-    - Cuisine.icu $12.20 Renews at $12.20
-    - recipe.icu unavailable
-    - gourmet.icu $29.20 Renews at $58.20
-    - dish.icu $29.20 Renews at $58.20
-    - kitchen.icu is not available
-    - cook.icu $89.20Renews at $178.20
-- .icuドメインにこだわるとブランド命名の幅が狭まる.
-    - SEOも弱い?
-    - .icuというドメインは，ICUの公式サイトであるように（良くも悪くも）誤認されやすい
-- 「まずはここから」
-    - starter.icu $12.20 Renews at $12.20
-    - starterkit.icu $12.20 Renews at $12.20
-- 天体観測
-    - stargazer.icu unavailable
-    - planet.icu $29.20Renews at $58.20
-- ICUっぽさ
-    - Bakayama.icu unavailable
-    - bakayama.com $10.46Renews at $10.46
-    - sekume.icu $12.20 Renews at $12.20
-    - coursemate.icu $12.20 Renews at $12.20
-    - ahoyama.icu $12.20 Renews at $12.20
-    - donguri.icu $12.20 Renews at $12.20
-    - dongry.icu 11.20 (12.20)
-    - land.icu $29.20Renews at $58.20
-    - why.icu unavailable
-    - forest.icu $29.20Renews at $58.20
-    - mori.icu unavailable
-    -
-- 色々
-    - story.icu unavailable
-    - render.icu unavailable
-    - overview.icu unavailable
-    - look4.icu $12.20 Renews at $12.20
-    - good4.icu $12.20Renews at $12.20
-    - time2.icu $12.20Renews at $12.20
-    - go4.icu unavailable
-    - ilove.icu unavailable
-    - madein.icu $12.20Renews at $12.20
-    - made4.icu $12.20Renews at $12.20
-    - what.icu unavailable
-    - belong2.icu $12.20Renews at $12.20
-    - easyregi.icu $12.20Renews at $12.20
-    - chef.icu $287.70Renews at $575.20
-    - at.icu $89.20Renews at $178.20
-- 絵を書く
-    - canvas.icu $29.20Renews at $58.20
-    - palette.icu $29.20Renews at $58.20
-- 参考:
-    - Twinte (筑波)
-    - Hupass (北大)
-    - [Berkeleytime.com](https://berkeleytime.com/grades) (Berkeley)
-    - Penmark
+--->
