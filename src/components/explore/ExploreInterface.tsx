@@ -52,7 +52,7 @@ interface Props {
 	isLoggedIn: boolean;
 	categories: Categories[];
 	initialUserCourseIds: number[];
-	user?: User;
+  user?: User | null;
 	hasNextPage: boolean;
 	lang?: string;
 }
