@@ -77,110 +77,169 @@ const baseFormUrl =
 	"https://docs.google.com/forms/d/e/1FAIpQLSe_76F-MOJhkuG0346otCkCn3KlSqTTHXulhTNGNozNRXUqdg/viewform";
 const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(href)}`;
 ---
+
 <!doctype html>
 <html lang={currentLang}>
-<head>
-    <meta charset="UTF-8"/>
+  <head>
+    <meta charset="UTF-8" />
     <title>{title}</title>
-    <meta name="application-name" content={title}>
-    <meta name="description" content={description}/>
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="generator" content={Astro.generator}/>
-    <meta http-equiv="content-language" content={currentLang}>
-        
-    <meta name="robots" content="index, follow, archive">
+    <meta name="application-name" content={title} />
+    <meta name="description" content={description} />
 
-    <link rel="canonical" href={new URL(Astro.url.pathname, baseUrl).href}/>
-    {!isExcluded && (
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta http-equiv="content-language" content={currentLang} />
+
+    <meta name="robots" content="index, follow, archive" />
+
+    <link rel="canonical" href={new URL(Astro.url.pathname, baseUrl).href} />
+    {
+      !isExcluded && (
         <>
-            <link rel="alternate" hreflang="ja" href={jaUrl}/>
-            <link rel="alternate" hreflang="en" href={enUrl}/>
-            <link rel="alternate" hreflang="x-default" href={jaUrl}/>
+          <link rel="alternate" hreflang="ja" href={jaUrl} />
+          <link rel="alternate" hreflang="en" href={enUrl} />
+          <link rel="alternate" hreflang="x-default" href={jaUrl} />
         </>
-    )}
+      )
+    }
 
-    <meta property="og:title" content={title}/>
-    <meta property="og:description" content={description}/>
-    <meta property="og:type" content={ogType}/>
-    <meta property="og:url" content={Astro.url.href}/>
-    <meta property="og:image" content={ogImage}/>
-    <meta property="og:site_name" content={t('site.title')}/>
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={t("site.title")} />
 
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:image" content={ogImage}/>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
-    <link rel="manifest" href="/manifest.webmanifest"/>
-    
-    {breadcrumbItems.length > 1 && (
-          <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-        )}
-</head>
-<body class="min-h-screen flex flex-col">
-{
-    (showDBError && dbError) && (
-                <div class="p-4 container mx-auto">
-                    <div role="alert" class="alert alert-warning shadow-lg">
-                        <TriangleAlert/>
-                        <div>
-                            <h3 class="font-bold">{t('error.db.title')}</h3>
-                            <div class="text-xs">
-                                {t('error.db.description')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    )
-}
-<Toast user={user ?? undefined} lang={currentLang} client:load />
-{showHeader && <Header user={user}/>}
-<main class="grow min-h-0">
-    <slot/>
-</main>
-{showFooter
-    ? <Footer/>
-    : (
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    {
+      breadcrumbItems.length > 1 && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(breadcrumbSchema)}
+        />
+      )
+    }
+  </head>
+  <body class="min-h-screen flex flex-col">
+    {
+      showDBError && dbError && (
+        <div class="p-4 container mx-auto">
+          <div role="alert" class="alert alert-warning shadow-lg">
+            <TriangleAlert />
+            <div>
+              <h3 class="font-bold">{t("error.db.title")}</h3>
+              <div class="text-xs">{t("error.db.description")}</div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+    <Toast user={user ?? undefined} lang={currentLang} client:load />
+    {showHeader && <Header user={user} />}
+    <main class="grow min-h-0">
+      <slot />
+    </main>
+    {
+      showFooter ? (
+        <Footer />
+      ) : (
         <footer class="footer md:footer-horizontal bg-neutral text-neutral-content p-10">
-            <aside class="flex flex-col gap-4">
-               <Logo
-                    width={40}
-                    height={40}
-            />
-                <p class="font-black text-lg block">
-                  {t('site.title')}
-                </p>
-            </aside>
-            <nav>
-                <h5 class="footer-title">Features</h5>
-                <a href={l('/explore')} class="link link-hover">{t('lp.nav.explore')}</a>
-                <a href={l('/timetable')} class="link link-hover">{t('lp.nav.timetable')}</a>
-                <a href="/terms" class="link link-hover">{t('footer.terms')}</a>
-                <a href="/privacy" class="link link-hover">{t('footer.privacy')}</a>
-                
-            </nav>
-            <nav>
-                <h5 class="footer-title">Support</h5>
-                <a target="_blank" href={formUrl} class="link link-hover">
-                    {t('footer.support')}</a>
-   <a target="_blank" href="https://discord.gg/2gmKTs4ezk" class="link link-hover">Discord</a>             
-                <a target="_blank" href="https://gitlab.com/ItsukiKigoshi/timetable.icu" class="link link-hover">GitLab</a>
-            </nav>
-            <nav>
-                <h5 class="footer-title">Official Sites</h3>
-                <a target="_blank" href="https://portal.icu.ac.jp/" class="link link-hover">ICU Portal</a>
-                <a target="_blank" href="https://campus.icu.ac.jp/icumap" class="link link-hover">icuMAP</a>
-                <a target="_blank" href="https://sites.google.com/icu.ac.jp/icu-ehandbook/" class="link link-hover">ehandbook</a>
-            </nav>
-            <nav>
-                <h5 class="footer-title">Official Resources</h3>
-                <a target="_blank" href="https://office.icu.ac.jp/ctl/aps/index.html" class="link link-hover">Academic Planning Support</a>
-                <a target="_blank" href="https://sites.google.com/icu.ac.jp/aps/home/" class="link link-hover">Academic Planning Handbook</a>
-                <a target="_blank" href="https://sites.google.com/icu.ac.jp/major-information/home" class="link link-hover">Major Information Site</a>
-            </nav>
+          <aside class="flex flex-col gap-4">
+            <Logo width={40} height={40} />
+            <p class="font-black text-lg block">{t("site.title")}</p>
+          </aside>
+          <nav>
+            <h5 class="footer-title">Features</h5>
+            <a href={l("/explore")} class="link link-hover">
+              {t("lp.nav.explore")}
+            </a>
+            <a href={l("/timetable")} class="link link-hover">
+              {t("lp.nav.timetable")}
+            </a>
+            <a href="/terms" class="link link-hover">
+              {t("footer.terms")}
+            </a>
+            <a href="/privacy" class="link link-hover">
+              {t("footer.privacy")}
+            </a>
+          </nav>
+          <nav>
+            <h5 class="footer-title">Support</h5>
+            <a target="_blank" href={formUrl} class="link link-hover">
+              {t("footer.support")}
+            </a>
+            <a
+              target="_blank"
+              href="https://discord.gg/2gmKTs4ezk"
+              class="link link-hover"
+            >
+              Discord
+            </a>
+            <a
+              target="_blank"
+              href="https://gitlab.com/ItsukiKigoshi/timetable.icu"
+              class="link link-hover"
+            >
+              GitLab
+            </a>
+          </nav>
+          <nav>
+            <h5 class="footer-title">Official Sites</h5>
+            <a
+              target="_blank"
+              href="https://portal.icu.ac.jp/"
+              class="link link-hover"
+            >
+              ICU Portal
+            </a>
+            <a
+              target="_blank"
+              href="https://campus.icu.ac.jp/icumap"
+              class="link link-hover"
+            >
+              icuMAP
+            </a>
+            <a
+              target="_blank"
+              href="https://sites.google.com/icu.ac.jp/icu-ehandbook/"
+              class="link link-hover"
+            >
+              ehandbook
+            </a>
+          </nav>
+          <nav>
+            <h5 class="footer-title">Official Resources</h5>
+            <a
+              target="_blank"
+              href="https://office.icu.ac.jp/ctl/aps/index.html"
+              class="link link-hover"
+            >
+              Academic Planning Support
+            </a>
+            <a
+              target="_blank"
+              href="https://sites.google.com/icu.ac.jp/aps/home/"
+              class="link link-hover"
+            >
+              Academic Planning Handbook
+            </a>
+            <a
+              target="_blank"
+              href="https://sites.google.com/icu.ac.jp/major-information/home"
+              class="link link-hover"
+            >
+              Major Information Site
+            </a>
+          </nav>
         </footer>
-)}
-</body>
+      )
+    }
+  </body>
 </html>

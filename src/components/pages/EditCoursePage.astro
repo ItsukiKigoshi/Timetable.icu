@@ -44,16 +44,16 @@ const { t } = createTranslationHelper(lang);
 ---
 
 <Layout title=`${t('custom.edit')} | ${t('site.title')}`>
-    <div class="max-w-2xl mx-auto p-4">
-        <CourseEditor
-                client:only="react"
-                mode="edit"
-                lang={lang}
-                user={user}
-                targetId={targetId}
-                initialData={initialData}
-                selectedYear={selectedYear}
-                selectedTerm={selectedTerm}
-        />
-    </div>
+  <div class="max-w-2xl mx-auto p-4">
+    <CourseEditor
+      client:only="react"
+      mode="edit"
+      lang={lang}
+      user={user}
+      targetId={targetId}
+      initialData={initialData}
+      selectedYear={selectedYear}
+      selectedTerm={selectedTerm}
+    />
+  </div>
 </Layout>

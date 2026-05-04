@@ -347,8 +347,8 @@ export default function ExploreInterface({
 						<Search />
 						<input
 							type="text"
-              className="grow"
-              maxLength={48}
+							className="grow"
+							maxLength={48}
 							placeholder={t("explore.search_placeholder")}
 							defaultValue={filters.q || ""}
 							onKeyDown={(e) =>
