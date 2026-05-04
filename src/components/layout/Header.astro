@@ -24,88 +24,93 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
             <h1 class="hidden sm:inline">{t('site.title')}</h1>
         </a>
     </div>
-
-        <div class="navbar-center flex gap-2">
-            <label class="flex gap-1 items-center">
-                <select
-                        id="year-select"
-                        class="select select-bordered select-sm md:select-md w-fit font-bold"
-                        autocomplete="off"
-                >
-                    {SELECTABLE_YEARS.map(y => (
-                            <option value={y} selected={Number(selectedYear) === y}>
-                                {y}
-                            </option>
-                    ))}
-                </select>
-                <select
-                        id="term-select"
-                        class="select select-bordered select-sm md:select-md w-fit font-bold"
-                        autocomplete="off"
-                >
-                    {SELECTABLE_TERMS.map(termObj => (
-                            <option value={termObj} selected={selectedTerm === termObj}>
-                                {t(`term.${termObj}` as any) || termObj}
-                            </option>
-                    ))}
-                </select>
-            </label>
-        </div>
+    <div class="navbar-center flex gap-2">
+        <label class="flex gap-1 items-center">
+            <select
+                    id="year-select"
+                    class="select select-bordered select-sm md:select-md w-fit font-bold"
+                    autocomplete="off"
+            >
+                {SELECTABLE_YEARS.map(y => (
+                        <option value={y} selected={Number(selectedYear) === y}>
+                            {y}
+                        </option>
+                ))}
+            </select>
+            <select
+                    id="term-select"
+                    class="select select-bordered select-sm md:select-md w-fit font-bold"
+                    autocomplete="off"
+            >
+                {SELECTABLE_TERMS.map(termObj => (
+                        <option value={termObj} selected={selectedTerm === termObj}>
+                            {t(`term.${termObj}` as any) || termObj}
+                        </option>
+                ))}
+            </select>
+        </label>
+    </div>
     <nav class="navbar-end">
         {!dbError && (
-            <div class="relative inline-block ml-auto">
-                <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
-                <label for="user-menu-toggle"
-                        class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer">
-                    <div class="w-10 h-10 rounded-full shadow-inner ring-1 ring-base-content/10 flex items-center justify-center">
-                        {user ? (
-                          <CloudCheck class="text-success" size={20} />
-                        ) : (
-                          <LogIn size={20} />
-                        )}
-                    </div>
-                </label>
-                <ul class="hidden peer-checked:flex absolute right-0 z-100 mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl flex-col items-center gap-4">
-                    <li class="w-full text-center">
-                        <h3 class="font-bold text-sm">
-                            {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
-                        </h3>
-                    </li>
-                    <li class="w-full">
-                        <LoginButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
-                    </li>
-                    <li class="w-full -my-2"> 
-                        <div class="divider opacity-20 w-full my-0"></div>
-                    </li>
-                    <li class="w-full">
-                        <nav class="w-full join border border-base-300">
-                            <button
-                                class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
-                                data-lang-switch="en"
-                            >
-                                EN
-                            </button>
-                            <button
-                                class={`join-item btn btn-sm flex-1 ${lang === 'ja' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
-                                data-lang-switch="ja"
-                            >
-                                JA
-                            </button>
-                        </nav>
-                    </li>
-                    <li class="w-full py-1">
-                        <a
-                            target="_blank"
-                            href={formUrl}
-                            class="flex flex-col items-center link text-base-content/60"
-                        >
-                            <span class="text-[11px]">
-                                {t('header.support')}
-                            </span>
-                        </a>
-                    </li>
-                </ul>
+            <button
+            class="btn btn-ghost btn-circle avatar hover:bg-base-200 ml-auto"
+            popovertarget="user-dropdown"
+            style="anchor-name:--user-anchor"
+            >
+            <div class="w-10 h-10 rounded-full shadow-inner ring-1 ring-base-content/10 flex items-center justify-center">
+                {user ? (
+                    <CloudCheck class="text-success" size={20} />
+                ) : (
+                    <LogIn size={20} />
+                )}
             </div>
+            </button>
+
+            <ul
+            popover
+            id="user-dropdown"
+            style="position-anchor:--user-anchor; top: anchor(bottom); right: anchor(right); inset: auto; margin: 0;"
+            class="dropdown mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl flex flex-col items-center gap-4 list-none border-none overflow-visible"
+            >
+                <li class="w-full text-center">
+                    <h3 class="font-bold text-sm">
+                        {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
+                    </h3>
+                </li>
+                <li class="w-full">
+                    <LoginButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
+                </li>
+                <li class="w-full -my-2">
+                    <div class="divider opacity-20 w-full my-0"></div>
+                </li>
+                <li class="w-full">
+                    <nav class="w-full join border border-base-300">
+                        <button
+                            class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
+                            data-lang-switch="en"
+                        >
+                            EN
+                        </button>
+                        <button
+                            class={`join-item btn btn-sm flex-1 ${lang === 'ja' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
+                            data-lang-switch="ja"
+                        >
+                            JA
+                        </button>
+                    </nav>
+                </li>
+                <li class="w-full py-1">
+                    <a
+                        target="_blank"
+                        href={formUrl}
+                        class="flex flex-col items-center link text-base-content/60"
+                    >
+                        <span class="text-[11px]">
+                            {t('header.support')}
+                        </span>
+                    </a>
+                </li>
+            </ul>
         )}
     </nav>
 </header>
