@@ -19,13 +19,13 @@ ICU生の時間割・履修計画アプリの決定版
 # 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
-- [ ] 100人のTermly Active UserをICU内で獲得する
+- [x] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
 -  [x] 私が卒業しても自動で更新される状態にする
   - [x] 授業データを公開情報のみで構築する
     - [x] 教室情報は各自に打ち込んでもらえるように
     - [x] regnoはsyllabus公開後にリンクから取得
-  - [ ] GitLab CI/CD?
+    - [ ] GitLab CI/CD?
       
 # 大切にしたいこと
 
@@ -47,27 +47,6 @@ ICU生の時間割・履修計画アプリの決定版
 - [ ] Transparency
     - [ ] Share Issues, Feature Requests
     - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
-
-# まだできないこと
-
-- [ ] Google Calendar / .icsエクスポート？
-- [x] FeatureRequest/Feedback (他の人も見られる?)
-    - [ ] Google Formにいかずとも簡単に送れるように
-    - [ ] With Upvote
-- [ ] 実際の履修登録 (リンク貼る)
-    - [ ] Registration Website
-- [ ] 卒業要件との照らし合わせ (リンク貼る)
-    - [ ] Grad Requirement Checklist
-    - [ ] 卒業要件PDF (ehandbook)
-- [ ] 授業評価（TES）を見ること (リンク貼る)
-    - [ ] 見やすくして掲載は要検討
-    - [ ] TODO - Over Year TES解析
-        - [ ] RegIDが違うのでまずは経年でコースを統合(instructorとcorusenoが一致する?)して解析; Python
-        - [ ] 経年評価や同一講師の授業評価を可視化
-- [ ] オフラインで確認すること
-    - [ ] 代わりに: Apple/Google Calendarへのエクスポート
-    - [x] 代わりに: スクショしやすい画面配置
-- [x] マニュアル登録: できるようになった
 
 # 挑戦したいこと
 
