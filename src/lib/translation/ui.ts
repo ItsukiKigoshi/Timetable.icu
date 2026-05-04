@@ -127,6 +127,10 @@ const ja = {
 	"custom.cancel": "キャンセル",
 	"custom.alert.schedule.null": "スケジュールを1つ以上選択してください",
 	"custom.alert.save.failed": "保存に失敗しました",
+	"custom.error.notFound.title": "コースが見つかりません",
+	"custom.error.notFound.description":
+		"編集しようとしたコースは削除された，または別のデバイスのデータかもしれません．",
+	"custom.error.notFound.back": "時間割に戻る",
 
 	"days.mon": "月",
 	"days.tue": "火",
@@ -278,6 +282,10 @@ const en = {
 	"custom.cancel": "Cancel",
 	"custom.alert.schedule.null": "Select at least 1 schedule",
 	"custom.alert.save.failed": "Failed to save",
+	"custom.error.notFound.title": "Course Not Found",
+	"custom.error.notFound.description":
+		"The course you are trying to edit may have been deleted or might belong to another device.",
+	"custom.error.notFound.back": "Back to Timetable",
 
 	"days.mon": "Mon",
 	"days.tue": "Tue",

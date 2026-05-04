@@ -27,7 +27,10 @@ const CourseEditor = ({
 }: CourseEditorProps) => {
 	const { t, l } = createTranslationHelper(lang);
 
+	// Mountされたか
 	const [isMounted, setIsMounted] = useState(false);
+	// 編集対象が見つからない場合
+	const [notFound, setNotFound] = useState(false);
 
 	const { courses, saveCustomCourse } = useTimetable({
 		user,
@@ -159,9 +162,42 @@ const CourseEditor = ({
 		}
 	};
 
-	// --- ロード画面の判定 ---
-	// 「ブラウザでJSがまだ動いていない(SSR/Hydration中)」または「編集データが準備できていない」場合
-	if (!isMounted || (!isInitialized && mode === "edit")) {
+	useEffect(() => {
+		setIsMounted(true);
+
+		// 編集モードでないならチェック不要
+		if (mode !== "edit" || isInitialized) return;
+
+		// --- 判定ロジック ---
+
+		// 1. まず initialData (DB経由) があればそれを使う
+		if (initialData) {
+			setFormData(normalizeInitialData(initialData));
+			setIsInitialized(true);
+			return;
+		}
+
+		// 2. initialDataがない場合、LocalStorage(courses)のロードを待ってから探す
+		// courses.length > 0 は、LocalStorageの読み込みが完了したサイン
+		if (courses.length > 0) {
+			const foundInLocal = courses.find(
+				(c) => String(c.id) === String(targetId),
+			);
+
+			if (foundInLocal) {
+				setFormData(normalizeInitialData(foundInLocal));
+				setIsInitialized(true);
+			} else {
+				// DBにもなく、LocalStorageを全走査しても見つからない場合
+				setNotFound(true);
+				setIsInitialized(true); // ロード画面を終了させるために必要
+			}
+		}
+	}, [initialData, courses, targetId, mode, isInitialized]);
+
+	// --- 表示の分岐 ---
+	// 1. ローディング
+	if (!isMounted || (!isInitialized && !notFound)) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
 				<span className="loading loading-spinner loading-lg text-primary"></span>
@@ -171,6 +207,23 @@ const CourseEditor = ({
 			</div>
 		);
 	}
+
+	// 2. データが見つからなかった場合のエラー表示
+if (notFound) {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+            <h2 className="text-xl font-bold">
+                {t("custom.error.notFound.title")}
+            </h2>
+            <p className="text-sm opacity-60">
+                {t("custom.error.notFound.description")}
+            </p>
+            <a href={l("/timetable")} className="btn btn-outline btn-md mt-4">
+                {t("custom.error.notFound.back")}
+            </a>
+        </div>
+    );
+}
 
 	return (
 		<LanguageProvider lang={lang}>
