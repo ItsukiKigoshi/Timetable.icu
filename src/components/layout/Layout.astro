@@ -154,18 +154,19 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
                 </p>
             </aside>
             <nav>
-                <h5 class="footer-title">Features</h5>
+                <h5 class="footer-title">Features/Legal</h5>
                 <a href={l('/explore')} class="link link-hover">{t('lp.nav.explore')}</a>
                 <a href={l('/timetable')} class="link link-hover">{t('lp.nav.timetable')}</a>
-                <a target="_blank" href={formUrl} class="link link-hover">
-                    {t('footer.support')}</a>
-            </nav>
-            <nav>
-                <h5 class="footer-title">Legal/Development</h5>
                 <a href="/terms" class="link link-hover">{t('footer.terms')}</a>
                 <a href="/privacy" class="link link-hover">{t('footer.privacy')}</a>
+                
+            </nav>
+            <nav>
+                <h5 class="footer-title">Support</h5>
+                <a target="_blank" href={formUrl} class="link link-hover">
+                    {t('footer.support')}</a>
+   <a target="_blank" href="https://discord.gg/2gmKTs4ezk" class="link link-hover">Discord</a>             
                 <a target="_blank" href="https://gitlab.com/ItsukiKigoshi/timetable.icu" class="link link-hover">GitLab</a>
-                <a target="_blank" href="https://discord.gg/2gmKTs4ezk" class="link link-hover">Discord</a>
             </nav>
             <nav>
                 <h5 class="footer-title">Official Sites</h3>
