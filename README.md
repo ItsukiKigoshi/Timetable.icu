@@ -220,7 +220,8 @@ bun x auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/sche
 ```
 
 Create migration file by Drizzle Kit
-
+`--custom` Create Empty Migration File
+`--name=clear_user_name_image` Set Custom Name on Migration File
 ```bash
 bunx drizzle-kit generate
 ```
