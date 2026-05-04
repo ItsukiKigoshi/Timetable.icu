@@ -209,21 +209,21 @@ const CourseEditor = ({
 	}
 
 	// 2. データが見つからなかった場合のエラー表示
-if (notFound) {
-    return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-            <h2 className="text-xl font-bold">
-                {t("custom.error.notFound.title")}
-            </h2>
-            <p className="text-sm opacity-60">
-                {t("custom.error.notFound.description")}
-            </p>
-            <a href={l("/timetable")} className="btn btn-outline btn-md mt-4">
-                {t("custom.error.notFound.back")}
-            </a>
-        </div>
-    );
-}
+	if (notFound) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+				<h2 className="text-xl font-bold">
+					{t("custom.error.notFound.title")}
+				</h2>
+				<p className="text-sm opacity-60">
+					{t("custom.error.notFound.description")}
+				</p>
+				<a href={l("/timetable")} className="btn btn-outline btn-md mt-4">
+					{t("custom.error.notFound.back")}
+				</a>
+			</div>
+		);
+	}
 
 	return (
 		<LanguageProvider lang={lang}>
