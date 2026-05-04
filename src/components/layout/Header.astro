@@ -1,7 +1,7 @@
 ---
+import { CloudCheck, User } from "lucide-astro";
 import Logo from "@/assets/Logo.svg";
 import LoginButton from "@/components/common/LoginButton.tsx";
-import PasskeyButton from "@/components/common/PasskeyButton.tsx";
 import { SELECTABLE_TERMS, SELECTABLE_YEARS } from "@/constants/time.ts";
 import { defaultLang } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
@@ -53,70 +53,59 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
         </div>
     <nav class="navbar-end">
         {!dbError && (
-                <div class="relative inline-block ml-auto">
-                    <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
-                    <label for="user-menu-toggle"
-                           class="fixed inset-0 h-screen w-screen cursor-default hidden peer-checked:block z-90"></label>
-
-                    <label for="user-menu-toggle"
-                           class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer">
-                        <div class="w-10 rounded-full shadow-inner ring-1 ring-base-content/10">
-                            {user?.image ? (
-                                    <img src={user.image} alt="User Avatar"/>
-                            ) : (
-                                    <div class="flex h-full w-full items-center justify-center bg-base-200 text-base-content/50">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="8" r="5"/>
-                                            <path d="M20 21a8 8 0 0 0-16 0"/>
-                                        </svg>
-                                    </div>
-                            )}
-                        </div>
-                    </label>
-
-                    <ul class="hidden peer-checked:flex absolute right-0 z-101 mt-3 w-64 p-4 shadow-xl bg-base-100 rounded-xl border border-base-200 flex-col items-center">
-                        <li class="w-full text-center space-y-1">
-                            <h3 class="font-bold text-lg">
-                                {user ? t('header.hi').replace('{name}', user.name ?? '') : t('header.welcome_back')}
-                            </h3>
-                            <p class="text-xs text-base-content/60">
-                                {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
-                            </p>
-                            <nav class="w-full join mt-2 border border-base-300">
-                                <button
-                                        class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
-                                        data-lang-switch="en"
-                                >
-                                    EN
-                                </button>
-                                <button
-                                        class={`join-item btn btn-sm flex-1 ${lang === 'ja' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
-                                        data-lang-switch="ja"
-                                >
-                                    JA
-                                </button>
-                            </nav>
-                        </li>
-                        <div class="divider my-3 opacity-20 w-full"></div>
-                        <li class="w-full flex flex-col gap-2">
-                            <LoginButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
-                            <PasskeyButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
-                        </li>
-                        <li class="w-full mt-4">
-                            <a
-                                target="_blank"
-                                href={formUrl}
-                                class="flex flex-col items-center link text-base-content/70"
+            <div class="relative inline-block ml-auto">
+                <input type="checkbox" id="user-menu-toggle" class="peer hidden"/>
+                <label for="user-menu-toggle"
+                        class="relative z-101 btn btn-ghost btn-circle avatar hover:bg-base-200 cursor-pointer">
+                    <div class="w-10 h-10 rounded-full shadow-inner ring-1 ring-base-content/10 flex items-center justify-center">
+                        {user ? (
+                          <CloudCheck class="text-success" size={20} />
+                        ) : (
+                          <User size={20} />
+                        )}
+                    </div>
+                </label>
+                <ul class="hidden peer-checked:flex absolute right-0 z-100 mt-3 w-64 p-2 shadow-xl bg-base-100 rounded-xl flex-col items-center gap-4">
+                    <li class="w-full text-center">
+                        <h3 class="font-bold text-sm">
+                            {isLoggedIn ? t('header.synced') : t('header.login_to_sync')}
+                        </h3>
+                    </li>
+                    <li class="w-full">
+                        <LoginButton client:load isLoggedIn={isLoggedIn} lang={lang}/>
+                    </li>
+                    <li class="w-full -my-2"> 
+                        <div class="divider opacity-20 w-full my-0"></div>
+                    </li>
+                    <li class="w-full">
+                        <nav class="w-full join border border-base-300">
+                            <button
+                                class={`join-item btn btn-sm flex-1 ${lang === 'en' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
+                                data-lang-switch="en"
                             >
-                                <span class="text-[11px]">
-                                    {t('header.support')}
-                                </span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                                EN
+                            </button>
+                            <button
+                                class={`join-item btn btn-sm flex-1 ${lang === 'ja' ? 'btn-active btn-neutral' : 'btn-ghost'}`}
+                                data-lang-switch="ja"
+                            >
+                                JA
+                            </button>
+                        </nav>
+                    </li>
+                    <li class="w-full py-1">
+                        <a
+                            target="_blank"
+                            href={formUrl}
+                            class="flex flex-col items-center link text-base-content/60"
+                        >
+                            <span class="text-[11px]">
+                                {t('header.support')}
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         )}
     </nav>
 </header>

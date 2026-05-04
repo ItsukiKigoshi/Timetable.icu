@@ -11,23 +11,15 @@ const ja = {
 	"auth.logging_out": "ログアウト中...",
 	"auth.login_google": "Googleでログイン",
 	"auth.connecting_google": "Googleへ接続中...",
-	"auth.error_login": "ログインに失敗しました",
-	"auth.passkey.add": "Passkeyを追加",
-	"auth.passkey.adding": "Passkeyを登録中...",
-	"auth.passkey.login": "Passkeyでログイン",
-	"auth.passkey.logging_in": "Passkeyで認証中...",
-	"auth.passkey.name_prompt": "Passkeyの名前はどうしますか？",
-	"auth.passkey.success_add": "Passkeyを登録しました！",
-	"auth.passkey.error_login": "ログインに失敗しました。",
-	"auth.passkey.error_add_hint":
-		"Passkeyの登録に失敗しました。まだ登録していない場合は、まずGoogleでログインしてください。",
+  "auth.error_login": "ログインに失敗しました",
+	
 	"error.db.title": "アクセス制限中",
 	"error.db.description": "データベースの読み取り制限に達しています．",
 
 	// ヘッダー
 	"header.welcome_back": "おかえりなさい",
 	"header.hi": "Hi! {name}",
-	"header.synced": "同期済み",
+	"header.synced": "同期されています!",
 	"header.login_to_sync": "ログインして同期",
 	"header.support": "サポートに連絡する",
 
@@ -165,15 +157,6 @@ const en = {
 	"auth.login_google": "Login with Google",
 	"auth.connecting_google": "Connecting to Google...",
 	"auth.error_login": "Failed to login",
-	"auth.passkey.add": "Add Passkey",
-	"auth.passkey.adding": "Adding Passkey...",
-	"auth.passkey.login": "Login with Passkey",
-	"auth.passkey.logging_in": "Authenticating...",
-	"auth.passkey.name_prompt": "Name for this Passkey?",
-	"auth.passkey.success_add": "Passkey registered!",
-	"auth.passkey.error_login": "Authentication failed.",
-	"auth.passkey.error_add_hint":
-		"Failed to add Passkey. If you haven't registered yet, please login with Google first.",
 
 	// Error
 	"error.db.title": "Access Restricted",
@@ -186,8 +169,8 @@ const en = {
 	// Header
 	"header.welcome_back": "Welcome back!",
 	"header.hi": "Hi, {name}!",
-	"header.synced": "Synced",
-	"header.login_to_sync": "Login to sync",
+	"header.synced": "Synced!",
+	"header.login_to_sync": "Login to Sync!",
 	"header.support": "Contact Support",
 
 	"term.Spring": "Spring",
