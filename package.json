@@ -27,7 +27,6 @@
 		"@astrojs/cloudflare": "13.3.0",
 		"@astrojs/react": "5.0.4",
 		"@astrojs/sitemap": "^3.7.2",
-		"@better-auth/passkey": "^1.5.6",
 		"@tailwindcss/vite": "^4.2.2",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",

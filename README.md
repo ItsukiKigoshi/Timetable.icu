@@ -127,7 +127,7 @@ ICU生の時間割・履修計画アプリの決定版
 ### Backend
 
 - [Astro](https://astro.build/)
-- [BetterAuth](https://better-auth.com/) (Google OAuth/Passkey)
+- [BetterAuth](https://better-auth.com/) (Google OAuth)
 - [Drizzle ORM](https://orm.drizzle.team/)
 - [TypeScript](https://www.typescriptlang.org/)
 

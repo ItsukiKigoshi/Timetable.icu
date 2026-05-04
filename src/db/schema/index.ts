@@ -211,7 +211,6 @@ export const courseToCategories = sqliteTable(
 export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(authSchema.session),
 	accounts: many(authSchema.account),
-	passkeys: many(authSchema.passkey),
 	userCourses: many(userCourses),
 	customCourses: many(customCourses),
 }));

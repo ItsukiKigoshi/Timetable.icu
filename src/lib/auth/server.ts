@@ -1,4 +1,3 @@
-import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
@@ -20,11 +19,7 @@ export const getAuth = (env: Env, request: Request) => {
 
 	return betterAuth({
 		baseURL: currentOrigin,
-		trustedOrigins: [
-			"https://timetable.icu",
-			"https://dev-timetable-icu.itsukikigoshi.workers.dev",
-			"http://localhost:4321",
-		],
+		trustedOrigins: ["https://timetable.icu", "http://localhost:4321"],
 		database: drizzleAdapter(drizzle(env.timetable_icu), {
 			provider: "sqlite",
 			schema: schema,
@@ -36,10 +31,7 @@ export const getAuth = (env: Env, request: Request) => {
 				ipAddressHeaders: ["cf-connecting-ip"], // Cloudflare specific header
 			},
 		},
-		plugins: [
-			passkey(),
-			...(process.env.NODE_ENV === "test" ? [testUtils()] : []),
-		],
+		plugins: [...(process.env.NODE_ENV === "test" ? [testUtils()] : [])],
 		socialProviders: {
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,
