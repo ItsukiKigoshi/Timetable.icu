@@ -1,5 +1,5 @@
 ---
-import { CloudCheck, User } from "lucide-astro";
+import { CloudCheck, LogIn } from "lucide-astro";
 import Logo from "@/assets/Logo.svg";
 import LoginButton from "@/components/common/LoginButton.tsx";
 import { SELECTABLE_TERMS, SELECTABLE_YEARS } from "@/constants/time.ts";
@@ -61,7 +61,7 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
                         {user ? (
                           <CloudCheck class="text-success" size={20} />
                         ) : (
-                          <User size={20} />
+                          <LogIn size={20} />
                         )}
                     </div>
                 </label>
