@@ -33,19 +33,16 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.astro"],
+			"includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
 			"linter": {
 				"rules": {
+					"style": {
+						"useConst": "off",
+						"useImportType": "off"
+					},
 					"correctness": {
-						"noUnusedImports": "off",
-						"noUnusedVariables": "off"
-					}
-				}
-			},
-			"assist": {
-				"actions": {
-					"source": {
-						"organizeImports": "off"
+						"noUnusedVariables": "off",
+						"noUnusedImports": "off"
 					}
 				}
 			}
