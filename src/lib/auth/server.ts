@@ -46,8 +46,8 @@ export const getAuth = (env: Env, request: Request) => {
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
 				redirectURI: `${currentOrigin}/api/auth/callback/google`,
 				prompt: "select_account",
-        hd: "icu.ac.jp",
-        // 名前とプロフィール写真を保存しない
+				hd: "icu.ac.jp",
+				// 名前とプロフィール写真を保存しない
 				mapProfileToUser: (profile) => {
 					return {
 						name: "",

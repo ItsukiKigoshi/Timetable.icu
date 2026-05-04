@@ -11,8 +11,8 @@ const ja = {
 	"auth.logging_out": "ログアウト中...",
 	"auth.login_google": "Googleでログイン",
 	"auth.connecting_google": "Googleへ接続中...",
-  "auth.error_login": "ログインに失敗しました",
-	
+	"auth.error_login": "ログインに失敗しました",
+
 	"error.db.title": "アクセス制限中",
 	"error.db.description": "データベースの読み取り制限に達しています．",
 
