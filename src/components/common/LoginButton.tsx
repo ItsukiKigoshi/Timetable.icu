@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { client, signInWithGoogle } from "@/lib/auth/client.ts";
 import { defaultLang, ui } from "@/lib/translation/ui.ts";
 
@@ -48,6 +48,18 @@ export default function LoginButton({
 			alert(t("auth.error_login"));
 		}
 	};
+
+	// ブラウザバック時にはsetIsLoading stateをリセット
+	useEffect(() => {
+		const handlePageShow = (event: PageTransitionEvent) => {
+			if (event.persisted) {
+				setIsLoading(false);
+			}
+		};
+
+		window.addEventListener("pageshow", handlePageShow);
+		return () => window.removeEventListener("pageshow", handlePageShow);
+	}, []);
 
 	return (
 		<div className="w-full">

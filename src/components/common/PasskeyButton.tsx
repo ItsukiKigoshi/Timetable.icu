@@ -40,18 +40,22 @@ export default function PasskeyButton({
 		if (isLoading) return;
 
 		setIsLoading(true);
-		await client.signIn.passkey({
-			fetchOptions: {
-				onSuccess() {
-					window.location.reload();
+		try {
+			await client.signIn.passkey({
+				fetchOptions: {
+					onSuccess() {
+						window.location.reload();
+					},
+					onError(ctx) {
+						setIsLoading(false);
+						if (ctx.error.message.includes("cancelled")) return;
+						console.error("Authentication failed:", ctx.error.message);
+					},
 				},
-				onError(ctx) {
-					setIsLoading(false);
-					console.error("Authentication failed:", ctx.error.message);
-					alert(t("auth.passkey.error_login"));
-				},
-			},
-		});
+			});
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	// パスキー追加処理
