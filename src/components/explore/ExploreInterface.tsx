@@ -449,7 +449,7 @@ export default function ExploreInterface({
 					>
 						<X size={18} />
 						<span className="inline font-medium">
-							{t("explore.clear_selection")}
+							{t("explore.reset_selection")}
 						</span>
 					</button>
 				</div>
