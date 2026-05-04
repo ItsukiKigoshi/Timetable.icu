@@ -53,7 +53,7 @@ const ja = {
 	// Hero
 	"lp.hero.description": "ICU生の時間割・履修計画アプリの決定版",
 	"lp.nav.explore": "コースを探す",
-	"lp.nav.timetable": "時間割を見る",
+	"lp.nav.timetable": "時間割を作る",
 
 	// できること
 	"lp.features.label": "できること",
@@ -85,7 +85,7 @@ const ja = {
 	"explore.select_slots": "時限を選択",
 	"explore.clear_selection": "クリア",
 	"explore.close": "閉じる",
-	"explore.no_results": "該当する授業が見つかりませんでした。",
+	"explore.no_results": "該当する授業が見つかりませんでした．",
 	"explore.syllabus": "シラバス",
 	"explore.add": "追加",
 	"explore.remove": "削除",
@@ -203,7 +203,7 @@ const en = {
 	// --- Landing Page ---
 	"lp.hero.description": "Your Academic Planning at ICU starts here.",
 	"lp.nav.explore": "Explore Courses",
-	"lp.nav.timetable": "View Timetable",
+	"lp.nav.timetable": "Create Timetable",
 
 	// Features
 	"lp.features.label": "Features",
