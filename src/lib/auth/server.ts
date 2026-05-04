@@ -44,18 +44,16 @@ export const getAuth = (env: Env, request: Request) => {
 			google: {
 				clientId: env.GOOGLE_CLIENT_ID,
 				clientSecret: env.GOOGLE_CLIENT_SECRET,
-				// 以下の行を有効にすることで，名前とプロフィール写真を保存しないようにできる．
-				// 画面上で名前と顔写真を表示している部分が空白になるので，
-				// その部分の改修が必要
-				// mapProfileToUser: (profile) => {
-				// 	return {
-				// 		name: "",
-				// 		image: null,
-				// 	};
-				// },
 				redirectURI: `${currentOrigin}/api/auth/callback/google`,
 				prompt: "select_account",
-				hd: "icu.ac.jp",
+        hd: "icu.ac.jp",
+        // 名前とプロフィール写真を保存しない
+				mapProfileToUser: (profile) => {
+					return {
+						name: "",
+						image: undefined,
+					};
+				},
 			},
 		},
 		hooks: {
