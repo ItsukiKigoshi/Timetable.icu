@@ -197,12 +197,12 @@ All commands are run from the root of the project, from a terminal:
 
 Run Test
 ```bash
-bun x playwright test
+bunx playwright test
 ```
 
 Format Code
 ```bash
-bun x biome check --write
+bunx biome check --write
 ```
 
 Create types from wrangler.jsonc
@@ -222,13 +222,13 @@ bun x auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/sche
 Create migration file by Drizzle Kit
 
 ```bash
-bun x drizzle-kit generate
+bunx drizzle-kit generate
 ```
 
 一度生成したmigrationファイルをなかったことにする
 
 ```bash
-bun x drizzle-kit drop
+bunx drizzle-kit drop
 ```
 
 Migration to D1
