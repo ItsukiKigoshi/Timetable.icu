@@ -181,7 +181,7 @@ bunx playwright test
 
 Format Code
 ```bash
-bunx biome check --write
+bun format
 ```
 
 Create types from wrangler.jsonc

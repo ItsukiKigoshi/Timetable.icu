@@ -7,6 +7,9 @@
 	},
 	"scripts": {
 		"dev": "astro dev",
+		"format:prettier": "prettier \"**/*.astro\" --write",
+		"format:biome": "biome check --write",
+		"format": "bun run format:prettier; bun run format:biome",
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
@@ -49,6 +52,8 @@
 		"bun-types": "^1.3.11",
 		"daisyui": "^5.5.19",
 		"drizzle-kit": "^0.31.10",
+		"prettier": "3.8.3",
+		"prettier-plugin-astro": "^0.14.1",
 		"wrangler": "^4.85.0"
 	}
 }
