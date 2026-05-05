@@ -44,15 +44,24 @@ def parse_icumap_html(html_content):
         # 4. IDのプレフィックスを生成
         # 例: "ctl00_ContentPlaceHolder1_grv_course_ctl02_lbl_rgno"
         # -> "ctl00_ContentPlaceHolder1_grv_course_ctl02_lbl_"
-        base_id = rgno_tag['id'].replace('lbl_rgno', 'lbl_')
+        tag_id = str(rgno_tag.get('id', ''))
+        base_id = tag_id.replace('lbl_rgno', 'lbl_')
 
         # 5. キャンセル判定 (打消し線クラスの確認)
         title_ja_tag = row.find('span', id=base_id + "title_j")
         is_cancelled = False
         if title_ja_tag:
-            # クラス名リストを結合してチェック
-            combined_classes = (title_ja_tag.get('class') or []) + \
-                               (title_ja_tag.parent.get('class') or [])
+            def get_safe_classes(tag):
+                if tag is None:
+                    return []
+                cls = tag.get('class')
+                if isinstance(cls, list):
+                    return cls # すでにリストならそのまま
+                if isinstance(cls, str):
+                    return [cls] # 文字列ならリストに包む
+                return [] # Noneなどの場合は空リスト
+            combined_classes = get_safe_classes(title_ja_tag) + \
+                               get_safe_classes(title_ja_tag.parent)
             is_cancelled = "word_line_through" in combined_classes
 
         # テキスト取得ヘルパー
@@ -106,7 +115,7 @@ def run_parser():
         # メタデータ更新
         save_course_update_metadata()
 
-        print(f"--- Process Completed ---")
+        print("--- Process Completed ---")
         print(f"Total courses: {len(results)}")
         print(f"Output: {os.path.abspath(output_file)}")
         print("icuMAP parsing completed.")

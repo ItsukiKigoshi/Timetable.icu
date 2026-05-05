@@ -31,13 +31,15 @@ def parse_ehandbook_html(html_content, is_english=True):
 
     for row in rows:
         cols = row.find_all('td')
-        if len(cols) < 8: continue
+        if len(cols) < 8:
+            continue
 
         # 1. rgNoの抽出
         link_tag = cols[2].find('a')
         rgno = ""
         if link_tag and 'href' in link_tag.attrs:
-            match = re.search(r'regno=([0-9]+)', link_tag['href'])
+            href_value = str(link_tag['href'])
+            match = re.search(r'regno=([0-9]+)', href_value)
             if match:
                 rgno = match.group(1)
 
@@ -112,8 +114,10 @@ def run_parser():
 
         if os.path.exists(path_en) and os.path.exists(path_ja):
             print(f"Processing {label}...")
-            with open(path_en, "r", encoding="utf-8") as f: html_en = f.read()
-            with open(path_ja, "r", encoding="utf-8") as f: html_ja = f.read()
+            with open(path_en, "r", encoding="utf-8") as f:
+                html_en = f.read()
+            with open(path_ja, "r", encoding="utf-8") as f:
+                html_ja = f.read()
 
             raw_en = parse_ehandbook_html(html_en, is_english=True)
             raw_ja = parse_ehandbook_html(html_ja, is_english=False)
@@ -148,7 +152,7 @@ def run_parser():
 
     save_course_update_metadata()
 
-    print(f"--- Process Completed ---")
+    print("--- Process Completed ---")
     print(f"Total processed items (after deduplication): {len(final_list)}")
     print(f"Output: {os.path.abspath(output_file)}")
 

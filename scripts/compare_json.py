@@ -51,7 +51,7 @@ def compare():
     only_im = im_keys - eh_keys
     only_eh = eh_keys - im_keys
 
-    print(f"--- 統計 ---")
+    print("--- 統計 ---")
     print(f"ehandbook 総数 (Unique): {len(eh_keys)}")
     print(f"icuMAP    総数 (Unique): {len(im_keys)}")
     print(f"差分（純粋な件数差）    : {len(im_keys) - len(eh_keys)}")
