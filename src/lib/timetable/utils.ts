@@ -43,7 +43,6 @@ export const computeDisplaySchedules = (
 			startMin: number;
 			endMin: number;
 			col: number;
-			displayEndMin: number;
 		})[] = [];
 		merged.forEach((sched) => {
 			const startMin = timeToMin(sched.startTime);
@@ -61,7 +60,7 @@ export const computeDisplaySchedules = (
 			) {
 				col++;
 			}
-			tempWithCol.push({ ...(sched as any), startMin, endMin, col });
+			tempWithCol.push({ ...sched, startMin, endMin, col });
 		});
 
 		// 4. 幅計算 ＋ スタイル計算

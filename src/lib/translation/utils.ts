@@ -12,7 +12,7 @@ const getCurrentLang = (lang?: string | null): keyof typeof ui => {
 export const getTranslations = (lang: string | undefined) => {
 	const currentLang = getCurrentLang(lang);
 	return (key: keyof (typeof ui)[typeof defaultLang]) => {
-		return (ui[currentLang] as any)[key] || (ui[defaultLang] as any)[key];
+		return ui[currentLang][key] || ui[defaultLang][key];
 	};
 };
 
@@ -50,8 +50,8 @@ export const createTranslationHelper = (lang: string | undefined) => {
 	};
 
 	const translatePeriod = (label: string) => {
-		if (label === "昼") return t("period.lunch" as any);
-		if (label === "夜") return t("period.night" as any);
+		if (label === "昼") return t("period.lunch");
+		if (label === "夜") return t("period.night");
 		return label;
 	};
 

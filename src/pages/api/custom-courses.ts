@@ -3,10 +3,10 @@ import type { APIRoute } from "astro";
 import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "@/db/schema";
-import type { CourseFormInput } from "@/db/schema/index.ts";
+import type { CourseFormInput, CustomCourse } from "@/db/schema/index.ts";
 
 // IDが文字列で来る可能性があるため，処理用のヘルパー
-const parseId = (id: any): string | null => {
+const parseId = (id: string | number): string | null => {
 	if (typeof id === "string" && id.length > 0) return id;
 	if (typeof id === "number") return String(id);
 	return null;
@@ -92,7 +92,7 @@ export const PATCH: APIRoute = async ({ request, locals }) => {
 
 	try {
 		const body = (await request.json()) as Partial<CourseFormInput>;
-		const rawId = body.id || body.courseId;
+		const rawId = body.id || body.courseId || "";
 		const id = parseId(rawId);
 
 		if (!id)
@@ -101,10 +101,10 @@ export const PATCH: APIRoute = async ({ request, locals }) => {
 			});
 
 		const db = drizzle(env.timetable_icu, { schema });
-		const batchQueries: any[] = [];
+		const batchQueries = [];
 
 		// 基本情報の更新
-		const updateData: any = {};
+		const updateData = {} as CustomCourse;
 		if (body.title !== undefined) updateData.title = body.title;
 		if (body.instructor !== undefined) updateData.instructor = body.instructor;
 		if (body.units !== undefined) updateData.units = Number(body.units);
@@ -137,7 +137,7 @@ export const PATCH: APIRoute = async ({ request, locals }) => {
 					.delete(schema.customCourseSchedules)
 					.where(eq(schema.customCourseSchedules.customCourseId, id)),
 			);
-			const scheduleValues = body.schedules.map((s: any) => ({
+			const scheduleValues = body.schedules.map((s) => ({
 				customCourseId: id,
 				dayOfWeek: s.dayOfWeek,
 				period: String(s.period),
