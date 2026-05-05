@@ -1,12 +1,12 @@
 ---
 import {
-  CalendarCheck2,
-  CalendarDays,
-  CalendarPlus,
-  RefreshCcw,
-  Search,
-  Telescope,
-  ThumbsUp,
+	CalendarCheck2,
+	CalendarDays,
+	CalendarPlus,
+	RefreshCcw,
+	Search,
+	Telescope,
+	ThumbsUp,
 } from "lucide-astro";
 import Logo from "@/assets/Logo.svg";
 import Layout from "@/components/layout/Layout.astro";
@@ -17,239 +17,237 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 ---
 
 <Layout
-  title=`${t('site.title')} | ${t('site.tagline')}`
-  showHeader={false}
-  showFooter={false}
-  showDBError={false}
+	title=`${t('site.title')} | ${t('site.tagline')}`
+	showHeader={false}
+	showFooter={false}
+	showDBError={false}
 >
-  <!--背景画像-->
-  <aside
-    aria-hidden="true"
-    class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none"
-  >
-    <img
-      src="/images/cover1.webp"
-      alt="Cover Photo 1 (ICU garden)"
-      width={800}
-      sizes="(max-width: 768px) 400px, 800px"
-      class="absolute -top-10 -right-10 w-185 md:w-200 rotate-12"
-    />
-    <img
-      src="/images/cover2.webp"
-      alt="Cover Photo 1 (ICU Chappel)"
-      height={800}
-      sizes="(max-width: 768px) 400px, 800px"
-      class="absolute -bottom-40 -left-20 w-150 md:w-225 -rotate-12"
-    />
-  </aside>
+	<!--背景画像-->
+	<aside
+		aria-hidden="true"
+		class="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none"
+	>
+		<img
+			src="/images/cover1.webp"
+			alt="Cover Photo 1 (ICU garden)"
+			width={800}
+			sizes="(max-width: 768px) 400px, 800px"
+			class="absolute -top-10 -right-10 w-185 md:w-200 rotate-12"
+		/>
+		<img
+			src="/images/cover2.webp"
+			alt="Cover Photo 1 (ICU Chappel)"
+			height={800}
+			sizes="(max-width: 768px) 400px, 800px"
+			class="absolute -bottom-40 -left-20 w-150 md:w-225 -rotate-12"
+		/>
+	</aside>
 
-  <!--Main Content-->
-  <section
-    class="flex flex-col items-center lg:gap-16 gap-8 p-6 max-w-5xl mx-auto min-h-screen relative"
-  >
-    <!-- Toggle Language-->
-    <div
-      class="flex justify-center items-center gap-1 p-1 rounded-xl bg-base-200/30 backdrop-blur-sm border border-base-content/5"
-    >
-      {
-        currentLang === "ja" ? (
-          <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">
-            JA
-          </span>
-        ) : (
-          <a
-            href="/"
-            class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors"
-          >
-            JA
-          </a>
-        )
-      }
+	<!--Main Content-->
+	<section
+		class="flex flex-col items-center lg:gap-16 gap-8 p-6 max-w-5xl mx-auto min-h-screen relative"
+	>
+		<!-- Toggle Language-->
+		<div
+			class="flex justify-center items-center gap-1 p-1 rounded-xl bg-base-200/30 backdrop-blur-sm border border-base-content/5"
+		>
+			{
+				currentLang === "ja" ? (
+					<span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">
+						JA
+					</span>
+				) : (
+					<a
+						href="/"
+						class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors"
+					>
+						JA
+					</a>
+				)
+			}
 
-      {
-        currentLang === "en" ? (
-          <span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">
-            EN
-          </span>
-        ) : (
-          <a
-            href="/en/"
-            class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors"
-          >
-            EN
-          </a>
-        )
-      }
-    </div>
-    <!--Hero-->
-    <section
-      class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-6 shadow-2xl w-full max-w-7xl mx-auto border border-white/20"
-    >
-      <header class="hero-content lg:flex-row flex-col lg:gap-16 gap-12">
-        <Logo width={200} height={200} class="drop-shadow-2xl" />
-        <div class="lg:text-left text-center">
-          <h1
-            class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content"
-          >
-            {t("site.title")}
-          </h1>
-          <p
-            class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl"
-          >
-            {t("lp.hero.description")}
-          </p>
-          <nav
-            class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4"
-          >
-            <a
-              href={l("/explore")}
-              class="btn btn-primary btn-lg rounded-full lg:px-16 px-12"
-            >
-              <Telescope size="24" />
-              <span>{t("lp.nav.explore")}</span>
-            </a>
+			{
+				currentLang === "en" ? (
+					<span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">
+						EN
+					</span>
+				) : (
+					<a
+						href="/en/"
+						class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors"
+					>
+						EN
+					</a>
+				)
+			}
+		</div>
+		<!--Hero-->
+		<section
+			class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-6 shadow-2xl w-full max-w-7xl mx-auto border border-white/20"
+		>
+			<header class="hero-content lg:flex-row flex-col lg:gap-16 gap-12">
+				<Logo width={200} height={200} class="drop-shadow-2xl" />
+				<div class="lg:text-left text-center">
+					<h1
+						class="md:text-5xl text-3xl font-extrabold tracking-tighter leading-tight text-base-content"
+					>
+						{t("site.title")}
+					</h1>
+					<p
+						class="py-4 md:text-lg text-sm font-medium opacity-70 leading-relaxed max-w-3xl"
+					>
+						{t("lp.hero.description")}
+					</p>
+					<nav
+						class="flex lg:flex-nowrap flex-wrap lg:justify-start justify-center gap-4"
+					>
+						<a
+							href={l("/explore")}
+							class="btn btn-primary btn-lg rounded-full lg:px-16 px-12"
+						>
+							<Telescope size="24" />
+							<span>{t("lp.nav.explore")}</span>
+						</a>
 
-            <a
-              href={l("/timetable")}
-              class="btn btn-neutral btn-lg rounded-full lg:px-16 px-12"
-            >
-              <CalendarDays size="24" />
-              <span>{t("lp.nav.timetable")}</span>
-            </a>
-          </nav>
-        </div>
-      </header>
-    </section>
+						<a
+							href={l("/timetable")}
+							class="btn btn-neutral btn-lg rounded-full lg:px-16 px-12"
+						>
+							<CalendarDays size="24" />
+							<span>{t("lp.nav.timetable")}</span>
+						</a>
+					</nav>
+				</div>
+			</header>
+		</section>
 
-    <section
-      class="flex flex-col w-full bg-base-100 border border-base-200 rounded-4xl overflow-hidden shadow-sm"
-    >
-      <div class="p-6 border-b border-base-200 bg-base-200/20">
-        <h2
-          class="flex items-center gap-3 text-2xl font-black text-base-content"
-        >
-          <div class="text-primary">
-            <ThumbsUp size="32" />
-          </div>
-          {t("lp.features.label")}
-        </h2>
-      </div>
+		<section
+			class="flex flex-col w-full bg-base-100 border border-base-200 rounded-4xl overflow-hidden shadow-sm"
+		>
+			<div class="p-6 border-b border-base-200 bg-base-200/20">
+				<h2 class="flex items-center gap-3 text-2xl font-black text-base-content">
+					<div class="text-primary">
+						<ThumbsUp size="32" />
+					</div>
+					{t("lp.features.label")}
+				</h2>
+			</div>
 
-      <ul
-        class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-base-200 grow"
-      >
-        <li class="p-6 flex gap-5">
-          <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
-            <Search size="24" />
-          </div>
-          <div>
-            <h3 class="font-bold text-lg">
-              {t("lp.features.search.title")}
-            </h3>
-            <p class="text-sm text-base-content/70 leading-relaxed">
-              {t("lp.features.search.desc")}
-            </p>
-          </div>
-        </li>
-        <li class="p-6 flex gap-5">
-          <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
-            <RefreshCcw size="24" />
-          </div>
-          <div>
-            <h3 class="font-bold text-lg">
-              {t("lp.features.sync.title")}
-            </h3>
-            <p class="text-sm text-base-content/70 leading-relaxed">
-              {t("lp.features.sync.desc")}
-            </p>
-          </div>
-        </li>
-        <li class="p-6 flex gap-5">
-          <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
-            <CalendarCheck2 size="24" />
-          </div>
-          <div>
-            <h3 class="font-bold text-lg">
-              {t("lp.features.schedule.title")}
-            </h3>
-            <p class="text-sm text-base-content/70 leading-relaxed">
-              {t("lp.features.schedule.desc")}
-            </p>
-          </div>
-        </li>
-        <li class="p-6 flex gap-5">
-          <div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
-            <CalendarPlus size="24" />
-          </div>
-          <div>
-            <h3 class="font-bold text-lg">
-              {t("lp.features.custom.title")}
-            </h3>
-            <p class="text-sm text-base-content/70 leading-relaxed">
-              {t("lp.features.custom.desc")}
-            </p>
-          </div>
-        </li>
-      </ul>
-    </section>
-    <section
-      class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-8"
-    >
-      <div class="avatar-group -space-x-10 flex flex-nowrap items-start">
-        <a
-          href="https://cimetier.org/"
-          target="_blank"
-          class="flex flex-col items-center shrink-0"
-        >
-          <img
-            src="/images/ItsukiKigoshi.webp"
-            alt="Itsuki Kigoshi"
-            class="avatar border-none z-30 w-28 h-28 rounded-full mb-0.5"
-          />
-          <p class="text-[8pt] font-medium link">Itsuki Kigoshi</p>
-        </a>
+			<ul
+				class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-base-200 grow"
+			>
+				<li class="p-6 flex gap-5">
+					<div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+						<Search size="24" />
+					</div>
+					<div>
+						<h3 class="font-bold text-lg">
+							{t("lp.features.search.title")}
+						</h3>
+						<p class="text-sm text-base-content/70 leading-relaxed">
+							{t("lp.features.search.desc")}
+						</p>
+					</div>
+				</li>
+				<li class="p-6 flex gap-5">
+					<div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+						<RefreshCcw size="24" />
+					</div>
+					<div>
+						<h3 class="font-bold text-lg">
+							{t("lp.features.sync.title")}
+						</h3>
+						<p class="text-sm text-base-content/70 leading-relaxed">
+							{t("lp.features.sync.desc")}
+						</p>
+					</div>
+				</li>
+				<li class="p-6 flex gap-5">
+					<div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+						<CalendarCheck2 size="24" />
+					</div>
+					<div>
+						<h3 class="font-bold text-lg">
+							{t("lp.features.schedule.title")}
+						</h3>
+						<p class="text-sm text-base-content/70 leading-relaxed">
+							{t("lp.features.schedule.desc")}
+						</p>
+					</div>
+				</li>
+				<li class="p-6 flex gap-5">
+					<div class="text-primary bg-primary/10 p-3 rounded-2xl h-fit">
+						<CalendarPlus size="24" />
+					</div>
+					<div>
+						<h3 class="font-bold text-lg">
+							{t("lp.features.custom.title")}
+						</h3>
+						<p class="text-sm text-base-content/70 leading-relaxed">
+							{t("lp.features.custom.desc")}
+						</p>
+					</div>
+				</li>
+			</ul>
+		</section>
+		<section
+			class="bg-base-200/80 rounded-[2.5rem] p-8 md:p-10 w-full shadow-sm border border-base-200 flex flex-col md:flex-row items-center gap-8"
+		>
+			<div class="avatar-group -space-x-10 flex flex-nowrap items-start">
+				<a
+					href="https://cimetier.org/"
+					target="_blank"
+					class="flex flex-col items-center shrink-0"
+				>
+					<img
+						src="/images/ItsukiKigoshi.webp"
+						alt="Itsuki Kigoshi"
+						class="avatar border-none z-30 w-28 h-28 rounded-full mb-0.5"
+					/>
+					<p class="text-[8pt] font-medium link">Itsuki Kigoshi</p>
+				</a>
 
-        <div class="flex flex-col items-center shrink-0">
-          <img
-            src="/images/EnaMiura.webp"
-            alt="Ena Miura"
-            class="avatar border-none z-20 w-28 h-28 rounded-full mb-0.5"
-          />
-          <p class="text-[8pt] font-medium">Ena Miura</p>
-        </div>
+				<div class="flex flex-col items-center shrink-0">
+					<img
+						src="/images/EnaMiura.webp"
+						alt="Ena Miura"
+						class="avatar border-none z-20 w-28 h-28 rounded-full mb-0.5"
+					/>
+					<p class="text-[8pt] font-medium">Ena Miura</p>
+				</div>
 
-        <div class="avatar border-none placeholder z-10 shrink-0">
-          <div class="bg-sky-100 w-28 h-28 rounded-full"></div>
-        </div>
-      </div>
+				<div class="avatar border-none placeholder z-10 shrink-0">
+					<div class="bg-sky-100 w-28 h-28 rounded-full"></div>
+				</div>
+			</div>
 
-      <address class="text-center md:text-left flex-1 not-italic">
-        <h4
-          class="text-2xl font-black mb-2 flex flex-wrap justify-center md:justify-start items-center gap-2"
-        >
-          Made with ♥ by ICU Students Team!
-        </h4>
-        <p class="text-sm md:text-base leading-relaxed opacity-80 mb-4">
-          {t("lp.profile.description.top")}
-          <br />
-          {t("lp.profile.description.bottom")}
-          <a
-            class="inline-flex items-center gap-1 underline font-medium"
-            target="_blank"
-            href="https://discord.gg/2gmKTs4ezk"
-          >
-            {t("lp.profile.contact")}
-          </a>
-          {t("lp.profile.dot")}<br />
-          <a
-            target="_blank"
-            class="link"
-            href="https://github.com/sponsors/ItsukiKigoshi"
-          >
-            {t("lp.profile.support")}
-          </a>
-        </p>
-      </address>
-    </section>
-  </section>
+			<address class="text-center md:text-left flex-1 not-italic">
+				<h4
+					class="text-2xl font-black mb-2 flex flex-wrap justify-center md:justify-start items-center gap-2"
+				>
+					Made with ♥ by ICU Students Team!
+				</h4>
+				<p class="text-sm md:text-base leading-relaxed opacity-80 mb-4">
+					{t("lp.profile.description.top")}
+					<br />
+					{t("lp.profile.description.bottom")}
+					<a
+						class="inline-flex items-center gap-1 underline font-medium"
+						target="_blank"
+						href="https://discord.gg/2gmKTs4ezk"
+					>
+						{t("lp.profile.contact")}
+					</a>
+					{t("lp.profile.dot")}<br />
+					<a
+						target="_blank"
+						class="link"
+						href="https://github.com/sponsors/ItsukiKigoshi"
+					>
+						{t("lp.profile.support")}
+					</a>
+				</p>
+			</address>
+		</section>
+	</section>
 </Layout>

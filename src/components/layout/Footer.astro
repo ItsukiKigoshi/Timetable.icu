@@ -14,22 +14,22 @@ const isActive = (path: string) => {
 ---
 
 <footer class="z-50">
-  <nav
-    class="flex dock dock-sm bg-base-100/80 backdrop-blur-lg border-t border-white/10"
-  >
-    <a
-      href={l("/explore")}
-      class={`transition-colors ${isActive("/explore") ? "dock-active text-primary" : "text-base-content"}`}
-    >
-      <Telescope size="24" />
-      <span class="dock-label">{t("nav.explore")}</span>
-    </a>
-    <a
-      href={l("/timetable")}
-      class={`transition-colors ${isActive("/timetable") ? "dock-active text-primary" : "text-base-content"}`}
-    >
-      <CalendarDays size="24" />
-      <span class="dock-label">{t("nav.timetable")}</span>
-    </a>
-  </nav>
+	<nav
+		class="flex dock dock-sm bg-base-100/80 backdrop-blur-lg border-t border-white/10"
+	>
+		<a
+			href={l("/explore")}
+			class={`transition-colors ${isActive("/explore") ? "dock-active text-primary" : "text-base-content"}`}
+		>
+			<Telescope size="24" />
+			<span class="dock-label">{t("nav.explore")}</span>
+		</a>
+		<a
+			href={l("/timetable")}
+			class={`transition-colors ${isActive("/timetable") ? "dock-active text-primary" : "text-base-content"}`}
+		>
+			<CalendarDays size="24" />
+			<span class="dock-label">{t("nav.timetable")}</span>
+		</a>
+	</nav>
 </footer>

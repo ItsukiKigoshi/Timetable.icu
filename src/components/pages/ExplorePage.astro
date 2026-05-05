@@ -61,17 +61,17 @@ Astro.response.headers.set("Content-Type", "text/html; charset=utf-8");
 ---
 
 <Layout title=`${t('explore.title')} | ${t('site.title')}`>
-  <section class="max-w-7xl mx-auto px-4 py-6">
-    <ExploreInterface
-      client:load
-      initialResults={results as OfficialCourseWithDetails[]}
-      initialFilters={filters}
-      isLoggedIn={!!user}
-      categories={allCategories}
-      initialUserCourseIds={userCourseIds}
-      user={user}
-      hasNextPage={hasNextPage}
-      lang={currentLang}
-    />
-  </section>
+	<section class="max-w-7xl mx-auto px-4 py-6">
+		<ExploreInterface
+			client:load
+			initialResults={results as OfficialCourseWithDetails[]}
+			initialFilters={filters}
+			isLoggedIn={!!user}
+			categories={allCategories}
+			initialUserCourseIds={userCourseIds}
+			user={user}
+			hasNextPage={hasNextPage}
+			lang={currentLang}
+		/>
+	</section>
 </Layout>

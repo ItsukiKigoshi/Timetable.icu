@@ -1,14 +1,13 @@
 pre-commit:
   parallel: true
   commands:
-    # 1. Biome (JS/TS)
-    biome:
-      glob: "*.{js,ts,jsx,tsx,json}"
-      run: bunx biome check --write {staged_files}
-      stage_fixed: true
-
-    # 2. Prettier (Astro)
+    # 1. Prettier (Astro)
     prettier:
       glob: "*.astro"
       run: bunx prettier --write {staged_files}
+      stage_fixed: true
+    # 2. Biome (JS/TS)
+    biome:
+      glob: "*.{js,ts,jsx,tsx,json}"
+      run: bunx biome check --write {staged_files}
       stage_fixed: true

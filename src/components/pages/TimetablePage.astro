@@ -60,11 +60,9 @@ if (user) {
 
 	// 3. データの整形
 	const officialMapped = results
-		.filter(
-			(uc): uc is typeof uc & { course: NonNullable<typeof uc.course> } => {
-				return uc.course !== null;
-			},
-		)
+		.filter((uc): uc is typeof uc & { course: NonNullable<typeof uc.course> } => {
+			return uc.course !== null;
+		})
 		.map((uc) => ({
 			...uc.course,
 			isVisible: uc.isVisible,
@@ -84,15 +82,15 @@ if (user) {
 ---
 
 <Layout title={`${t("timetable.title")} | ${t("site.title")}`}>
-  <div class="p-2 md:px-6 mx-auto h-[calc(100vh-128px)] overflow-hidden">
-    <TimetableInterface
-      initialCourses={initialCourses}
-      initialViewMode={viewParam as "grid" | "list"}
-      user={user}
-      lang={lang}
-      selectedYear={selectedYear}
-      selectedTerm={selectedTerm}
-      client:load
-    />
-  </div>
+	<div class="p-2 md:px-6 mx-auto h-[calc(100vh-128px)] overflow-hidden">
+		<TimetableInterface
+			initialCourses={initialCourses}
+			initialViewMode={viewParam as "grid" | "list"}
+			user={user}
+			lang={lang}
+			selectedYear={selectedYear}
+			selectedTerm={selectedTerm}
+			client:load
+		/>
+	</div>
 </Layout>
