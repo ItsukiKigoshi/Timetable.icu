@@ -7,7 +7,6 @@ interface CourseListProps {
 	items: UserCourseWithDetails[];
 	padding?: boolean;
 	isJa: boolean;
-	t: any;
 	setSelectedCourse: (course: UserCourseWithDetails | null) => void;
 	toggleVisibility: (course: UserCourseWithDetails) => void;
 	handleToggle: (course: UserCourseWithDetails) => void;
@@ -53,7 +52,8 @@ const CourseList = ({
 						className={`group p-3 bg-base-200 rounded-xl flex justify-between items-center border border-base-300 ${!course.isVisible ? "opacity-60" : ""}`}
 					>
 						{/* 左側：クリックで詳細モーダルへ */}
-						<div
+						<button
+							type="button"
 							className="flex-1 min-w-0 cursor-pointer"
 							onClick={() => handleCourseSelect(course)}
 						>
@@ -62,11 +62,12 @@ const CourseList = ({
 								showColor={true}
 								colorCustom={course.colorCustom}
 							/>
-						</div>
+						</button>
 
 						{/* 右側：最小限のクイック操作のみ残す */}
-						<div className="flex gap-1 shrink-0 ml-2">
+						<nav className="flex gap-1 shrink-0 ml-2">
 							<button
+								type="button"
 								onClick={() => toggleVisibility(course)}
 								className="btn btn-sm btn-square btn-ghost border-base-300"
 							>
@@ -77,6 +78,7 @@ const CourseList = ({
 								)}
 							</button>
 							<button
+								type="button"
 								onClick={() => handleToggle(course)}
 								disabled={isSubmitting === course.id}
 								className="btn btn-sm btn-square btn-error"
@@ -87,7 +89,7 @@ const CourseList = ({
 									<Trash2 size="14" />
 								)}
 							</button>
-						</div>
+						</nav>
 					</div>
 				);
 			})}

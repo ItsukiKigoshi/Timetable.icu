@@ -1,6 +1,4 @@
 // src/constants/time.ts
-import type { Course } from "@/db/schema";
-
 export const SELECTABLE_YEARS = [2026] as const;
 export const SELECTABLE_TERMS = ["Spring", "Autumn", "Winter"] as const;
 export const SELECTABLE_DAYS = [
@@ -13,7 +11,7 @@ export const SELECTABLE_DAYS = [
 ] as const;
 
 export const DEFAULT_YEAR = 2026; // new Date().getFullYear() didnt work on Workers
-export const DEFAULT_TERM: Course["term"] = "Spring";
+export const DEFAULT_TERM = SELECTABLE_TERMS["0"];
 
 export const PERIODS = [
 	{ label: "1", start: "08:45", end: "10:00" },

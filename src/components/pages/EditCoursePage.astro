@@ -6,6 +6,7 @@ import Layout from "@/components/layout/Layout.astro";
 import CourseEditor from "@/components/timetable/CourseEditor";
 import * as schema from "@/db/schema/index.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
+import type { SELECTABLE_DAYS } from "@/constants/time";
 
 interface Props {
 	lang: string;
@@ -32,8 +33,8 @@ if (user && db && targetId) {
 		initialData = {
 			...result,
 			schedules: result.schedules.map((s) => ({
-				dayOfWeek: s.dayOfWeek,
-				period: s.period,
+				dayOfWeek: s.dayOfWeek as (typeof SELECTABLE_DAYS)[number],
+				period: s.period ?? "",
 				startTime: s.startTime,
 				endTime: s.endTime,
 			})),

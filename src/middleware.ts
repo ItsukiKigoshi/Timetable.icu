@@ -1,6 +1,10 @@
 import { defineMiddleware } from "astro:middleware";
 import { env } from "cloudflare:workers";
-import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time.ts";
+import {
+	DEFAULT_TERM,
+	DEFAULT_YEAR,
+	type SELECTABLE_TERMS,
+} from "@/constants/time.ts";
 import { getAuth } from "@/lib/auth/server.ts";
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -64,7 +68,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	context.locals.selectedYear = finalYear;
-	context.locals.selectedTerm = finalTerm;
+	context.locals.selectedTerm = finalTerm as (typeof SELECTABLE_TERMS)[number];
 
 	return next();
 });

@@ -7,6 +7,6 @@ declare namespace App {
 		session: import("better-auth").Session | null;
 		dbError: boolean;
 		selectedYear: number;
-		selectedTerm: string;
+		selectedTerm: typeof import("@/constants/time").SELECTABLE_TERMS[number];
 	}
 }

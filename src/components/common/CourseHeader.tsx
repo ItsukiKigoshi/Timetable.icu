@@ -38,7 +38,7 @@ const CourseHeader = ({
 
 			<section className="flex flex-col gap-2 w-full min-w-0">
 				{/* 1. 上段: コースコード, 言語, 単位数，時期 */}
-				<div className="flex flex-wrap gap-1.5 items-center">
+				<div className="flex flex-wrap gap-1.5">
 					{(course as OfficialCourseWithDetails).courseCode && (
 						<span className="badge badge-neutral badge-xs px-1.5 py-2 font-mono tracking-tighter shrink-0">
 							{(course as OfficialCourseWithDetails).courseCode}
@@ -65,7 +65,7 @@ const CourseHeader = ({
 				</div>
 
 				{/* 2. 中段: タイトル */}
-				<h2 className="text-sm sm:text-base font-bold leading-tight line-clamp-2 text-base-content">
+				<h2 className="text-sm sm:text-base font-bold leading-tight line-clamp-2 text-base-content text-start">
 					{isJa
 						? (course as OfficialCourseWithDetails).titleJa ||
 							(course as CustomCourseWithDetails).title
@@ -74,7 +74,7 @@ const CourseHeader = ({
 				</h2>
 
 				{/* 3. 下段: 教員名 (共通プロパティ) */}
-				<p className="text-xs sm:text-sm text-base-content/60 truncate italic">
+				<p className="text-xs sm:text-sm text-base-content/60 truncate italic text-start">
 					{course.instructor}
 				</p>
 

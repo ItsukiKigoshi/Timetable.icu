@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			const res: UserCoursePostResponse = { success: true, action: "added" };
 			return new Response(JSON.stringify(res), { status: 201 });
 		}
-	} catch (e) {
+	} catch (_e) {
 		const res: UserCoursePostResponse = { error: "Internal Server Error" };
 		return new Response(JSON.stringify(res), { status: 500 });
 	}
@@ -118,7 +118,7 @@ export const PATCH: APIRoute = async ({ request, locals }) => {
 		return new Response(JSON.stringify({ success: true, isVisible }), {
 			status: 200,
 		});
-	} catch (e) {
+	} catch (_e) {
 		return new Response(JSON.stringify({ error: "Internal Server Error" }), {
 			status: 500,
 		});
@@ -163,7 +163,7 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
 		return new Response(JSON.stringify({ success: true, action: "removed" }), {
 			status: 200,
 		});
-	} catch (e) {
+	} catch (_e) {
 		return new Response(JSON.stringify({ error: "Internal Server Error" }), {
 			status: 500,
 		});

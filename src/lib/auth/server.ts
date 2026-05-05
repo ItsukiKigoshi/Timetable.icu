@@ -40,7 +40,7 @@ export const getAuth = (env: Env, request: Request) => {
 				prompt: "select_account",
 				hd: "icu.ac.jp",
 				// 名前とプロフィール写真を保存しない
-				mapProfileToUser: (profile) => {
+				mapProfileToUser: () => {
 					return {
 						name: "",
 						image: undefined,

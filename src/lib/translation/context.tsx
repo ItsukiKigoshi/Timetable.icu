@@ -26,6 +26,6 @@ export const LanguageProvider = ({
 export const useTranslation = () => {
 	const context = useContext(LanguageContext);
 	if (!context)
-		throw new Error("useLanguage must be used within LanguageProvider");
+		throw new Error("useTranslation must be used within LanguageProvider");
 	return context;
 };

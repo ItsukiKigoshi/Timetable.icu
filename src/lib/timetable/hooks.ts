@@ -1,4 +1,7 @@
+// src/lib/timetable/hooks.ts
+import type { User } from "better-auth";
 import { useEffect, useMemo, useState } from "react";
+import type { SELECTABLE_TERMS } from "@/constants/time";
 import type {
 	CourseFormInput,
 	FlatSchedule,
@@ -13,22 +16,20 @@ export function useTimetable({
 	selectedTerm,
 }: {
 	initialCourses?: UserCourseWithDetails[];
-	user: any;
+	user?: User | null;
 	selectedYear: number;
 	selectedTerm: string;
 }) {
-	// Source of Truth (詳細データを含むコース配列すべてのデータはcoursesを参照すべし)
 	const [courses, setCourses] =
 		useState<UserCourseWithDetails[]>(initialCourses);
 
-	// 初回マウント: LocalStorage(ゲスト) or Props(ログイン) から復元
 	useEffect(() => {
 		if (!user) {
 			const cached = localStorage.getItem("guest_timetable");
 			if (cached) {
 				try {
 					setCourses(JSON.parse(cached));
-				} catch (e) {
+				} catch (_e) {
 					setCourses(initialCourses);
 				}
 			}
@@ -37,30 +38,27 @@ export function useTimetable({
 		}
 	}, [user, initialCourses]);
 
-	// 全スケジュールを平坦化
 	const allSchedules = useMemo(() => {
 		return courses.flatMap((course) =>
 			course.schedules.map((s) => {
 				const { id: _unused, ...scheduleData } = s;
 				return {
-					...course, // コース情報の展開
-					...scheduleData, // スケジュール情報の展開
-					id: course.id, // コースID (string | number)
-					scheduleId: s.id, // スケジュール自身のID
-					type: course.type, // 'official' | 'custom'
+					...course,
+					...scheduleData,
+					id: course.id,
+					scheduleId: s.id,
+					type: course.type,
 				} as unknown as FlatSchedule;
 			}),
 		);
 	}, [courses]);
 
-	// 選択中の年と学期の授業一覧
 	const displayCourses = useMemo(() => {
 		return courses.filter(
 			(uc) => uc.year === selectedYear && uc.term === selectedTerm,
 		);
 	}, [courses, selectedYear, selectedTerm]);
 
-	// 描画用のデータ（isVisible=trueかつ選択中の年と学期のみ）
 	const displaySchedules = useMemo(() => {
 		const visibleOnly = allSchedules
 			.filter((uc) => uc.year === selectedYear && uc.term === selectedTerm)
@@ -68,8 +66,7 @@ export function useTimetable({
 		return computeDisplaySchedules(visibleOnly);
 	}, [allSchedules, selectedYear, selectedTerm]);
 
-	// 登録済み判定用：IDとTypeの組み合わせでSetを作る
-	const registeredKeys = useMemo(() => {
+	const registeredIds = useMemo(() => {
 		return new Set(courses.map((c) => `${c.type}-${c.id}`));
 	}, [courses]);
 
@@ -78,28 +75,23 @@ export function useTimetable({
 		localStorage.setItem("guest_timetable", JSON.stringify(nextCourses));
 	};
 
-	// --- ハンドラー ---
-	// CustomCourseの保存（フォーム入力から）
 	const saveCustomCourse = async (
 		formData: CourseFormInput,
 		mode: "create" | "edit",
 	) => {
 		const isNew = mode === "create";
-
-		// IDの確定
 		const tempId = isNew ? `custom-${Date.now()}` : formData.id;
 
 		const newCourse: UserCourseWithDetails = {
 			...formData,
-			id: tempId as any,
+			id: tempId,
 			type: "custom",
 			isVisible: true,
 			year: selectedYear,
-			term: selectedTerm as any,
+			term: selectedTerm as (typeof SELECTABLE_TERMS)[number],
 			schedules: formData.schedules.map((s, idx) => ({ ...s, id: idx })),
 		} as UserCourseWithDetails;
 
-		// 更新または追加
 		const nextCourses = !isNew
 			? courses.map((c) =>
 					c.type === "custom" && String(c.id) === String(formData.id)
@@ -145,37 +137,6 @@ export function useTimetable({
 		}
 	};
 
-	// 削除・追加
-	const toggleCourse = async (course: UserCourseWithDetails) => {
-		const { id, type } = course;
-		const courseKey = `${type}-${id}`;
-		const isRegistered = registeredKeys.has(courseKey);
-
-		let nextCourses: UserCourseWithDetails[];
-		if (isRegistered) {
-			nextCourses = courses.filter((c) => `${c.type}-${c.id}` !== courseKey);
-		} else {
-			nextCourses = [...courses, { ...course, isVisible: true }];
-		}
-
-		setCourses(nextCourses);
-		syncLocalStorage(nextCourses);
-
-		if (user) {
-			const endpoint =
-				type === "custom" ? "/api/custom-courses" : "/api/user-courses";
-			// 公式もカスタムも、登録済みなら削除リクエストを送る
-			const method = isRegistered ? "DELETE" : "POST";
-
-			await fetch(endpoint, {
-				method,
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ id: id, courseId: id }),
-			});
-		}
-	};
-
-	// 表示/非表示
 	const toggleVisibility = async (course: UserCourseWithDetails) => {
 		const { id, type, isVisible } = course;
 		const nextVisible = !isVisible;
@@ -198,7 +159,6 @@ export function useTimetable({
 		}
 	};
 
-	// 色の更新
 	const updateColor = async (
 		course: UserCourseWithDetails,
 		nextColor: string | null,
@@ -222,7 +182,6 @@ export function useTimetable({
 		}
 	};
 
-	// メモの更新
 	const updateMemo = async (
 		course: UserCourseWithDetails,
 		nextMemo: string,
@@ -248,11 +207,12 @@ export function useTimetable({
 
 	return {
 		courses,
+		setCourses, // useToggleCourse内で状態を更新できるようにエクスポート
+		registeredIds,
 		schedules: allSchedules,
 		displayCourses,
 		displaySchedules,
 		saveCustomCourse,
-		toggleCourse,
 		toggleVisibility,
 		updateColor,
 		updateMemo,

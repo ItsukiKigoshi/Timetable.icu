@@ -1,6 +1,7 @@
 import { and, eq, gte, inArray, isNull, like, lte, or } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { SearchFilters } from "@/components/explore/ExploreInterface";
+import type { SELECTABLE_DAYS, SELECTABLE_TERMS } from "@/constants/time";
 import * as schema from "@/db/schema";
 
 export function getCourseSearchConfig(
@@ -12,15 +13,18 @@ export function getCourseSearchConfig(
 	const q = url.searchParams.get("q") || "";
 	const categoryId = url.searchParams.get("categoryId") || null;
 	const slots = url.searchParams.get("slots")?.split(",").filter(Boolean) || [];
-	const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
+	const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10));
 	const language = url.searchParams.get("language");
 	const units = url.searchParams.get("units");
 
 	const conditions = [];
 
 	// 基本条件（インデックス: courses_search_optimal_idx）
-	if (year) conditions.push(eq(schema.courses.year, parseInt(year)));
-	if (term) conditions.push(eq(schema.courses.term, term as any));
+	if (year) conditions.push(eq(schema.courses.year, parseInt(year, 10)));
+	if (term)
+		conditions.push(
+			eq(schema.courses.term, term as (typeof SELECTABLE_TERMS)[number]),
+		);
 
 	// cancelされていないコースのみ検索可能
 	conditions.push(eq(schema.courses.status, "active"));
@@ -57,8 +61,8 @@ export function getCourseSearchConfig(
 	if (slots.length > 0) {
 		slots.forEach((slot) => {
 			const [day, periodStr] = slot.split("-");
-			const p = parseInt(periodStr);
-			if (!isNaN(p)) {
+			const p = parseInt(periodStr, 10);
+			if (!Number.isNaN(p)) {
 				// コマごとにサブクエリを作成。
 				// courses.id IN (SELECT course_id FROM schedules WHERE day=? AND period=?)
 				// を重ねることで、結果的にすべてのコマを持つものに絞り込まれる。
@@ -67,7 +71,10 @@ export function getCourseSearchConfig(
 					.from(schema.courseSchedules)
 					.where(
 						and(
-							eq(schema.courseSchedules.dayOfWeek, day as any),
+							eq(
+								schema.courseSchedules.dayOfWeek,
+								day as (typeof SELECTABLE_DAYS)[number],
+							),
 							eq(schema.courseSchedules.period, p),
 						),
 					);

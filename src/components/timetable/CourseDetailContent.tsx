@@ -40,7 +40,7 @@ const CourseDetailContent = ({
 					type="button"
 					onClick={() => updateColor(course, null)}
 					className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95 bg-primary 
-                                ${course.colorCustom === null ? "ring-2 ring-primary ring-offset-2" : ""}`}
+                               ${course.colorCustom == null ? "ring-2 ring-primary ring-offset-2" : ""}`}
 				/>
 
 				{/* スウォッチ一覧 */}
@@ -58,12 +58,13 @@ const CourseDetailContent = ({
 
 			{/* メモ */}
 			<div className="form-control w-full">
-				<label className="label pt-0">
+				<label htmlFor="memo-textarea" className="label pt-0">
 					<span className="label-text flex items-center gap-2 font-bold opacity-70">
 						<StickyNote size="14" /> {t("timetable.memo")}
 					</span>
 				</label>
 				<textarea
+					id="memo-textarea"
 					className="textarea textarea-bordered w-full h-24 text-base focus:textarea-primary"
 					placeholder={
 						isCustom
@@ -101,6 +102,7 @@ const CourseDetailContent = ({
 
 				{/* 表示/非表示 (1/4 を占有) */}
 				<button
+					type="button"
 					onClick={() => toggleVisibility(course)}
 					className={`btn btn-md gap-2 col-span-1 ${!course.isVisible ? "btn-ghost border-base-300    " : "btn-neutral"}`}
 				>
@@ -109,6 +111,7 @@ const CourseDetailContent = ({
 
 				{/* 削除 (1/4 を占有) */}
 				<button
+					type="button"
 					onClick={() => handleToggle(course)}
 					disabled={isSubmitting === cId}
 					className="btn btn-md btn-error col-span-1 gap-2"

@@ -1,13 +1,19 @@
 import type { User } from "better-auth";
 import { CalendarPlus, LayoutGrid, List, Telescope } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
 import Modal from "@/components/common/Modal.tsx";
 import CourseDetailContent from "@/components/timetable/CourseDetailContent.tsx";
 import CourseList from "@/components/timetable/CourseList.tsx";
 import TimetableGrid from "@/components/timetable/TimetableGrid.tsx";
-import { DEFAULT_TERM, DEFAULT_YEAR, PERIODS } from "@/constants/time.ts";
+import {
+	DEFAULT_TERM,
+	DEFAULT_YEAR,
+	type PERIODS,
+	type SELECTABLE_TERMS,
+} from "@/constants/time.ts";
 import type { UserCourseWithDetails } from "@/db/schema";
+import { useToggleCourse } from "@/lib/course/hooks";
 import { formatUnits } from "@/lib/course/utils.ts";
 import { useTimetable } from "@/lib/timetable/hooks.ts";
 import { timeToMin } from "@/lib/timetable/utils.ts";
@@ -28,23 +34,52 @@ export default function TimetableInterface({
 	user?: User | null;
 	lang?: string;
 	selectedYear: number;
-	selectedTerm: string;
+	selectedTerm: (typeof SELECTABLE_TERMS)[number];
 }) {
 	const {
-		schedules, // 平坦化されたもの
+		setCourses,
+		schedules,
+		registeredIds,
 		displayCourses,
 		displaySchedules,
-		toggleCourse,
 		toggleVisibility,
 		updateColor,
 		updateMemo,
 	} = useTimetable({
-		initialCourses: initialCourses, // Astroから渡されたもの
+		initialCourses: initialCourses,
 		user,
 		selectedYear,
 		selectedTerm,
 	});
+
+	const { toggleCourse, isSubmitting } = useToggleCourse({
+		user,
+		onToggleSuccess: (course, isAdded) => {
+			setCourses((prev) =>
+				isAdded
+					? [...prev, { ...course, isVisible: true } as UserCourseWithDetails]
+					: prev.filter((c) => !(c.id === course.id && c.type === course.type)),
+			);
+		},
+		onToggleError: (course, wasRegistered) => {
+			setCourses((prev) =>
+				wasRegistered
+					? [...prev, { ...course, isVisible: true } as UserCourseWithDetails]
+					: prev.filter((c) => !(c.id === course.id && c.type === course.type)),
+			);
+		},
+	});
+	const handleToggle = useCallback(
+		(c: UserCourseWithDetails) => {
+			const key = `${c.type}-${c.id}`;
+			const isRegistered = registeredIds.has(key);
+			toggleCourse(c, isRegistered);
+		},
+		[toggleCourse, registeredIds],
+	);
+
 	// 翻訳
+	// TODO - useTranslation Context使える?
 	const { t, l, isJa, translateDay, translatePeriod, currentLang } =
 		createTranslationHelper(lang);
 
@@ -55,9 +90,6 @@ export default function TimetableInterface({
 		start: string;
 		end: string;
 	} | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState<number | string | null>(
-		null,
-	);
 	const [selectedCourse, setSelectedCourse] =
 		useState<UserCourseWithDetails | null>(null);
 	const [expandedCourseId, setExpandedCourseId] = useState<
@@ -115,7 +147,7 @@ export default function TimetableInterface({
 		window.addEventListener("popstate", handlePopState);
 		handlePopState(); // 初回読み込み時にも実行
 		return () => window.removeEventListener("popstate", handlePopState);
-	}, [displayCourses]);
+	}, []);
 
 	// モバイルで表示中のモードをSearch Parameterで管理
 	useEffect(() => {
@@ -147,19 +179,8 @@ export default function TimetableInterface({
 	}, [selectedCourse, displayCourses]);
 
 	// --- 関数 ---
-	const handleToggle = async (course: any) => {
-		const cId = course.id;
-		if (isSubmitting === cId) return;
-		setIsSubmitting(cId);
-		try {
-			await toggleCourse(course);
-		} finally {
-			setIsSubmitting(null);
-		}
-	};
-
 	// スロットクリック時
-	const handleSlotClick = (day: string, p: any) => {
+	const handleSlotClick = (day: string, p: (typeof PERIODS)[number]) => {
 		setSelectedSlot({ day, period: p.label, start: p.start, end: p.end });
 	};
 
@@ -187,6 +208,7 @@ export default function TimetableInterface({
 				{/* 右側：表示モード切り替え (Grid/List) */}
 				<nav className="lg:hidden fixed bottom-16 right-2 z-50 flex bg-base-100 shadow-xl rounded-full border-2 border-base-300 p-1 gap-1 h-14 items-center">
 					<button
+						type="button"
 						onClick={() => updateViewMode("list")}
 						className={`btn btn-sm btn-square h-11 w-11 rounded-full border-none transition-all ${
 							viewMode === "list" ? "btn-primary shadow-md" : "btn-ghost"
@@ -196,6 +218,7 @@ export default function TimetableInterface({
 						<List size={20} />
 					</button>
 					<button
+						type="button"
 						onClick={() => updateViewMode("grid")}
 						className={`btn btn-xs btn-square h-11 w-11 rounded-full border-none transition-all ${
 							viewMode === "grid" ? "btn-primary shadow-md" : "btn-ghost"
@@ -238,7 +261,6 @@ export default function TimetableInterface({
 								<CourseList
 									items={displayCourses}
 									isJa={isJa}
-									t={t}
 									setSelectedCourse={setSelectedCourse}
 									toggleVisibility={toggleVisibility}
 									handleToggle={handleToggle}
@@ -255,7 +277,6 @@ export default function TimetableInterface({
 								<CourseList
 									items={displayCourses}
 									isJa={isJa}
-									t={t}
 									setSelectedCourse={setSelectedCourse}
 									toggleVisibility={toggleVisibility}
 									handleToggle={handleToggle}
@@ -301,7 +322,7 @@ export default function TimetableInterface({
 							<div className="flex flex-col w-full gap-4">
 								{/* コースを探すボタン：periodが数字の場合のみ表示 */}
 								{selectedSlot?.period &&
-									!isNaN(Number(selectedSlot.period)) && (
+									!Number.isNaN(Number(selectedSlot.period)) && (
 										<a
 											href={l(
 												`/explore?slots=${selectedSlot?.day}-${selectedSlot?.period}`,
@@ -368,12 +389,12 @@ export default function TimetableInterface({
                                              ${isExpanded ? "collapse-open" : "collapse-close"}`}
 									>
 										{/* コース概要 */}
-										<div
+										<button
+											type="button"
 											className="gap-2 collapse-title pr-10 cursor-pointer active:bg-base-300/50"
 											onClick={() =>
 												setExpandedCourseId(isExpanded ? null : uniqueKey)
 											}
-											role="button"
 											tabIndex={0}
 										>
 											<CourseHeader
@@ -382,7 +403,7 @@ export default function TimetableInterface({
 												showColor={true}
 												colorCustom={c.colorCustom}
 											/>
-										</div>
+										</button>
 
 										{/* 内容部分 */}
 										<div className="collapse-content border-t border-base-300 bg-base-100 px-0">

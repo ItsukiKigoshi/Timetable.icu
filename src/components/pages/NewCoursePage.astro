@@ -3,7 +3,7 @@
 // /timetable/new.astro
 import Layout from "@/components/layout/Layout.astro";
 import CourseEditor from "@/components/timetable/CourseEditor";
-import { PERIODS } from "@/constants/time.ts";
+import { PERIODS, SELECTABLE_DAYS } from "@/constants/time.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const { lang, user, selectedYear, selectedTerm } = Astro.locals;
@@ -18,9 +18,16 @@ if (slotsParam) {
 
 	if (day && periodData) {
 		initialData = {
+			title: "",
+			units: 0,
+			year: selectedYear,
+			term: selectedTerm,
+			instructor: "",
+			room: "",
+			memo: "",
 			schedules: [
 				{
-					dayOfWeek: day,
+					dayOfWeek: day as (typeof SELECTABLE_DAYS)[number],
 					period: pLabel,
 					startTime: periodData.start,
 					endTime: periodData.end,

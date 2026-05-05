@@ -1,7 +1,12 @@
+import type { User } from "better-auth";
 import type React from "react";
-import { useEffect, useState } from "react";
-import { PERIODS, SELECTABLE_DAYS } from "@/constants/time.ts";
-import type { Course } from "@/db/schema";
+import { useCallback, useEffect, useState } from "react";
+import {
+	PERIODS,
+	SELECTABLE_DAYS,
+	type SELECTABLE_TERMS,
+} from "@/constants/time.ts";
+import type { Course, CourseFormInput } from "@/db/schema";
 import { useTimetable } from "@/lib/timetable/hooks.ts";
 import { LanguageProvider } from "@/lib/translation/context";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
@@ -10,10 +15,10 @@ interface CourseEditorProps {
 	mode: "create" | "edit";
 	lang: string;
 	targetId?: string;
-	initialData?: any;
-	user: any;
+	initialData: CourseFormInput | null;
+	user: User | null;
 	selectedYear: number;
-	selectedTerm: string;
+	selectedTerm: (typeof SELECTABLE_TERMS)[number];
 }
 
 const CourseEditor = ({
@@ -38,23 +43,25 @@ const CourseEditor = ({
 		selectedTerm,
 	});
 
-	const normalizeInitialData = (data: any) => ({
-		id: data?.id || undefined,
-		title: data?.title || data?.titleJa || "",
-		instructor: data?.instructor || data?.instructorJa || "",
-		units: data?.units ?? 0,
-		memo: data?.memo || "",
-		room: data?.room || "",
-		colorCustom: data?.colorCustom || null,
-		year: data?.year || selectedYear,
-		term: data?.term || selectedTerm,
-		schedules: (data?.schedules || []).map((s: any) => ({
-			...s,
-			id: s.id || `temp-sched-${Math.random().toString(36).substr(2, 9)}`,
-		})),
-	});
+	const normalizeInitialData = useCallback(
+		(data: CourseFormInput | null) => ({
+			id: data?.id || undefined,
+			title: data?.title ?? "",
+			instructor: data?.instructor ?? "",
+			units: data?.units ?? 0,
+			memo: data?.memo || "",
+			room: data?.room || "",
+			colorCustom: data?.colorCustom || null,
+			year: data?.year || selectedYear,
+			term: data?.term || selectedTerm,
+			schedules: (data?.schedules || []).map((s) => ({
+				...s,
+				id: s.id || `temp-sched-${Math.random().toString(36).substring(2, 11)}`,
+			})),
+		}),
+		[selectedYear, selectedTerm],
+	);
 
-	// 1. 初期化フラグ: 編集モードでデータが来るまでは false
 	const [isInitialized, setIsInitialized] = useState(
 		mode === "create" || !!initialData,
 	);
@@ -79,7 +86,12 @@ const CourseEditor = ({
 		if (initialData) {
 			foundData = initialData;
 		} else if (mode === "edit" && targetId && courses.length > 0) {
-			foundData = courses.find((c) => String(c.id) === String(targetId));
+			const found = courses.find(
+				(c) => String(c.id) === String(targetId) && c.type === "custom",
+			);
+			if (found) {
+				foundData = found as CourseFormInput;
+			}
 		}
 		if (foundData) {
 			setFormData(normalizeInitialData(foundData));
@@ -87,7 +99,14 @@ const CourseEditor = ({
 		} else if (mode === "create") {
 			setIsInitialized(true);
 		}
-	}, [initialData, courses, targetId, mode, isInitialized]);
+	}, [
+		initialData,
+		courses,
+		targetId,
+		mode,
+		isInitialized,
+		normalizeInitialData,
+	]);
 
 	// --- ハンドラー ---
 	const handleChange = (
@@ -104,20 +123,23 @@ const CourseEditor = ({
 		}));
 	};
 
-	const toggleSchedule = (day: string, pLabel: string) => {
+	const toggleSchedule = (
+		day: (typeof SELECTABLE_DAYS)[number],
+		pLabel: string,
+	) => {
 		if (!isInitialized) return;
 		const periodData = PERIODS.find((p) => p.label === pLabel);
 		if (!periodData) return;
 
 		const isSelected = formData.schedules.some(
-			(s: any) => s.dayOfWeek === day && s.period === pLabel,
+			(s) => s.dayOfWeek === day && s.period === pLabel,
 		);
 
 		if (isSelected) {
 			setFormData((prev) => ({
 				...prev,
 				schedules: prev.schedules.filter(
-					(s: any) => !(s.dayOfWeek === day && s.period === pLabel),
+					(s) => !(s.dayOfWeek === day && s.period === pLabel),
 				),
 			}));
 		} else {
@@ -169,7 +191,6 @@ const CourseEditor = ({
 		if (mode !== "edit" || isInitialized) return;
 
 		// --- 判定ロジック ---
-
 		// 1. まず initialData (DB経由) があればそれを使う
 		if (initialData) {
 			setFormData(normalizeInitialData(initialData));
@@ -181,19 +202,27 @@ const CourseEditor = ({
 		// courses.length > 0 は、LocalStorageの読み込みが完了したサイン
 		if (courses.length > 0) {
 			const foundInLocal = courses.find(
-				(c) => String(c.id) === String(targetId),
+				(c) => String(c.id) === String(targetId) && c.type === "custom",
 			);
 
 			if (foundInLocal) {
-				setFormData(normalizeInitialData(foundInLocal));
+				const foundData = foundInLocal as CourseFormInput;
+				setFormData(normalizeInitialData(foundData));
 				setIsInitialized(true);
 			} else {
-				// DBにもなく、LocalStorageを全走査しても見つからない場合
+				// DBにもなく，LocalStorageを全走査しても見つからない場合
 				setNotFound(true);
 				setIsInitialized(true); // ロード画面を終了させるために必要
 			}
 		}
-	}, [initialData, courses, targetId, mode, isInitialized]);
+	}, [
+		initialData,
+		courses,
+		targetId,
+		mode,
+		isInitialized,
+		normalizeInitialData,
+	]);
 
 	// --- 表示の分岐 ---
 	// 1. ローディング
@@ -243,10 +272,11 @@ const CourseEditor = ({
 				>
 					{/* タイトル（必須） */}
 					<div className="form-control">
-						<label className="label font-bold">
+						<label htmlFor="course-title" className="label font-bold">
 							{t("custom.title")} ({t("custom.necessary")})
 						</label>
 						<input
+							id="course-title"
 							type="text"
 							name="title"
 							className="input input-bordered w-full"
@@ -259,8 +289,11 @@ const CourseEditor = ({
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						{/*教室/場所*/}
 						<div className="form-control">
-							<label className="label font-bold">{t("custom.room")}</label>
+							<label htmlFor="course-location" className="label font-bold">
+								{t("custom.room")}
+							</label>
 							<input
+								id="course-location"
 								type="text"
 								name="room"
 								className="input input-bordered w-full"
@@ -285,8 +318,11 @@ const CourseEditor = ({
 
 						{/*単位数*/}
 						<div className="form-control">
-							<label className="label font-bold">{t("custom.units")}</label>
+							<label htmlFor="course-units" className="label font-bold">
+								{t("custom.units")}
+							</label>
 							<select
+								id="course-units"
 								name="units"
 								className="select select-bordered w-full"
 								value={formData.units}
@@ -304,10 +340,13 @@ const CourseEditor = ({
 					</div>
 
 					<div className="form-control">
-						<label className="label font-bold">
+						<label htmlFor="course-schedule" className="label font-bold">
 							{t("custom.schedule")} ({t("custom.necessary")})
 						</label>
-						<div className="overflow-x-auto rounded-lg border border-base-300">
+						<div
+							id="course-schedule"
+							className="overflow-x-auto rounded-lg border border-base-300"
+						>
 							<table className="table table-fixed w-full text-center">
 								<thead>
 									<tr className="bg-base-200">
@@ -330,25 +369,27 @@ const CourseEditor = ({
 											</th>
 											{SELECTABLE_DAYS.map((day) => {
 												const isSelected = formData.schedules.some(
-													(s: any) =>
-														s.dayOfWeek === day && s.period === p.label,
+													(s) => s.dayOfWeek === day && s.period === p.label,
 												);
 
 												return (
 													<td
 														key={`${day}-${p.label}`}
-														onClick={() => toggleSchedule(day, p.label)}
-														className={`border border-base-300 cursor-pointer transition-colors p-0 h-10 ${
+														className={`border border-base-300 transition-colors p-0 h-10 ${
 															isSelected
 																? "bg-primary text-primary-content"
 																: ""
 														}`}
 													>
-														{isSelected && (
-															<div className={"text-primary-content font-bold"}>
-																✓
-															</div>
-														)}
+														<button
+															type="button"
+															className="w-full h-full flex items-center justify-center cursor-pointer focus:outline-primary -outline-offset-2"
+															onClick={() => toggleSchedule(day, p.label)}
+															aria-label={`${day} ${p.label} slot`}
+															aria-pressed={isSelected}
+														>
+															{isSelected && <div className="font-bold">✓</div>}
+														</button>
 													</td>
 												);
 											})}

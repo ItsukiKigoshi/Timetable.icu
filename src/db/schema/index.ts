@@ -8,22 +8,11 @@ import {
 	text,
 	uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+import { SELECTABLE_DAYS, SELECTABLE_TERMS } from "@/constants/time.ts";
 import * as authSchema from "@/db/schema/auth.ts";
 import { user } from "@/db/schema/auth.ts";
 
 export * from "./auth.ts";
-
-export const daysEnum = [
-	"Mon",
-	"Tue",
-	"Wed",
-	"Thu",
-	"Fri",
-	"Sat",
-	"Sun",
-] as const;
-
-export const termsEnum = ["Spring", "Autumn", "Winter"] as const;
 
 // --- Courses ---
 // シラバスデータなどの基本情報を保持
@@ -34,7 +23,7 @@ export const courses = sqliteTable(
 		year: integer("year").notNull(),
 		rgNo: text("rg_no").notNull(),
 		status: text("status", { enum: ["active", "cancelled"] }).default("active"),
-		term: text("term", { enum: termsEnum }).notNull(),
+		term: text("term", { enum: SELECTABLE_TERMS }).notNull(),
 		courseCode: text("course_code").notNull(), // 例: GES001
 		titleJa: text("title_ja").notNull(),
 		titleEn: text("title_en").notNull(),
@@ -83,7 +72,7 @@ export const courseSchedules = sqliteTable(
 		courseId: integer("course_id")
 			.notNull()
 			.references(() => courses.id, { onDelete: "cascade" }),
-		dayOfWeek: text("day_of_week", { enum: daysEnum }).notNull(),
+		dayOfWeek: text("day_of_week", { enum: SELECTABLE_DAYS }).notNull(),
 		startTime: text("start_time").notNull(),
 		endTime: text("end_time").notNull(),
 		period: integer("period"),
@@ -160,7 +149,7 @@ export const customCourses = sqliteTable("custom_courses", {
 	units: real("units").notNull().default(0),
 
 	year: integer("year").notNull(),
-	term: text("term", { enum: termsEnum }).notNull(),
+	term: text("term", { enum: SELECTABLE_TERMS }).notNull(),
 
 	isVisible: integer("is_visible", { mode: "boolean" }).notNull().default(true),
 	colorCustom: text("color_custom"),
@@ -176,7 +165,7 @@ export const customCourseSchedules = sqliteTable("custom_course_schedules", {
 		.notNull()
 		.references(() => customCourses.id, { onDelete: "cascade" }), // 親が消えたら消える
 
-	dayOfWeek: text("day_of_week", { enum: daysEnum }).notNull(),
+	dayOfWeek: text("day_of_week", { enum: SELECTABLE_DAYS }).notNull(),
 	period: text("period"), // "昼" などが入る可能性を考慮して text
 	startTime: text("start_time").notNull(),
 	endTime: text("end_time").notNull(),
@@ -323,10 +312,11 @@ export interface CourseFormInput {
 	memo?: string | null;
 	colorCustom?: string | null;
 	year: number;
-	term: (typeof termsEnum)[number];
+	term: (typeof SELECTABLE_TERMS)[number];
 	isVisible?: boolean;
 	schedules: {
-		dayOfWeek: (typeof daysEnum)[number];
+		id?: number | string;
+		dayOfWeek: (typeof SELECTABLE_DAYS)[number];
 		period: string;
 		startTime: string;
 		endTime: string;

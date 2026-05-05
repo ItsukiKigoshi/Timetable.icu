@@ -18,7 +18,8 @@ export const POST: APIRoute = async (context) => {
 
 		const normalItems = rawItems.filter(
 			(item) =>
-				!String(item.id).startsWith("custom-") && !isNaN(Number(item.id)),
+				!String(item.id).startsWith("custom-") &&
+				!Number.isNaN(Number(item.id)),
 		);
 		const customItems = rawItems.filter((item) =>
 			String(item.id).startsWith("custom-"),

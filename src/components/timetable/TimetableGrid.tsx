@@ -1,3 +1,4 @@
+import type { User } from "better-auth";
 import {
 	PERIODS,
 	SELECTABLE_DAYS,
@@ -9,7 +10,7 @@ import { timeToMin } from "@/lib/timetable/utils.ts";
 interface TimetableGridProps {
 	// 1. データ
 	displaySchedules: DisplaySchedule[];
-	user: any;
+	user?: User | null;
 
 	// 2. 状態・ユーティリティ
 	isJa: boolean;
@@ -17,7 +18,7 @@ interface TimetableGridProps {
 	translatePeriod: (p: string) => string;
 
 	// 3. ハンドラー
-	handleSlotClick: (day: string, p: any) => void;
+	handleSlotClick: (day: string, p: (typeof PERIODS)[number]) => void;
 }
 
 const TimetableGrid = ({
@@ -96,7 +97,7 @@ const TimetableGrid = ({
 					{/* 授業カード: 実際の授業時間 (10分休みを含まない) で描画 (z-5) */}
 					{displaySchedules
 						.filter((s) => s.dayOfWeek === day)
-						.map((sched, i) => {
+						.map((sched, _i) => {
 							const themeColor = sched.colorCustom || "var(--color-primary)";
 
 							// sched.memo内に@から始まる行があればroomとして表示
@@ -116,7 +117,7 @@ const TimetableGrid = ({
 
 							return (
 								<div
-									key={`${sched.courseCode}-${i}`}
+									key={sched.id}
 									className="absolute z-5"
 									style={{
 										top: getTop(sched.startMin),
@@ -135,8 +136,8 @@ const TimetableGrid = ({
 										<div className="flex flex-col gap-0 min-w-0 overflow-hidden md:break-normal break-all">
 											<h1 className="lg:text-sm md:text-xs text-[10px] font-bold leading-tight line-clamp-3 text-base-content/90">
 												{isJa
-													? sched.titleJa || (sched as any).title
-													: sched.titleEn || (sched as any).title}
+													? sched.titleJa || sched.title
+													: sched.titleEn || sched.title}
 											</h1>
 											{displayRoom && (
 												<p className="lg:text-[12px] text-[8px] font-medium opacity-80 truncate">
@@ -157,7 +158,8 @@ const TimetableGrid = ({
 						// 次のコマがあればその開始時刻まで、なければ自分の終了時刻まで
 						const visualEndMin = nextP ? timeToMin(nextP.start) : pEndMin;
 						return (
-							<div
+							<button
+								type="button"
 								key={`slot-${p.label}`}
 								className={
 									"absolute w-full z-10 cursor-pointer pointer-events-auto"

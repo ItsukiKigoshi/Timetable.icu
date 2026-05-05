@@ -11,7 +11,7 @@ import {
 	Trash2,
 	X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
 import Modal from "@/components/common/Modal";
 import { SELECTABLE_DAYS } from "@/constants/time.ts";
@@ -21,11 +21,11 @@ import type {
 	OfficialCourseWithDetails,
 	UserCourseWithDetails,
 } from "@/db/schema";
+import { useToggleCourse } from "@/lib/course/hooks";
 import { getSyllabusUrl } from "@/lib/course/utils.ts";
 import { LanguageProvider } from "@/lib/translation/context.tsx";
 import { defaultLang } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
-import type { UserCoursePostResponse } from "@/pages/api/user-courses";
 
 export interface SearchFilters {
 	year: string | null;
@@ -67,33 +67,23 @@ export default function ExploreInterface({
 }: Props) {
 	const { t, isJa } = createTranslationHelper(lang);
 
-	// --- States ---
 	const [courses, setCourses] =
 		useState<OfficialCourseWithDetails[]>(initialResults);
 	const [hasNextPage, setHasNextPage] = useState(initialHasNext);
 	const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 	const [isFetching, setIsFetching] = useState(false);
-	const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
-
 	const [isSlotModalOpen, setSlotModalOpen] = useState<boolean>(false);
-
-	// 1. 初期化フラグ（LocalStorage読み込み完了を待つ）
 	const [isInitialized, setIsInitialized] = useState(false);
-
-	// 2. 登録済みIDリスト（配列で管理して参照更新を確実にする）
 	const [registeredIdList, setRegisteredIdList] =
 		useState<number[]>(initialUserCourseIds);
 
-	// --- Effects ---
 	useEffect(() => {
-		// クライアントサイドでのみ実行: ゲストモードのデータを反映
 		if (!user) {
 			const cached = localStorage.getItem("guest_timetable");
 			if (cached) {
 				try {
 					const localCourses = JSON.parse(cached);
 					const localIds = localCourses.map((c: UserCourseWithDetails) => c.id);
-					// サーバーから渡された初期IDとLocalStorageのIDを合算
 					setRegisteredIdList((prev) =>
 						Array.from(new Set([...prev, ...localIds])),
 					);
@@ -105,85 +95,27 @@ export default function ExploreInterface({
 		setIsInitialized(true);
 	}, [user]);
 
-	// registeredIds を Set で保持（描画時の .has() を高速化）
 	const registeredIds = useMemo(
 		() => new Set(registeredIdList),
 		[registeredIdList],
 	);
 
-	/**
-	 * コースの追加/削除（トグル）処理
-	 */
-	const toggleCourse = async (course: OfficialCourseWithDetails) => {
-		const courseId = course.id;
-		const isRegistered = registeredIds.has(courseId);
-
-		// --- 1. 楽観的UI更新 ---
-		setRegisteredIdList((prev) =>
-			isRegistered ? prev.filter((id) => id !== courseId) : [...prev, courseId],
-		);
-
-		if (user) {
-			// --- 2. ログイン済み同期 ---
-			try {
-				const res = await fetch("/api/user-courses", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ courseId }),
-				});
-				const data = (await res.json()) as UserCoursePostResponse;
-
-				if ("error" in data) throw new Error(data.error);
-
-				// APIの結果と現在の表示が食い違っていれば補正 (整合性確保)
-				if (data.action === "added") {
-					setRegisteredIdList((prev) =>
-						Array.from(new Set([...prev, courseId])),
-					);
-				} else if (data.action === "removed") {
-					setRegisteredIdList((prev) => prev.filter((id) => id !== courseId));
-				}
-			} catch (e) {
-				console.error(e);
-				// ロールバック
-				setRegisteredIdList((prev) =>
-					isRegistered
-						? [...prev, courseId]
-						: prev.filter((id) => id !== courseId),
-				);
-				alert(isJa ? "通信に失敗しました" : "Failed to sync with server");
-			}
-		} else {
-			// --- 3. ゲストモード同期 ---
-			const cached = localStorage.getItem("guest_timetable");
-			let currentCourses = cached ? JSON.parse(cached) : [];
-
-			if (isRegistered) {
-				currentCourses = currentCourses.filter(
-					(c: UserCourseWithDetails) => c.id !== courseId,
-				);
-			} else {
-				const newCourse = {
-					...course,
-					isVisible: true,
-					memo: "",
-					updatedAt: Date.now(),
-				};
-				currentCourses.push(newCourse);
-			}
-			localStorage.setItem("guest_timetable", JSON.stringify(currentCourses));
-		}
-	};
-
-	const handleToggle = async (course: OfficialCourseWithDetails) => {
-		if (isSubmitting === course.id || !isInitialized) return;
-		setIsSubmitting(course.id);
-		try {
-			await toggleCourse(course);
-		} finally {
-			setIsSubmitting(null);
-		}
-	};
+	const { toggleCourse, isSubmitting } = useToggleCourse({
+		user,
+		onToggleSuccess: (course, isAdded) => {
+			setRegisteredIdList((prev) => {
+				if (isAdded) return [...prev, Number(course.id)];
+				return prev.filter((id) => id !== Number(course.id));
+			});
+		},
+		onToggleError: (course, wasRegistered) => {
+			// エラー時は元の状態にロールバック
+			setRegisteredIdList((prev) => {
+				if (wasRegistered) return [...prev, Number(course.id)];
+				return prev.filter((id) => id !== Number(course.id));
+			});
+		},
+	});
 
 	const fetchData = async (nextFilters: SearchFilters) => {
 		setIsFetching(true);
@@ -237,12 +169,12 @@ export default function ExploreInterface({
 
 	const Pagination = () => {
 		// ページ更新用の関数
-		const goToNext = () => {
+		const goToNext = useCallback(() => {
 			if (hasNextPage) update({ page: filters.page + 1 });
-		};
-		const goToPrev = () => {
+		}, []);
+		const goToPrev = useCallback(() => {
 			if (filters.page > 1) update({ page: filters.page - 1 });
-		};
+		}, []);
 		// キーボードイベントの登録
 		useEffect(() => {
 			const handleKeyDown = (event: KeyboardEvent) => {
@@ -264,22 +196,27 @@ export default function ExploreInterface({
 			return () => {
 				window.removeEventListener("keydown", handleKeyDown);
 			};
-		}, [filters.page, hasNextPage]); // 依存配列に状態を含める
+		}, [goToPrev, goToNext]);
 
 		return (
 			<nav className="flex justify-center py-6">
 				<div className="join shadow-sm">
 					<button
+						type="button"
 						className="join-item btn btn-sm sm:btn-md"
 						disabled={filters.page <= 1}
 						onClick={goToPrev}
 					>
 						«
 					</button>
-					<button className="join-item btn btn-sm sm:btn-md no-animation cursor-default pointer-events-none font-mono">
+					<button
+						type="button"
+						className="join-item btn btn-sm sm:btn-md no-animation cursor-default pointer-events-none font-mono"
+					>
 						Page {filters.page}
 					</button>
 					<button
+						type="button"
 						className="join-item btn btn-sm sm:btn-md"
 						disabled={!hasNextPage}
 						onClick={goToNext}
@@ -493,7 +430,13 @@ export default function ExploreInterface({
 										</a>
 
 										<button
-											onClick={() => handleToggle(course)}
+											type="button"
+											onClick={() =>
+												toggleCourse(
+													course,
+													registeredIds.has(Number(course.id)),
+												)
+											}
 											disabled={loading}
 											className={`btn btn-md min-w-20 ${isAdded ? "btn-error" : "btn-primary"}`}
 										>
@@ -599,24 +542,18 @@ export default function ExploreInterface({
 					</p>
 
 					<div className="dropdown dropdown-top dropdown-end">
-						<div
+						<button
+							type="button"
 							tabIndex={0}
-							role="button"
 							className="btn btn-ghost btn-circle btn-sm min-h-0 opacity-80"
-							// クリックした瞬間にすでにフォーカスがある場合は、blurして閉じる
-							onClick={(e) => {
-								if (document.activeElement === e.currentTarget) {
-									(e.currentTarget as HTMLElement).blur();
-								}
-							}}
 						>
 							<Info size={18} />
-						</div>
+						</button>
 
 						{/*授業検索に関する注意事項*/}
 						{/*TODO - Apply i18n*/}
-						<div
-							tabIndex={0}
+						<nav
+							tabIndex={-1}
 							className="dropdown-content bg-base-100 rounded-box z-10 w-64 p-4 shadow-xl border border-base-200"
 						>
 							{isJa ? (
@@ -662,7 +599,7 @@ export default function ExploreInterface({
 									</div>
 								</div>
 							)}
-						</div>
+						</nav>
 					</div>
 				</div>
 
@@ -699,13 +636,19 @@ export default function ExploreInterface({
 													className={`cursor-pointer border border-base-300 h-14 transition-all ${
 														isSelected ? "bg-primary text-primary-content" : ""
 													}`}
-													onClick={() => toggleSlot(day, p)}
 												>
-													{isSelected && (
-														<div className={"text-primary-content font-bold"}>
-															✓
-														</div>
-													)}
+													<button
+														type="button"
+														className="w-full h-full flex items-center justify-center cursor-pointer focus:outline-primary"
+														onClick={() => toggleSlot(day, p)}
+														aria-label={`${day} ${p} slot`}
+													>
+														{isSelected && (
+															<span className="text-primary-content font-bold">
+																✓
+															</span>
+														)}
+													</button>
 												</td>
 											);
 										})}
