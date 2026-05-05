@@ -63,15 +63,13 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 				<div class="dropdown dropdown-end">
 					<button
 						tabindex="0"
-						class="btn btn-ghost btn-circle avatar hover:bg-base-200 ml-auto"
+						class="btn btn-circle w-10 h-10 rounded-full shadow-inner ring-1 ring-base-content/10"
 					>
-						<div class="w-10 h-10 rounded-full shadow-inner ring-1 ring-base-content/10 flex items-center justify-center">
-							{user ? (
-								<CloudCheck class="text-success" size={20} />
-							) : (
-								<LogIn size={20} />
-							)}
-						</div>
+						{user ? (
+							<CloudCheck class="text-success" size={20} />
+						) : (
+							<LogIn size={20} />
+						)}
 					</button>
 					<nav
 						tabindex="-1"
