@@ -60,11 +60,10 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 	<nav class="navbar-end">
 		{
 			!dbError && (
-				<>
+				<div class="dropdown dropdown-end">
 					<button
+						tabindex="0"
 						class="btn btn-ghost btn-circle avatar hover:bg-base-200 ml-auto"
-						popovertarget="user-dropdown"
-						style="anchor-name:--user-anchor"
 					>
 						<div class="w-10 h-10 rounded-full shadow-inner ring-1 ring-base-content/10 flex items-center justify-center">
 							{user ? (
@@ -74,50 +73,50 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 							)}
 						</div>
 					</button>
-					<ul
-						popover
-						id="user-dropdown"
-						style="position-anchor:--user-anchor; top: anchor(bottom); right: anchor(right); inset: auto; margin: 0;"
-						class="dropdown w-64 p-4 shadow-xl bg-base-100 rounded-xl flex flex-col items-center gap-4 border border-base-200"
+					<nav
+						tabindex="-1"
+						class="dropdown-content w-64 p-4 shadow-xl bg-base-100 rounded-xl border border-base-200"
 					>
-						<li class="w-full text-center">
-							<h3 class="font-bold text-sm">
-								{isLoggedIn ? t("header.synced") : t("header.login_to_sync")}
-							</h3>
-						</li>
-						<li class="w-full">
-							<LoginButton client:load isLoggedIn={isLoggedIn} lang={lang} />
-						</li>
-						<li class="w-full -my-2">
-							<div class="divider opacity-20 w-full my-0" />
-						</li>
-						<li class="w-full">
-							<nav class="w-full join border border-base-300">
-								<button
-									class={`join-item btn btn-sm flex-1 ${lang === "ja" ? "btn-active btn-neutral" : "btn-ghost"}`}
-									data-lang-switch="ja"
+						<ul class="flex flex-col items-center gap-4 w-full">
+							<li class="w-full text-center">
+								<h3 class="font-bold text-sm">
+									{isLoggedIn ? t("header.synced") : t("header.login_to_sync")}
+								</h3>
+							</li>
+							<li class="w-full">
+								<LoginButton client:load isLoggedIn={isLoggedIn} lang={lang} />
+							</li>
+							<li class="w-full -my-2">
+								<div class="divider opacity-20 w-full my-0" />
+							</li>
+							<li class="w-full">
+								<nav class="w-full join border border-base-300">
+									<button
+										class={`join-item btn btn-sm flex-1 ${lang === "ja" ? "btn-active btn-neutral" : "btn-ghost"}`}
+										data-lang-switch="ja"
+									>
+										JA
+									</button>
+									<button
+										class={`join-item btn btn-sm flex-1 ${lang === "en" ? "btn-active btn-neutral" : "btn-ghost"}`}
+										data-lang-switch="en"
+									>
+										EN
+									</button>
+								</nav>
+							</li>
+							<li class="w-full py-1">
+								<a
+									target="_blank"
+									href={formUrl}
+									class="flex flex-col items-center link text-base-content/60"
 								>
-									JA
-								</button>
-								<button
-									class={`join-item btn btn-sm flex-1 ${lang === "en" ? "btn-active btn-neutral" : "btn-ghost"}`}
-									data-lang-switch="en"
-								>
-									EN
-								</button>
-							</nav>
-						</li>
-						<li class="w-full py-1">
-							<a
-								target="_blank"
-								href={formUrl}
-								class="flex flex-col items-center link text-base-content/60"
-							>
-								<span class="text-[11px]">{t("header.support")}</span>
-							</a>
-						</li>
-					</ul>
-				</>
+									<span class="text-[11px]">{t("header.support")}</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
 			)
 		}
 	</nav>
