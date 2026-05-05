@@ -12,6 +12,8 @@ const ja = {
 	"auth.login_google": "Googleでログイン",
 	"auth.connecting_google": "Googleへ接続中...",
 	"auth.error_login": "ログインに失敗しました",
+	"auth.error_domain":
+		"ログインにはICUのアカウント（@icu.ac.jp）を使用してください",
 
 	"error.db.title": "アクセス制限中",
 	"error.db.description": "データベースの読み取り制限に達しています．",
@@ -157,6 +159,7 @@ const en = {
 	"auth.login_google": "Login with Google",
 	"auth.connecting_google": "Connecting to Google...",
 	"auth.error_login": "Failed to login",
+	"auth.error_domain": "Please use ICU account (@icu.ac.jp) to Login",
 
 	// Error
 	"error.db.title": "Access Restricted",
