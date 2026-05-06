@@ -279,7 +279,7 @@ const en = {
 	"404.closing": "Ready to set sail back to your course?",
 } satisfies typeof ja;
 
-export const ui = { en, ja } as const;
+export const ui = { ja, en } as const;
 
 export type Language = keyof typeof ui;
 
