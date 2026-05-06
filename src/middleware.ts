@@ -6,14 +6,18 @@ import {
 } from "@/constants/time.ts";
 import { DEFAULT_LANG, LANGUAGES, type Language } from "./lib/translation/ui";
 
+const NON_TRANSLATED_PAGES = ["/privacy", "/terms"];
+
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { url, cookies, redirect } = context;
-	const pathname = url.pathname;
+	const pathname = url.pathname.replace(/\/$/, "");
 
+	// 静的ファイルやAPIはスキップ
 	if (
 		pathname.startsWith("/api") ||
 		pathname.startsWith("/_image") ||
 		pathname.startsWith("/_astro") ||
+		NON_TRANSLATED_PAGES.includes(pathname) ||
 		pathname.includes(".")
 	) {
 		return next();

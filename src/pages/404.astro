@@ -6,6 +6,8 @@ import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang || DEFAULT_LANG;
 const { t, l } = createTranslationHelper(lang);
+
+// SSGするとmiddlewareが効かず英語に翻訳されない
 export const prerender = true;
 ---
 
