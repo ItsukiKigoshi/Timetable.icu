@@ -1,15 +1,20 @@
 import { and, eq, gte, inArray, isNull, like, lte, or } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { SearchFilters } from "@/components/explore/ExploreInterface";
-import type { SELECTABLE_DAYS, SELECTABLE_TERMS } from "@/constants/time";
+import {
+	DEFAULT_TERM,
+	DEFAULT_YEAR,
+	type SELECTABLE_DAYS,
+	type SELECTABLE_TERMS,
+} from "@/constants/time";
 import * as schema from "@/db/schema";
 
 export function getCourseSearchConfig(
 	url: URL,
 	db: DrizzleD1Database<typeof schema>,
 ) {
-	const year = url.searchParams.get("year");
-	const term = url.searchParams.get("term");
+	const year = url.searchParams.get("year") || String(DEFAULT_YEAR);
+	const term = url.searchParams.get("term") || DEFAULT_TERM;
 	const q = url.searchParams.get("q") || "";
 	const categoryId = url.searchParams.get("categoryId") || null;
 	const slots = url.searchParams.get("slots")?.split(",").filter(Boolean) || [];
