@@ -1,14 +1,25 @@
 ---
 import Layout from "@/components/layout/Layout.astro";
+import Logo from "@/assets/Logo.svg";
 import { DEFAULT_LANG } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang || DEFAULT_LANG;
-const { t } = createTranslationHelper(lang);
+const { t, l } = createTranslationHelper(lang);
 export const prerender = true;
 ---
 
-<Layout title={`404 - ${t("404.title")}`}>
+<Layout title={`404 - ${t("404.title")}`} showHeader={false} showFooter={false}>
+	<header
+		class="navbar min-h-0 h-12 lg:h-16 sticky top-0 z-50 bg-base-100 shadow-sm"
+	>
+		<div class="navbar-start">
+			<a class="btn btn-ghost text-xl flex gap-2 px-2" href={l("/")}>
+				<Logo width={24} height={24} />
+				<h1 class="hidden sm:inline">{t("site.title")}</h1>
+			</a>
+		</div>
+	</header>
 	<main class="hero min-h-[85vh] relative overflow-hidden">
 		<div class="hero-content text-center z-10 px-4">
 			<section
