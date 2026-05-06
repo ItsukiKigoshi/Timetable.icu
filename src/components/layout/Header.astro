@@ -118,10 +118,18 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 
 <script>
 	/**
-	 * 現在のURLのクエリパラメータを維持したまま
-	 * Year と Term だけを書き換えて遷移する
+	 * Cookieをセットするヘルパー
 	 */
-	const updateYearTerm = () => {
+	const setCookie = (name: string, value: string) => {
+		document.cookie = `${name}=${value}; path=/; max-age=${60 * 60 * 24 * 365}`;
+	};
+
+	/**
+	 * Year / Term の変更処理
+	 * URLを直接いじらずCookieを更新してリロードすることで
+	 * middlewareのリダイレクトロジックに委ねる
+	 */
+	const handleYearTermChange = () => {
 		const yearSelect = document.getElementById(
 			"year-select",
 		) as unknown as HTMLSelectElement;
@@ -131,11 +139,19 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 
 		if (!yearSelect || !termSelect) return;
 
+		// Cookieを更新
+		setCookie("year", yearSelect.value);
+		setCookie("term", termSelect.value);
+
+		// 現在のURLを取得
 		const url = new URL(window.location.href);
+
+		// クエリパラメータも同期させておくとmiddlewareでのループが減るため、
+		// URLのパラメータも更新して遷移する
 		url.searchParams.set("year", yearSelect.value);
 		url.searchParams.set("term", termSelect.value);
 
-		// ページネーションがある場合、年度が変わったら1ページ目に戻す
+		// ページネーションがある場合はリセット
 		if (url.searchParams.has("page")) {
 			url.searchParams.set("page", "1");
 		}
@@ -143,13 +159,13 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 		window.location.assign(url.toString());
 	};
 
-	// イベントリスナーの登録
+	// --- イベントリスナーの登録 ---
 	document
 		.getElementById("year-select")
-		?.addEventListener("change", updateYearTerm);
+		?.addEventListener("change", handleYearTermChange);
 	document
 		.getElementById("term-select")
-		?.addEventListener("change", updateYearTerm);
+		?.addEventListener("change", handleYearTermChange);
 
 	// --- 言語切り替えロジック ---
 	document.querySelectorAll("[data-lang-switch]").forEach((btn) => {
@@ -158,7 +174,7 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 			if (!targetLang) return;
 
 			// Cookieをセット
-			document.cookie = `lang=${targetLang}; path=/; max-age=${60 * 60 * 24 * 365}`;
+			setCookie("lang", targetLang);
 
 			// ページをリロード（middlewareのリダイレクトロジックが発動する）
 			window.location.reload();
@@ -172,7 +188,6 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			const isOpen = dropdown.classList.contains("dropdown-open");
-
 			if (isOpen) {
 				dropdown.classList.remove("dropdown-open");
 				(e.currentTarget as HTMLElement).blur();
