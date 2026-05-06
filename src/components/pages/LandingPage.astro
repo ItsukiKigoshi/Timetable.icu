@@ -243,17 +243,22 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 </Layout>
 
 <script>
-	// --- 言語切り替えロジック ---
+	import { DEFAULT_LANG } from "@/lib/translation/ui";
+
 	document.querySelectorAll("[data-lang-switch]").forEach((btn) => {
 		btn.addEventListener("click", (e) => {
 			const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
 			if (!targetLang) return;
 
-			// Cookieをセット
+			// 1. Cookieを更新
 			document.cookie = `lang=${targetLang}; path=/; max-age=${60 * 60 * 24 * 365}`;
 
-			// ページをリロード（middlewareのリダイレクトロジックが発動する）
-			window.location.reload();
+			// 2. 新しい言語のルートパスを決定
+			// デフォルト言語なら "/"、それ以外なら "/en" など
+			const newPath = targetLang === DEFAULT_LANG ? "/" : `/${targetLang}`;
+
+			// 3. 遷移
+			window.location.href = newPath;
 		});
 	});
 </script>
