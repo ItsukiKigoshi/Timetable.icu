@@ -15,8 +15,8 @@ export default function LoginButton({
 	const [isLoading, setIsLoading] = useState(false);
 
 	const currentLang = (lang in ui ? lang : DEFAULT_LANG) as Lang;
-	const t = (key: keyof (typeof ui)["en"]) =>
-		ui[currentLang][key] || ui.en[key];
+	const t = (key: keyof (typeof ui)["ja"]) =>
+		ui[currentLang][key] || ui.ja[key];
 
 	const handleLogout = async () => {
 		if (isLoading) return;
