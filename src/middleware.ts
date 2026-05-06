@@ -26,7 +26,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	// --- 1. i18n Language Management ---
 	const langCookie = cookies.get("lang")?.value as Language | undefined;
-
 	let currentLang: Language = DEFAULT_LANG;
 
 	// 1. パスの第一セグメントが LANGUAGES に含まれているかチェック (例: /en/...)
@@ -37,14 +36,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (langInPath) {
 		currentLang = langInPath;
 	}
-	// 2. APIリクエストの場合は Cookie を優先
-	else if (pathname.startsWith("/api")) {
+	// ルートパスではデフォルト言語 (LandingPage.astroでCookie操作なしに言語を切り替えられるように)
+	else if (pathname === "/") {
+		currentLang = DEFAULT_LANG;
+	} else {
 		currentLang =
 			langCookie && LANGUAGES.includes(langCookie) ? langCookie : DEFAULT_LANG;
-	}
-	// 3. それ以外（ルートパス "/" など）はデフォルト
-	else {
-		currentLang = DEFAULT_LANG;
 	}
 
 	context.locals.lang = currentLang;
