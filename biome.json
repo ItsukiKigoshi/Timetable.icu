@@ -6,7 +6,7 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!**/*.astro"]
+		"includes": ["**", "!!**/dist", "!**/*.astro", "!worker-configuration.d.ts"]
 	},
 	"formatter": {
 		"enabled": true,
