@@ -461,84 +461,44 @@ export default function ExploreInterface({
 					})}
 				</div>
 
-				{/*TODO - Apply i18n*/}
 				{courses.length === 0 && (
 					<section className="alert shadow-sm">
-						{isJa ? (
-							<div className="space-y-3">
-								<h3 className="font-bold text-lg">
-									該当する授業が見つかりません．
-								</h3>
-								<p className="text-sm">
-									最新の授業情報は{" "}
-									<a
-										target="_blank"
-										className="link font-semibold"
-										href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
-										rel="noopener"
-									>
-										公式シラバス
-									</a>{" "}
-									をご確認ください．
-								</p>
-								<div className="text-xs opacity-60 pt-2 border-t border-base-content/10">
-									<p>
-										※休講（Cancelled）および Co-Listing 科目は表示されません．
-									</p>
-									<p className="mt-1">
-										（Co-Listing：他メジャー開講だが，自身のメジャー単位として認められる科目
-										[
-										<a
-											className="link"
-											href="https://sites.google.com/icu.ac.jp/icu-ehandbook/%E3%83%9B%E3%83%BC%E3%83%A0_japanese/%E5%B1%A5%E4%BF%AE%E6%A1%88%E5%86%85/%E5%8D%92%E6%A5%AD%E3%81%AE%E8%A6%81%E4%BB%B6"
-										>
-											出典
-										</a>
-										]）
-									</p>
-								</div>
+						<div className="space-y-3">
+							<h3 className="font-bold text-lg">{t("explore.no_results")}</h3>
+
+							{/* 公式シラバスへのリンク */}
+							<p className="text-sm">
+								{t("explore.check_syllabus")
+									.split("{link}")
+									.map((part, i, arr) => (
+										<span key={`no-result-${part}`}>
+											{part}
+											{i < arr.length - 1 && (
+												<a
+													target="_blank"
+													className="link font-semibold"
+													href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
+													rel="noopener"
+												>
+													{t("explore.syllabus")}
+												</a>
+											)}
+										</span>
+									))}
+							</p>
+
+							<div className="text-xs opacity-60 pt-2 border-t border-base-content/10">
+								<p>{t("explore.disclaimer_cancelled")}</p>
+								<p className="mt-1">{t("explore.colisting_desc")}</p>
 							</div>
-						) : (
-							<div className="space-y-3">
-								<h3 className="font-bold text-lg">No course found.</h3>
-								<p className="text-sm">
-									Please refer to the{" "}
-									<a
-										target="_blank"
-										className="link font-semibold"
-										href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
-										rel="noopener"
-									>
-										Official Course Offerings
-									</a>{" "}
-									for latest information.
-								</p>
-								<div className="text-xs opacity-60 pt-2 border-t border-base-content/10">
-									<p>*Cancelled and Co-Listing courses are not shown here.</p>
-									<p className="mt-1">
-										(Co-Listing: Courses outside your major that count toward
-										major requirements [
-										<a
-											className="link"
-											href="https://sites.google.com/icu.ac.jp/icu-ehandbook/home_english/guide-to-academic-matters/graduation-requirements"
-										>
-											source
-										</a>
-										])
-									</p>
-								</div>
-							</div>
-						)}
+						</div>
 					</section>
 				)}
 
 				<div className="flex items-center group gap-1">
 					{/* 更新日時の表示 */}
-					{/*TODO - Apply i18n*/}
 					<p className="text-sm opacity-80">
-						{isJa
-							? `データ更新日: ${lastUpdateStr} (JST)`
-							: `Last Updated: ${lastUpdateStr} (JST)`}
+						{`${t("explore.last_updated")}: ${lastUpdateStr} (JST)`}
 					</p>
 
 					<div className="dropdown dropdown-top dropdown-end">
@@ -550,55 +510,36 @@ export default function ExploreInterface({
 							<Info size={18} />
 						</button>
 
-						{/*授業検索に関する注意事項*/}
-						{/*TODO - Apply i18n*/}
 						<nav
 							tabIndex={-1}
 							className="dropdown-content bg-base-100 rounded-box z-10 w-64 p-4 shadow-xl border border-base-200"
 						>
-							{isJa ? (
-								// 日本語コンテンツ
-								<div className="space-y-2">
-									<p className="text-sm leading-relaxed">
-										最新の授業情報は
-										<a
-											href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
-											target="_blank"
-											rel="noopener"
-											className="link font-semibold mx-1"
-										>
-											公式シラバス
-										</a>
-										をご確認ください．
+							<div className="space-y-2">
+								<p className="text-sm leading-relaxed">
+									{t("explore.check_syllabus")
+										.split("{link}")
+										.map((part, i, arr) => (
+											<span key={`dropdown-${part}`}>
+												{part}
+												{i < arr.length - 1 && (
+													<a
+														href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
+														target="_blank"
+														rel="noopener"
+														className="link font-semibold mx-1"
+													>
+														{t("explore.syllabus")}
+													</a>
+												)}
+											</span>
+										))}
+								</p>
+								<div className="pt-2 border-t border-base-content/10">
+									<p className="text-xs opacity-60">
+										{t("explore.disclaimer_cancelled")}
 									</p>
-									<div className="pt-2 border-t border-base-content/10">
-										<p className="text-xs opacity-60">
-											※休講および Co-Listing 科目は表示されません．
-										</p>
-									</div>
 								</div>
-							) : (
-								// 英語コンテンツ
-								<div className="space-y-2">
-									<p className="text-sm leading-relaxed">
-										Please refer to the
-										<a
-											href="https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
-											target="_blank"
-											rel="noopener"
-											className="link font-semibold mx-1"
-										>
-											Official Course Offerings
-										</a>
-										for latest information.
-									</p>
-									<div className="pt-2 border-t border-base-content/10">
-										<p className="text-xs opacity-60">
-											*Cancelled and Co-Listing courses are not shown here.
-										</p>
-									</div>
-								</div>
-							)}
+							</div>
 						</nav>
 					</div>
 				</div>

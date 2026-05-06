@@ -77,10 +77,16 @@ const ja = {
 	"explore.select_slots": "時限を選択",
 	"explore.reset_selection": "リセット",
 	"explore.no_results": "該当する授業が見つかりませんでした．",
+	"explore.check_syllabus": "最新の授業情報は {link} をご確認ください．",
+	"explore.disclaimer_cancelled":
+		"※休講（Cancelled）および Co-Listing 科目は表示されません．",
+	"explore.colisting_desc":
+		"（Co-Listing：他メジャー開講だが，自身のメジャー単位として認められる科目．）",
 	"explore.syllabus": "シラバス",
 	"explore.add": "追加",
 	"explore.remove": "削除",
 	"explore.no_schedule": "スケジュールなし",
+	"explore.last_updated": "データ更新日",
 
 	// 時間割
 	"timetable.title": "時間割を見る",
@@ -213,10 +219,17 @@ const en = {
 	"explore.units": "Units",
 	"explore.reset_selection": "Reset",
 	"explore.no_results": "No courses found matching your criteria.",
+	"explore.check_syllabus":
+		"Please refer to the {link} for latest information.",
+	"explore.disclaimer_cancelled":
+		"*Cancelled and Co-Listing courses are not shown here.",
+	"explore.colisting_desc":
+		"(Co-Listing: Courses outside your major that count toward major requirements.)",
 	"explore.syllabus": "Syllabus",
 	"explore.add": "Add",
 	"explore.remove": "Remove",
 	"explore.no_schedule": "No Schedule",
+	"explore.last_updated": "Last Updated",
 
 	// Timetable
 	"timetable.title": "View Timetable",
