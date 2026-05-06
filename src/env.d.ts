@@ -5,7 +5,6 @@ declare namespace App {
 		lang: string;
 		user: import("better-auth").User | null;
 		session: import("better-auth").Session | null;
-		dbError: boolean;
 		selectedYear: number;
 		selectedTerm: typeof import("@/constants/time").SELECTABLE_TERMS[number];
 	}

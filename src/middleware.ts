@@ -5,7 +5,6 @@ import {
 	DEFAULT_YEAR,
 	type SELECTABLE_TERMS,
 } from "@/constants/time.ts";
-import { getAuth } from "@/lib/auth/server.ts";
 import { DEFAULT_LANG, LANGUAGES, type Language } from "./lib/translation/ui";
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -76,24 +75,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	context.locals.lang = targetLang;
 
-	// --- 2. Session Management ---
-	try {
-		const auth = getAuth(env, context.locals.lang);
-		const sessionData = await auth.api.getSession({
-			headers: request.headers,
-		});
-
-		context.locals.user = sessionData?.user ?? null;
-		context.locals.session = sessionData?.session ?? null;
-		context.locals.dbError = false;
-	} catch (error) {
-		console.error("D1 or Auth error, proceeding as guest:", error);
-		context.locals.user = null;
-		context.locals.session = null;
-		context.locals.dbError = true;
-	}
-
-	// --- 3. Selected Year & Term Management ---
+	// --- 2. Selected Year & Term Management ---
 	const urlYear = url.searchParams.get("year");
 	const urlTerm = url.searchParams.get("term");
 

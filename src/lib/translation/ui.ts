@@ -15,9 +15,6 @@ const ja = {
 	"auth.error_domain":
 		"同期失敗: ログインにはICUのアカウント（@icu.ac.jp）を使用してください",
 
-	"error.db.title": "アクセス制限中",
-	"error.db.description": "データベースの読み取り制限に達しています．",
-
 	// ヘッダー
 	"header.synced": "同期されています!",
 	"header.login_to_sync": "ログインして同期",
@@ -154,10 +151,6 @@ const en = {
 	"auth.error_login": "Failed to login",
 	"auth.error_domain":
 		"Login Failed: Please use ICU account (@icu.ac.jp) to Login",
-
-	// Error
-	"error.db.title": "Access Restricted",
-	"error.db.description": "Database limit reached. Please try again later.",
 
 	// Navigation
 	"nav.explore": "Explore",

@@ -9,7 +9,6 @@ import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const locals = Astro.locals ?? {};
 const user = locals.user ?? null;
-const dbError = locals.dbError || false;
 
 const { t, l, currentLang } = createTranslationHelper(locals.lang);
 
@@ -20,7 +19,6 @@ const {
 	ogType = "website",
 	showHeader = true,
 	showFooter = true,
-	showDBError = true, // SSGではDBErrorを動的に判断できないのでオフにする．SSR時は問題なし．
 } = Astro.props;
 
 const { pathname, href } = Astro.url;
@@ -128,19 +126,6 @@ const formUrl = `${baseFormUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent
 		}
 	</head>
 	<body class="min-h-screen flex flex-col">
-		{
-			showDBError && dbError && (
-				<div class="p-4 container mx-auto">
-					<div role="alert" class="alert alert-warning shadow-lg">
-						<TriangleAlert />
-						<div>
-							<h3 class="font-bold">{t("error.db.title")}</h3>
-							<div class="text-xs">{t("error.db.description")}</div>
-						</div>
-					</div>
-				</div>
-			)
-		}
 		<Toast user={user ?? undefined} lang={currentLang} client:load />
 		{showHeader && <Header user={user} />}
 		<main class="grow min-h-0">

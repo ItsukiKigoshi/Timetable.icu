@@ -9,7 +9,7 @@ import { createTranslationHelper } from "@/lib/translation/utils.ts";
 const lang = Astro.locals.lang || DEFAULT_LANG;
 const { t, l } = createTranslationHelper(lang);
 
-const { user, selectedYear, selectedTerm, dbError } = Astro.locals;
+const { user, selectedYear, selectedTerm } = Astro.locals;
 const isLoggedIn = !!user;
 
 const currentUrl = Astro.url.href;
@@ -58,59 +58,61 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 		</label>
 	</div>
 	<nav class="navbar-end">
-		{
-			!dbError && (
-				<div class="dropdown dropdown-end" id="user-dropdown">
-					<button
-						type="button"
-						class="btn btn-circle w-10 h-10 shadow-inner ring-1 ring-base-content/10"
-						id="dropdown-button"
-					>
-						{user ? (
-							<CloudCheck class="text-success pointer-events-none" size={20} />
-						) : (
-							<LogIn class="pointer-events-none" size={20} />
-						)}
-					</button>
-					<nav class="dropdown-content w-68 p-4 mt-2 shadow-xl bg-base-100 rounded-xl border border-base-200 z-50">
-						<ul class="flex flex-col items-center gap-4 w-full">
-							<li class="w-full text-center">
-								<h3 class="font-bold text-sm">
-									{isLoggedIn ? t("header.synced") : t("header.login_to_sync")}
-								</h3>
-							</li>
-							<li class="w-full">
-								<LoginButton client:load isLoggedIn={isLoggedIn} lang={lang} />
-							</li>
-							<li class="w-full -my-2">
-								<div class="divider opacity-20 w-full my-0" />
-							</li>
-							<li class="w-full">
-								<nav class="w-full join border border-base-300">
-									{LANGUAGES.map((l) => (
-										<button
-											class={`join-item btn btn-sm flex-1 ${lang === l ? "btn-active btn-neutral" : "btn-ghost"}`}
-											data-lang-switch={l}
-										>
-											{l.toUpperCase()}
-										</button>
-									))}
-								</nav>
-							</li>
-							<li class="w-full py-1">
-								<a
-									target="_blank"
-									href={formUrl}
-									class="flex flex-col items-center link text-base-content/60"
-								>
-									<span class="text-[11px]">{t("header.support")}</span>
-								</a>
-							</li>
-						</ul>
-					</nav>
-				</div>
-			)
-		}
+		<div class="dropdown dropdown-end" id="user-dropdown">
+			<button
+				type="button"
+				class="btn btn-circle w-10 h-10 shadow-inner ring-1 ring-base-content/10"
+				id="dropdown-button"
+			>
+				{
+					user ? (
+						<CloudCheck class="text-success pointer-events-none" size={20} />
+					) : (
+						<LogIn class="pointer-events-none" size={20} />
+					)
+				}
+			</button>
+			<nav
+				class="dropdown-content w-68 p-4 mt-2 shadow-xl bg-base-100 rounded-xl border border-base-200 z-50"
+			>
+				<ul class="flex flex-col items-center gap-4 w-full">
+					<li class="w-full text-center">
+						<h3 class="font-bold text-sm">
+							{isLoggedIn ? t("header.synced") : t("header.login_to_sync")}
+						</h3>
+					</li>
+					<li class="w-full">
+						<LoginButton client:load isLoggedIn={isLoggedIn} lang={lang} />
+					</li>
+					<li class="w-full -my-2">
+						<div class="divider opacity-20 w-full my-0"></div>
+					</li>
+					<li class="w-full">
+						<nav class="w-full join border border-base-300">
+							{
+								LANGUAGES.map((l) => (
+									<button
+										class={`join-item btn btn-sm flex-1 ${lang === l ? "btn-active btn-neutral" : "btn-ghost"}`}
+										data-lang-switch={l}
+									>
+										{l.toUpperCase()}
+									</button>
+								))
+							}
+						</nav>
+					</li>
+					<li class="w-full py-1">
+						<a
+							target="_blank"
+							href={formUrl}
+							class="flex flex-col items-center link text-base-content/60"
+						>
+							<span class="text-[11px]">{t("header.support")}</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
 	</nav>
 </header>
 
