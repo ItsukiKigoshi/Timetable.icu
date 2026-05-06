@@ -245,6 +245,7 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 <script>
 	import { DEFAULT_LANG } from "@/lib/translation/ui";
 
+	// SSGのため，middlewareに頼らずURLを更新する必要がある
 	document.querySelectorAll("[data-lang-switch]").forEach((btn) => {
 		btn.addEventListener("click", (e) => {
 			const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
