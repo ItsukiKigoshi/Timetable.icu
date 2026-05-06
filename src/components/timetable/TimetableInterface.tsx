@@ -79,7 +79,6 @@ export default function TimetableInterface({
 	);
 
 	// 翻訳
-	// TODO - useTranslation Context使える?
 	const { t, l, isJa, translateDay, translatePeriod, currentLang } =
 		createTranslationHelper(lang);
 
