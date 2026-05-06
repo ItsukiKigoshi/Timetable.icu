@@ -5,7 +5,7 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
-import { defaultLang, languages } from "./src/lib/translation/ui"; // @エイリアスは使えない
+import { DEFAULT_LANG, LANGUAGES } from "./src/lib/translation/ui"; // @エイリアスは使えない
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,8 +14,8 @@ export default defineConfig({
 	adapter: cloudflare(),
 	integrations: [sitemap(), react()],
 	i18n: {
-		defaultLocale: defaultLang,
-		locales: languages,
+		defaultLocale: DEFAULT_LANG,
+		locales: LANGUAGES,
 		routing: {
 			prefixDefaultLocale: false,
 		},

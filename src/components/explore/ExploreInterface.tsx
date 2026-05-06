@@ -24,7 +24,7 @@ import type {
 import { useToggleCourse } from "@/lib/course/hooks";
 import { getSyllabusUrl } from "@/lib/course/utils.ts";
 import { LanguageProvider } from "@/lib/translation/context.tsx";
-import { defaultLang } from "@/lib/translation/ui.ts";
+import { DEFAULT_LANG } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 export interface SearchFilters {
@@ -63,7 +63,7 @@ export default function ExploreInterface({
 	initialUserCourseIds,
 	user,
 	hasNextPage: initialHasNext,
-	lang = defaultLang,
+	lang = DEFAULT_LANG,
 }: Props) {
 	const { t, isJa } = createTranslationHelper(lang);
 

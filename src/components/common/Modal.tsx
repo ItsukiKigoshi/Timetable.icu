@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { defaultLang } from "@/lib/translation/ui";
+import { DEFAULT_LANG } from "@/lib/translation/ui";
 import { getTranslations } from "@/lib/translation/utils";
 
 interface ModalProps {
@@ -17,7 +17,7 @@ export default function Modal({
 	title,
 	subtitle = "",
 	children,
-	lang = defaultLang,
+	lang = DEFAULT_LANG,
 }: ModalProps) {
 	const t = getTranslations(lang);
 	const dialogRef = useRef<HTMLDialogElement>(null);

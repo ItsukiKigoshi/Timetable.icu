@@ -18,14 +18,14 @@ import { formatUnits } from "@/lib/course/utils.ts";
 import { useTimetable } from "@/lib/timetable/hooks.ts";
 import { timeToMin } from "@/lib/timetable/utils.ts";
 import { LanguageProvider } from "@/lib/translation/context.tsx";
-import { defaultLang } from "@/lib/translation/ui";
+import { DEFAULT_LANG } from "@/lib/translation/ui";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 export default function TimetableInterface({
 	initialCourses,
 	initialViewMode = "grid",
 	user,
-	lang = defaultLang,
+	lang = DEFAULT_LANG,
 	selectedYear = DEFAULT_YEAR,
 	selectedTerm = DEFAULT_TERM,
 }: {

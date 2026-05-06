@@ -6,12 +6,14 @@ import {
 	type SELECTABLE_TERMS,
 } from "@/constants/time.ts";
 import { getAuth } from "@/lib/auth/server.ts";
+import { DEFAULT_LANG, LANGUAGES, type Language } from "./lib/translation/ui";
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (!env) return next();
 
 	const { url, cookies, request } = context;
 	const pathname = url.pathname;
+	const segments = pathname.split("/").filter(Boolean); // ["en", "home"] など
 
 	// 静的アセットの除外
 	if (
@@ -23,20 +25,38 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	// --- 1. i18n Language Management ---
-	const isEnUrl = pathname.startsWith("/en/") || pathname === "/en";
-	const currentLang = isEnUrl ? "en" : "ja";
+	const langCookie = cookies.get("lang")?.value as Language | undefined;
+
+	let currentLang: Language = DEFAULT_LANG;
+
+	// 1. パスの第一セグメントが LANGUAGES に含まれているかチェック (例: /en/...)
+	const langInPath = LANGUAGES.find(
+		(l) => l !== DEFAULT_LANG && segments[0] === l,
+	);
+
+	if (langInPath) {
+		currentLang = langInPath;
+	}
+	// 2. APIリクエストの場合は Cookie を優先
+	else if (pathname.startsWith("/api")) {
+		currentLang =
+			langCookie && LANGUAGES.includes(langCookie) ? langCookie : DEFAULT_LANG;
+	}
+	// 3. それ以外（ルートパス "/" など）はデフォルト
+	else {
+		currentLang = DEFAULT_LANG;
+	}
+
 	context.locals.lang = currentLang;
 
-	// URLの言語に合わせてCookieを更新（同期のみ）
-	const langCookie = cookies.get("lang")?.value;
+	// URLの言語に合わせてCookieを更新
 	if (langCookie !== currentLang) {
 		cookies.set("lang", currentLang, { path: "/", maxAge: 60 * 60 * 24 * 365 });
 	}
 
 	// --- 2. Session Management ---
 	try {
-		// リクエストごとの runtimeEnv を使用
-		const auth = getAuth(env, context.request);
+		const auth = getAuth(env, context.locals.lang);
 		const sessionData = await auth.api.getSession({
 			headers: request.headers,
 		});

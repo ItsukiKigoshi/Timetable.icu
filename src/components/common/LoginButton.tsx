@@ -1,20 +1,20 @@
 import { LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { client, signInWithGoogle } from "@/lib/auth/client.ts";
-import { defaultLang, ui } from "@/lib/translation/ui.ts";
+import { DEFAULT_LANG, ui } from "@/lib/translation/ui.ts";
 
 type Lang = keyof typeof ui;
 
 export default function LoginButton({
 	isLoggedIn,
-	lang = defaultLang,
+	lang = DEFAULT_LANG,
 }: {
 	isLoggedIn: boolean;
 	lang?: string;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const currentLang = (lang in ui ? lang : defaultLang) as Lang;
+	const currentLang = (lang in ui ? lang : DEFAULT_LANG) as Lang;
 	const t = (key: keyof (typeof ui)["en"]) =>
 		ui[currentLang][key] || ui.en[key];
 

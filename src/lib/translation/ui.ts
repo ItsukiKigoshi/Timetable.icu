@@ -13,7 +13,7 @@ const ja = {
 	"auth.connecting_google": "Googleへ接続中...",
 	"auth.error_login": "ログインに失敗しました",
 	"auth.error_domain":
-		"ログインにはICUのアカウント（@icu.ac.jp）を使用してください",
+		"同期失敗: ログインにはICUのアカウント（@icu.ac.jp）を使用してください",
 
 	"error.db.title": "アクセス制限中",
 	"error.db.description": "データベースの読み取り制限に達しています．",
@@ -159,7 +159,8 @@ const en = {
 	"auth.login_google": "Login with Google",
 	"auth.connecting_google": "Connecting to Google...",
 	"auth.error_login": "Failed to login",
-	"auth.error_domain": "Please use ICU account (@icu.ac.jp) to Login",
+	"auth.error_domain":
+		"Login Failed: Please use ICU account (@icu.ac.jp) to Login",
 
 	// Error
 	"error.db.title": "Access Restricted",
@@ -295,6 +296,6 @@ export const ui = { en, ja } as const;
 
 export type Language = keyof typeof ui;
 
-export const languages = Object.keys(ui) as Language[];
+export const LANGUAGES = Object.keys(ui) as Language[];
 
-export const defaultLang: Language = "ja";
+export const DEFAULT_LANG: Language = "ja";

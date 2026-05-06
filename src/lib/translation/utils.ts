@@ -1,8 +1,8 @@
-import { defaultLang, ui } from "./ui.ts";
+import { DEFAULT_LANG, ui } from "./ui.ts";
 
 // 内部ヘルパー
 const getCurrentLang = (lang?: string | null): keyof typeof ui => {
-	return lang && lang in ui ? (lang as keyof typeof ui) : defaultLang;
+	return lang && lang in ui ? (lang as keyof typeof ui) : DEFAULT_LANG;
 };
 
 /**
@@ -11,8 +11,8 @@ const getCurrentLang = (lang?: string | null): keyof typeof ui => {
  */
 export const getTranslations = (lang: string | undefined) => {
 	const currentLang = getCurrentLang(lang);
-	return (key: keyof (typeof ui)[typeof defaultLang]) => {
-		return ui[currentLang][key] || ui[defaultLang][key];
+	return (key: keyof (typeof ui)[typeof DEFAULT_LANG]) => {
+		return ui[currentLang][key] || ui[DEFAULT_LANG][key];
 	};
 };
 
@@ -23,7 +23,7 @@ export const getTranslations = (lang: string | undefined) => {
 const getTranslatedPath = (lang: string | undefined) => {
 	const currentLang = getCurrentLang(lang);
 	return (path: string) => {
-		const base = currentLang === defaultLang ? "" : `/${currentLang}`;
+		const base = currentLang === DEFAULT_LANG ? "" : `/${currentLang}`;
 		const cleanPath = path.startsWith("/") ? path : `/${path}`;
 		if (cleanPath === "/") return base === "" ? "/" : base;
 		return `${base}${cleanPath}`;
@@ -44,7 +44,7 @@ export const createTranslationHelper = (lang: string | undefined) => {
 	const translateDay = (day: string) => {
 		// days.mon, days.tue ... というキーが ui に存在すると仮定
 		const key =
-			`days.${day.toLowerCase()}` as keyof (typeof ui)[typeof defaultLang];
+			`days.${day.toLowerCase()}` as keyof (typeof ui)[typeof DEFAULT_LANG];
 		// uiから直接引くか、t() を使う
 		return t(key) || day;
 	};
