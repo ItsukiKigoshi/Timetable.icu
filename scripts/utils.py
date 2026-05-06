@@ -47,12 +47,14 @@ def parse_full_schedule(schedule_raw):
     raw_segments = []
     for p in re.split(r',', core_str):
         p = p.strip()
-        if '/' in p: raw_segments.append({"text": p, "isAlternative": False, "altGroupId": None})
+        if '/' in p:
+            raw_segments.append({"text": p, "isAlternative": False, "altGroupId": None})
     for i, group in enumerate(alt_groups_str):
         group_id = i + 1
         for p in re.split(r',', group):
             p = p.strip()
-            if '/' in p: raw_segments.append({"text": p, "isAlternative": True, "altGroupId": group_id})
+            if '/' in p:
+                raw_segments.append({"text": p, "isAlternative": True, "altGroupId": group_id})
 
     final_schedules = []
     for item in raw_segments:
@@ -225,7 +227,7 @@ def save_course_update_metadata():
         with open(COURSE_UPDATE_INFO_PATH, 'w', encoding='utf-8') as f:
             json.dump(update_data, f, ensure_ascii=False, indent=2)
 
-        print(f"--- Metadata Updated ---")
+        print("--- Metadata Updated ---")
         print(f"New Last Updated (UTC): {now_utc}")
         print(f"Moved Old Update to History: {old_last_updated}")
         print(f"Total History count: {len(history)}")
