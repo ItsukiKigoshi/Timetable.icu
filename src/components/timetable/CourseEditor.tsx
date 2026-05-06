@@ -37,7 +37,7 @@ const CourseEditor = ({
 	// 編集対象が見つからない場合
 	const [notFound, setNotFound] = useState(false);
 
-	const { courses, saveCustomCourse } = useTimetable({
+	const { courses, saveCustomCourse, isLoading } = useTimetable({
 		user,
 		selectedYear,
 		selectedTerm,
@@ -187,57 +187,30 @@ const CourseEditor = ({
 	useEffect(() => {
 		setIsMounted(true);
 
-		// 編集モードでないならチェック不要
-		if (mode !== "edit" || isInitialized) return;
+		// すでに初期化が完了しているまたはロード中なら何もしない
+		if (isInitialized || isLoading) return;
 
-		// --- 判定ロジック ---
-		// 1. まず initialData (DB経由) があればそれを使う
-		if (initialData) {
-			setFormData(normalizeInitialData(initialData));
-			setIsInitialized(true);
-			return;
-		}
-
-		// 2. initialDataがない場合、LocalStorage(courses)のロードを待ってから探す
-		// courses.length > 0 は、LocalStorageの読み込みが完了したサイン
-		if (courses.length > 0) {
-			const foundInLocal = courses.find(
+		// 編集モードでtargetId がありcourses のロードが完了した時の処理
+		if (mode === "edit" && targetId) {
+			const found = courses.find(
 				(c) => String(c.id) === String(targetId) && c.type === "custom",
 			);
 
-			if (foundInLocal) {
-				const foundData = foundInLocal as CourseFormInput;
-				setFormData(normalizeInitialData(foundData));
+			if (found) {
+				setFormData(normalizeInitialData(found as CourseFormInput));
 				setIsInitialized(true);
 			} else {
-				// DBにもなく，LocalStorageを全走査しても見つからない場合
+				// ロード完了後も見つからない場合
 				setNotFound(true);
-				setIsInitialized(true); // ロード画面を終了させるために必要
+				setIsInitialized(true);
 			}
+		} else if (mode === "create") {
+			setIsInitialized(true);
 		}
-	}, [
-		initialData,
-		courses,
-		targetId,
-		mode,
-		isInitialized,
-		normalizeInitialData,
-	]);
+	}, [isLoading, isInitialized, courses, targetId, mode, normalizeInitialData]);
 
-	// --- 表示の分岐 ---
-	// 1. ローディング
-	if (!isMounted || (!isInitialized && !notFound)) {
-		return (
-			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-				<span className="loading loading-spinner loading-lg text-primary"></span>
-				<p className="text-sm opacity-60 animate-pulse">
-					{t("custom.loading")}
-				</p>
-			</div>
-		);
-	}
+	if (!isMounted) return null;
 
-	// 2. データが見つからなかった場合のエラー表示
 	if (notFound) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
@@ -253,6 +226,8 @@ const CourseEditor = ({
 			</div>
 		);
 	}
+
+	if (!isInitialized) return null;
 
 	return (
 		<LanguageProvider lang={lang}>

@@ -1,4 +1,3 @@
-// src/lib/timetable/hooks.ts
 import type { User } from "better-auth";
 import { useEffect, useMemo, useState } from "react";
 import type { SELECTABLE_TERMS } from "@/constants/time";
@@ -22,21 +21,33 @@ export function useTimetable({
 }) {
 	const [courses, setCourses] =
 		useState<UserCourseWithDetails[]>(initialCourses);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		// ユーザーがいない場合（ゲスト）はlocalStorageを優先
 		if (!user) {
 			const cached = localStorage.getItem("guest_timetable");
 			if (cached) {
 				try {
-					setCourses(JSON.parse(cached));
+					const parsed = JSON.parse(cached);
+					setCourses(parsed);
 				} catch (_e) {
 					setCourses(initialCourses);
 				}
+			} else {
+				setCourses(initialCourses);
 			}
-		} else {
-			setCourses(initialCourses);
 		}
-	}, [user, initialCourses]);
+		// ログイン済みの場合
+		else {
+			// initialCoursesが空でなくかつ現在のcoursesも空なら同期する
+			if (courses.length === 0 && initialCourses.length > 0) {
+				setCourses(initialCourses);
+			}
+		}
+
+		setIsLoading(false);
+	}, [user, initialCourses.length, courses.length, initialCourses]);
 
 	const allSchedules = useMemo(() => {
 		return courses.flatMap((course) =>
@@ -207,7 +218,8 @@ export function useTimetable({
 
 	return {
 		courses,
-		setCourses, // useToggleCourse内で状態を更新できるようにエクスポート
+		setCourses,
+		isLoading,
 		registeredIds,
 		schedules: allSchedules,
 		displayCourses,
