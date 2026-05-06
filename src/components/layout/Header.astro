@@ -60,15 +60,19 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 	<nav class="navbar-end">
 		{
 			!dbError && (
-				<details class="dropdown dropdown-end">
-					<summary class="btn btn-circle w-10 h-10 shadow-inner ring-1 ring-base-content/10">
+				<div class="dropdown dropdown-end" id="user-dropdown">
+					<button
+						type="button"
+						class="btn btn-circle w-10 h-10 shadow-inner ring-1 ring-base-content/10"
+						id="dropdown-button"
+					>
 						{user ? (
-							<CloudCheck class="text-success" size={20} />
+							<CloudCheck class="text-success pointer-events-none" size={20} />
 						) : (
-							<LogIn size={20} />
+							<LogIn class="pointer-events-none" size={20} />
 						)}
-					</summary>
-					<nav class="dropdown-content w-64 p-4 mt-2 shadow-xl bg-base-100 rounded-xl border border-base-200">
+					</button>
+					<nav class="dropdown-content w-64 p-4 mt-2 shadow-xl bg-base-100 rounded-xl border border-base-200 z-50">
 						<ul class="flex flex-col items-center gap-4 w-full">
 							<li class="w-full text-center">
 								<h3 class="font-bold text-sm">
@@ -108,7 +112,7 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 							</li>
 						</ul>
 					</nav>
-				</details>
+				</div>
 			)
 		}
 	</nav>
@@ -174,4 +178,28 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 			window.location.assign(currentUrl.toString());
 		});
 	});
+
+	// --- ドロップダウンの開閉 ---
+	const dropdown = document.getElementById("user-dropdown");
+	const button = document.getElementById("dropdown-button");
+
+	if (dropdown && button) {
+		button.addEventListener("click", (e) => {
+			e.stopPropagation();
+			const isOpen = dropdown.classList.contains("dropdown-open");
+
+			if (isOpen) {
+				dropdown.classList.remove("dropdown-open");
+				(e.currentTarget as HTMLElement).blur();
+			} else {
+				dropdown.classList.add("dropdown-open");
+			}
+		});
+
+		document.addEventListener("click", (e) => {
+			if (!dropdown.contains(e.target as Node)) {
+				dropdown.classList.remove("dropdown-open");
+			}
+		});
+	}
 </script>
