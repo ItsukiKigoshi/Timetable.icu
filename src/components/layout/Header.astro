@@ -3,7 +3,7 @@ import { CloudCheck, LogIn } from "lucide-astro";
 import Logo from "@/assets/Logo.svg";
 import LoginButton from "@/components/common/LoginButton.tsx";
 import { SELECTABLE_TERMS, SELECTABLE_YEARS } from "@/constants/time.ts";
-import { DEFAULT_LANG } from "@/lib/translation/ui.ts";
+import { DEFAULT_LANG, LANGUAGES } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
 const lang = Astro.locals.lang || DEFAULT_LANG;
@@ -87,18 +87,14 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 							</li>
 							<li class="w-full">
 								<nav class="w-full join border border-base-300">
-									<button
-										class={`join-item btn btn-sm flex-1 ${lang === "ja" ? "btn-active btn-neutral" : "btn-ghost"}`}
-										data-lang-switch="ja"
-									>
-										JA
-									</button>
-									<button
-										class={`join-item btn btn-sm flex-1 ${lang === "en" ? "btn-active btn-neutral" : "btn-ghost"}`}
-										data-lang-switch="en"
-									>
-										EN
-									</button>
+									{LANGUAGES.map((l) => (
+										<button
+											class={`join-item btn btn-sm flex-1 ${lang === l ? "btn-active btn-neutral" : "btn-ghost"}`}
+											data-lang-switch={l}
+										>
+											{l.toUpperCase()}
+										</button>
+									))}
 								</nav>
 							</li>
 							<li class="w-full py-1">
@@ -157,28 +153,15 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 	document.querySelectorAll("[data-lang-switch]").forEach((btn) => {
 		btn.addEventListener("click", (e) => {
 			const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
-			const currentUrl = new URL(window.location.href);
-			let segments = currentUrl.pathname.split("/").filter(Boolean); // 空の要素を除去
+			if (!targetLang) return;
 
-			// 現在英語 (/en) かどうかを判定
-			const isCurrentlyEn = segments[0] === "en";
+			// Cookieをセット
+			document.cookie = `lang=${targetLang}; path=/; max-age=${60 * 60 * 24 * 365}`;
 
-			if (targetLang === "en" && !isCurrentlyEn) {
-				// 英語へ切り替え: パスの先頭に /en を追加
-				segments.unshift("en");
-			} else if (targetLang === "ja" && isCurrentlyEn) {
-				// 日本語へ切り替え: パスの先頭から en を削除
-				segments.shift();
-			} else {
-				return; // 変更の必要がない場合は終了
-			}
-
-			// パスを再構築 (先頭にスラッシュを忘れずに)
-			currentUrl.pathname = "/" + segments.join("/");
-			window.location.assign(currentUrl.toString());
+			// ページをリロード（middlewareのリダイレクトロジックが発動する）
+			window.location.reload();
 		});
 	});
-
 	// --- ドロップダウンの開閉 ---
 	const dropdown = document.getElementById("user-dropdown");
 	const button = document.getElementById("dropdown-button");

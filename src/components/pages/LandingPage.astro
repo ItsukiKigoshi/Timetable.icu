@@ -11,6 +11,7 @@ import {
 import Logo from "@/assets/Logo.svg";
 import Layout from "@/components/layout/Layout.astro";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
+import { LANGUAGES } from "@/lib/translation/ui";
 
 const lang = Astro.locals.lang;
 const { t, l, currentLang } = createTranslationHelper(lang);
@@ -52,33 +53,23 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 			class="flex justify-center items-center gap-1 p-1 rounded-xl bg-base-200/30 backdrop-blur-sm border border-base-content/5"
 		>
 			{
-				currentLang === "ja" ? (
-					<span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">
-						JA
-					</span>
-				) : (
-					<a
-						href="/"
-						class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors"
-					>
-						JA
-					</a>
-				)
-			}
-
-			{
-				currentLang === "en" ? (
-					<span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm">
-						EN
-					</span>
-				) : (
-					<a
-						href="/en/"
-						class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors"
-					>
-						EN
-					</a>
-				)
+				LANGUAGES.map((langCode) => {
+					const label = langCode.toUpperCase();
+					const isActive = currentLang === langCode;
+					return isActive ? (
+						<span class="px-4 py-1.5 rounded-lg bg-base-content text-base-100 shadow-sm cursor-default">
+							{label}
+						</span>
+					) : (
+						<button
+							type="button"
+							data-lang-switch={langCode}
+							class="px-4 py-1.5 rounded-lg text-base-content/70 hover:bg-base-content/10 transition-colors cursor-pointer"
+						>
+							{label}
+						</button>
+					);
+				})
 			}
 		</div>
 		<!--Hero-->
@@ -251,3 +242,19 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 		</section>
 	</section>
 </Layout>
+
+<script>
+	// --- 言語切り替えロジック ---
+	document.querySelectorAll("[data-lang-switch]").forEach((btn) => {
+		btn.addEventListener("click", (e) => {
+			const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
+			if (!targetLang) return;
+
+			// Cookieをセット
+			document.cookie = `lang=${targetLang}; path=/; max-age=${60 * 60 * 24 * 365}`;
+
+			// ページをリロード（middlewareのリダイレクトロジックが発動する）
+			window.location.reload();
+		});
+	});
+</script>

@@ -26,33 +26,55 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	// --- 1. i18n Language Management ---
 	const langCookie = cookies.get("lang")?.value as Language | undefined;
-
-	let currentLang: Language = DEFAULT_LANG;
-
-	// 1. パスの第一セグメントが LANGUAGES に含まれているかチェック (例: /en/...)
 	const langInPath = LANGUAGES.find(
 		(l) => l !== DEFAULT_LANG && segments[0] === l,
 	);
+	const currentLangInUrl = langInPath || DEFAULT_LANG;
 
-	if (langInPath) {
-		currentLang = langInPath;
-	}
-	// 2. APIリクエストの場合は Cookie を優先
-	else if (pathname.startsWith("/api")) {
-		currentLang =
-			langCookie && LANGUAGES.includes(langCookie) ? langCookie : DEFAULT_LANG;
-	}
-	// 3. それ以外（ルートパス "/" など）はデフォルト
-	else {
-		currentLang = DEFAULT_LANG;
+	let targetLang: Language = DEFAULT_LANG;
+
+	// Cookieが有効ならそれを最優先，なければURL
+	if (langCookie && LANGUAGES.includes(langCookie)) {
+		targetLang = langCookie;
+	} else {
+		targetLang = currentLangInUrl;
 	}
 
-	context.locals.lang = currentLang;
+	// URLと言語設定が矛盾している場合に強制リダイレクト
+	// 例: Cookieが'en'なのにパスが'/' (ja) の場合，'/en/'へ飛ばす
+	if (
+		targetLang !== currentLangInUrl &&
+		!pathname.startsWith("/api") &&
+		!pathname.includes(".")
+	) {
+		let newPath: string;
 
-	// URLの言語に合わせてCookieを更新
-	if (langCookie !== currentLang) {
-		cookies.set("lang", currentLang, { path: "/", maxAge: 60 * 60 * 24 * 365 });
+		if (targetLang === DEFAULT_LANG) {
+			// 1. デフォルト言語（ja）に戻す場合: 現在の言語プレフィックスを除去
+			// 例: /en/about -> /about
+			const currentPrefix = `/${currentLangInUrl}`;
+			newPath = pathname.startsWith(currentPrefix)
+				? pathname.replace(currentPrefix, "")
+				: pathname;
+		} else {
+			// 2. それ以外の言語（enなど）に切り替える場合
+			if (currentLangInUrl === DEFAULT_LANG) {
+				// 例: /about -> /en/about
+				newPath = `/${targetLang}${pathname}`;
+			} else {
+				// 例: /en/about -> /fr/about (言語間移動)
+				const currentPrefix = `/${currentLangInUrl}`;
+				newPath = pathname.replace(currentPrefix, `/${targetLang}`);
+			}
+		}
+
+		// パスが空になったりダブルスラッシュになるのを防ぐ
+		newPath = newPath.replace(/\/+$/, "") || "/";
+
+		return context.redirect(newPath);
 	}
+
+	context.locals.lang = targetLang;
 
 	// --- 2. Session Management ---
 	try {
