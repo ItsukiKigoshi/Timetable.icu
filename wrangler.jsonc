@@ -1,7 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "timetable-icu",
-	"compatibility_date": "2026-03-25",
+	"compatibility_date": "2026-05-06",
 	"compatibility_flags": [
 		"nodejs_compat",
 		"no_handle_cross_request_promise_resolution"
