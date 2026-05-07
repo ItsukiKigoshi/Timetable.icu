@@ -16,7 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	// 静的ファイルやAPIはスキップ (Authのエンドポイントもここで確実に通す)
 	if (
-		pathname.startsWith("/api") ||
+		pathname.startsWith("/api/auth") ||
 		pathname.startsWith("/_image") ||
 		pathname.startsWith("/_astro") ||
 		NON_TRANSLATED_PAGES.includes(pathname) ||
