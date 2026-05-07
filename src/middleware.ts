@@ -1,18 +1,20 @@
 import { defineMiddleware } from "astro:middleware";
+import { env } from "cloudflare:workers";
 import {
 	DEFAULT_TERM,
 	DEFAULT_YEAR,
 	type SELECTABLE_TERMS,
 } from "@/constants/time.ts";
+import { getAuth } from "@/lib/auth/server.ts";
 import { DEFAULT_LANG, LANGUAGES, type Language } from "./lib/translation/ui";
 
 const NON_TRANSLATED_PAGES = ["/privacy", "/terms"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	const { url, cookies, redirect } = context;
+	const { url, cookies, redirect, request } = context;
 	const pathname = url.pathname.replace(/\/$/, "");
 
-	// 静的ファイルやAPIはスキップ
+	// 静的ファイルやAPIはスキップ (Authのエンドポイントもここで確実に通す)
 	if (
 		pathname.startsWith("/api") ||
 		pathname.startsWith("/_image") ||
@@ -23,7 +25,28 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return next();
 	}
 
-	// --- 1. 現在の状態を取得 ---
+	// --- 1. Session Management ---
+	if (env) {
+		try {
+			const auth = getAuth(env);
+			// 現在のリクエストヘッダーを渡してセッションを取得
+			const sessionData = await auth.api.getSession({
+				headers: request.headers,
+			});
+
+			context.locals.user = sessionData?.user ?? null;
+			context.locals.session = sessionData?.session ?? null;
+		} catch (error) {
+			console.error("Auth error in middleware:", error);
+			context.locals.user = null;
+			context.locals.session = null;
+		}
+	} else {
+		context.locals.user = null;
+		context.locals.session = null;
+	}
+
+	// --- 2. 現在の状態を取得 ---
 	const langCookie = cookies.get("lang")?.value as Language | undefined;
 	const yearCookie = cookies.get("year")?.value;
 	const termCookie = cookies.get("term")?.value;
@@ -33,18 +56,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	);
 	const currentLangInUrl = langInPath || DEFAULT_LANG;
 
-	// --- 2. ターゲットを決定 (URL > Cookie > Default) ---
+	// --- 3. ターゲットを決定 (URL > Cookie > Default) ---
 	const targetLang =
 		langCookie && LANGUAGES.includes(langCookie)
 			? langCookie
 			: currentLangInUrl;
 
-	// URLにパラメータがなければCookieやデフォルトを使う
 	const targetYear =
 		url.searchParams.get("year") || yearCookie || String(DEFAULT_YEAR);
 	const targetTerm = url.searchParams.get("term") || termCookie || DEFAULT_TERM;
 
-	// --- 3. 言語パスが違う場合のみリダイレクト ---
+	// --- 4. 言語パスが違う場合のみリダイレクト ---
 	if (targetLang !== currentLangInUrl) {
 		let newPathname = pathname;
 		if (currentLangInUrl !== DEFAULT_LANG) {
@@ -55,13 +77,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			newPathname = `/${targetLang}${newPathname === "/" ? "" : newPathname}`;
 		}
 
-		// 言語変更時のみクエリを維持してリダイレクト
 		const newUrl = new URL(url);
 		newUrl.pathname = newPathname;
 		return redirect(newUrl.toString());
 	}
 
-	// --- 4. Localsをセット ---
+	// --- 5. Localsをセット ---
 	context.locals.lang = targetLang;
 	context.locals.selectedYear = Number(targetYear);
 	context.locals.selectedTerm = targetTerm as (typeof SELECTABLE_TERMS)[number];
