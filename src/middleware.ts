@@ -26,22 +26,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	// --- 1. Session Management ---
-	if (env) {
-		try {
-			const auth = getAuth(env);
-			// 現在のリクエストヘッダーを渡してセッションを取得
-			const sessionData = await auth.api.getSession({
-				headers: request.headers,
-			});
+	try {
+		const auth = getAuth(env, context.locals.lang);
+		const sessionData = await auth.api.getSession({
+			headers: request.headers,
+		});
 
-			context.locals.user = sessionData?.user ?? null;
-			context.locals.session = sessionData?.session ?? null;
-		} catch (error) {
-			console.error("Auth error in middleware:", error);
-			context.locals.user = null;
-			context.locals.session = null;
-		}
-	} else {
+		context.locals.user = sessionData?.user ?? null;
+		context.locals.session = sessionData?.session ?? null;
+	} catch (error) {
+		console.error("Auth error in middleware:", error);
 		context.locals.user = null;
 		context.locals.session = null;
 	}
