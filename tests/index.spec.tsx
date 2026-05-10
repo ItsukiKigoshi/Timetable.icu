@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Landing Page is Properly Rendered", () => {
+test.describe("Landing Page - Properly Rendered", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("http://localhost:4321/");
+		await page.goto("/");
 	});
 
 	test("Title is correct", async ({ page }) => {

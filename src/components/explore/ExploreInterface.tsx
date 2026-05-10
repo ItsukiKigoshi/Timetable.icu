@@ -284,6 +284,7 @@ export default function ExploreInterface({
 						<Search />
 						<input
 							type="text"
+							aria-label="Search courses"
 							className="grow"
 							maxLength={48}
 							placeholder={t("explore.search_placeholder")}
@@ -382,8 +383,9 @@ export default function ExploreInterface({
 					{/* --- 全条件クリアボタン (year, term以外) --- */}
 					<button
 						type="button"
-						className="btn btn-md btn-outline flex items-center gap-2 text-error"
 						onClick={clearFilters}
+						aria-label="Reset search"
+						className="btn btn-md btn-outline flex items-center gap-2 text-error"
 					>
 						<X size={18} />
 						<span className="inline font-medium">
@@ -396,6 +398,7 @@ export default function ExploreInterface({
 
 				{/* 結果表示 */}
 				<div
+					aria-busy={isFetching}
 					className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300 ${isFetching ? "opacity-40 pointer-events-none" : "opacity-100"}`}
 				>
 					{courses.map((course) => {
