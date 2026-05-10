@@ -12,9 +12,9 @@ ICU生の時間割・履修計画アプリの決定版
 ## Screenshots
 | Page | Screenshots |
 | :---: | :---: |
-| Home | ![Home](/uploads/f15de3cae7b1d26157d90fe93865c1ad/Screen_Shot_2026-04-23_at_23.59.02.png){width=900 height=563} |
-| Explore | ![Explore](/uploads/9cc6a871a66a6ae2102d1c736075e34c/Screen_Shot_2026-04-23_at_23.58.59.png){width=900 height=563} |
-| Timetable | ![Timetable](/uploads/e1528b102b0561314df2642b05f54a64/Screen_Shot_2026-04-23_at_23.58.54.png){width=900 height=563} |
+| Home | ![Home](https://gitlab.com/-/project/81459553/uploads/f15de3cae7b1d26157d90fe93865c1ad/Screen_Shot_2026-04-23_at_23.59.02.png) |
+| Explore | ![Explore](https://gitlab.com/-/project/81459553/uploads/9cc6a871a66a6ae2102d1c736075e34c/Screen_Shot_2026-04-23_at_23.58.59.png) |
+| Timetable | ![Timetable](https://gitlab.com/-/project/81459553/uploads/e1528b102b0561314df2642b05f54a64/Screen_Shot_2026-04-23_at_23.58.54.png) |
 
 # 目標
 
