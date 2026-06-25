@@ -42,7 +42,7 @@ CREATE TABLE `__new_custom_courses` (
 INSERT INTO `__new_custom_courses`("id", "user_id", "title", "instructor", "room", "units", "year", "term", "is_visible", "color_custom", "memo", "created_at") SELECT "id", "user_id", "title", "instructor", "room", "units", "year", "term", "is_visible", "color_custom", "memo", "created_at" FROM `custom_courses`;--> statement-breakpoint
 DROP TABLE `custom_courses`;--> statement-breakpoint
 ALTER TABLE `__new_custom_courses` RENAME TO `custom_courses`;--> statement-breakpoint
-CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `user_email_unique` ON `user` (`email`);--> statement-breakpoint
 CREATE TABLE `__new_verification` (
 	`id` text PRIMARY KEY NOT NULL,
 	`identifier` text NOT NULL,
