@@ -10,21 +10,21 @@
 		"dev": "astro dev",
 		"format:prettier": "prettier \"**/*.astro\" --write",
 		"format:biome": "biome check --write",
-		"format": "bun run format:prettier; bun run format:biome",
+		"format": "pnpm run format:prettier; pnpm run format:biome",
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
 		"db:scrape:icumap": "python3 scripts/parse_icumap.py",
 		"db:scrape:ehandbook": "python3 scripts/parse_ehandbook.py",
-		"db:scrape": "bun run db:scrape:icumap",
-		"db:push:local": "bun run db:backup:local && python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses.sql",
-		"db:sync:local": "bun run db:scrape && bun run db:push:local",
-		"db:push:remote": "bun run db:backup:remote && python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses.sql --remote",
-		"db:sync:remote": "bun run db:scrape && bun run db:push:remote",
+		"db:scrape": "pnpm run db:scrape:icumap",
+		"db:push:local": "pnpm run db:backup:local && python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses.sql",
+		"db:sync:local": "pnpm run db:scrape && pnpm run db:push:local",
+		"db:push:remote": "pnpm run db:backup:remote && python3 scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses.sql --remote",
+		"db:sync:remote": "pnpm run db:scrape && pnpm run db:push:remote",
 		"db:backup:local": "mkdir -p backup && wrangler d1 export timetable_icu --output=./backup/local_$(date +%Y%m%d_%H%M%S).sql",
 		"db:backup:remote": "mkdir -p backup && wrangler d1 export timetable_icu --remote --output=./backup/remote_$(date +%Y%m%d_%H%M%S).sql",
-		"db:migrate:local": "bun run db:backup:local && wrangler d1 migrations apply timetable_icu",
-		"db:migrate:remote": "bun run db:backup:remote && wrangler d1 migrations apply timetable_icu --remote"
+		"db:migrate:local": "pnpm run db:backup:local && wrangler d1 migrations apply timetable_icu",
+		"db:migrate:remote": "pnpm run db:backup:remote && wrangler d1 migrations apply timetable_icu --remote"
 	},
 	"dependencies": {
 		"@astrojs/check": "0.9.9",
@@ -57,5 +57,6 @@
 		"prettier": "^3.8.3",
 		"prettier-plugin-astro": "^0.14.1",
 		"wrangler": "^4.85.0"
-	}
+	},
+	"packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b"
 }

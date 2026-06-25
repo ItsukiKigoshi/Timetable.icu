@@ -167,27 +167,27 @@ All commands are run from the root of the project, from a terminal:
 
 | Command               | Action                                           |
 |:----------------------|:-------------------------------------------------|
-| `bun install`         | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun run build`       | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+| `pnpm install`        | Installs dependencies                            |
+| `pnpm dev`            | Starts local dev server at `localhost:4321`      |
+| `pnpm run build`      | Build your production site to `./dist/`          |
+| `pnpm preview`        | Preview your build locally, before deploying     |
+| `pnpm astro ...`      | Run CLI commands like `astro add`, `astro check` |
+| `pnpm astro -- --help`| Get help using the Astro CLI                     |
 
 Run Test
 ```bash
-bunx playwright test
+pnpm dlx playwright test
 ```
 
 Format Code
 ```bash
-bun format
+pnpm format
 ```
 
 Create types from wrangler.jsonc
 
 ```bash
-bunx wrangler types
+pnpm dlx wrangler types
 ```
 
 ### Schema Definition, Migration
@@ -195,31 +195,31 @@ bunx wrangler types
 Create schema for BetterAuth
 
 ```bash
-bun x auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
+pnpm dlx auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
 ```
 
 Create migration file by Drizzle Kit
 `--custom` Create Empty Migration File
 `--name=clear_user_name_image` Set Custom Name on Migration File
 ```bash
-bunx drizzle-kit generate
+pnpm drizzle-kit generate
 ```
 
 一度生成したmigrationファイルをなかったことにする
 
 ```bash
-bunx drizzle-kit drop
+pnpm drizzle-kit drop
 ```
 
 Migration to D1
 Remoteは1度目は通らないことがあるが2回目やればいけるときがある
 
 ```bash
-bun db:migrate:local
+pnpm db:migrate:local
 ```
 
 ```bash
-bun db:migrate:remote
+pnpm db:migrate:remote
 ```
 
 もし外部キー制約が通らない場合
@@ -235,12 +235,12 @@ sqlファイルの中身を一旦空にしてapplyする方法がある．私は
 Debug with Cloudflare Environment
 
 ```bash
-bun run build && bun x wrangler dev
+pnpm run build && pnpm x wrangler dev
 ```
 
 D1でのSQL文実行例
 ```bash
-bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
+pnpm wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 ```
 
 ### Corse data insertion
@@ -248,42 +248,42 @@ bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 Create JSON from HTML
 
 ```bash
-bun db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
-bun db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
+pnpm db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
+pnpm db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
 ```
 
 Local DBにJSONからcourses/categoriesを入れる
 
 ```bash
-bun db:push:local
+pnpm db:push:local
 ```
 
 HTML->JSON->Local DBを一括で実行
 
 ```bash
-bun db:sync:local
+pnpm db:sync:local
 ```
 
 Remote DBにJSONからcourses/categoriesを入れる
 
 ```bash
-bun db:push:remote
+pnpm db:push:remote
 ```
 
 HTML->JSON->Remote DBを一括で実行
 
 ```bash
-bun db:sync:remote
+pnpm db:sync:remote
 ```
 
 ライセンス出力
 
 ```bash
-bun x generate-license-file --input package.json --output CREDITS
+pnpm dlx generate-license-file --input package.json --output CREDITS
 ```
 
 リモートのログ出力
 
 ```bash
-bun wrangler tail
+pnpm wrangler tail
 ```
