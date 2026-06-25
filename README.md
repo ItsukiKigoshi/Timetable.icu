@@ -212,6 +212,16 @@ pnpm drizzle-kit drop
 ```
 
 Migration to D1
+
+はじめに一度のみ，コースのカテゴリーを入れてあげる必要がある
+```bash
+# Local
+pnpm wrangler d1 execute timetable_icu --file=./src/db/data/seed_categories.sql
+# Remote
+pnpm wrangler d1 execute timetable_icu --remote --file=./src/db/data/seed_categories.sql
+```
+
+
 Remoteは1度目は通らないことがあるが2回目やればいけるときがある
 
 ```bash
