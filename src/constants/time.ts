@@ -11,7 +11,7 @@ export const SELECTABLE_DAYS = [
 ] as const;
 
 export const DEFAULT_YEAR = 2026; // new Date().getFullYear() didnt work on Workers
-export const DEFAULT_TERM = SELECTABLE_TERMS["0"];
+export const DEFAULT_TERM = SELECTABLE_TERMS["1"];
 
 export const PERIODS = [
 	{ label: "1", start: "08:45", end: "10:00" },
