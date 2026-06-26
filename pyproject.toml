@@ -1,3 +1,5 @@
+[tool.uv]
+package = false
 [project]
 name = "timetable-icu"
 version = "0.1.0"
@@ -9,7 +11,3 @@ dependencies = [
     "lxml>=6.1.1",
     "requests>=2.34.2",
 ]
-
-[build-system]
-requires = ["uv_build>=0.11.23,<0.12.0"]
-build-backend = "uv_build"
