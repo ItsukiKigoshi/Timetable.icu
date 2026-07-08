@@ -181,7 +181,7 @@ pnpm dlx playwright test
 
 Format Code
 ```bash
-pnpm format
+pnpm run format
 ```
 
 Create types from wrangler.jsonc
@@ -225,11 +225,11 @@ pnpm wrangler d1 execute timetable_icu --remote --file=./src/db/data/seed_catego
 Remoteは1度目は通らないことがあるが2回目やればいけるときがある
 
 ```bash
-pnpm db:migrate:local
+pnpm run db:migrate:local
 ```
 
 ```bash
-pnpm db:migrate:remote
+pnpm run db:migrate:remote
 ```
 
 もし外部キー制約が通らない場合
@@ -258,32 +258,32 @@ pnpm wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 Create JSON from HTML
 
 ```bash
-pnpm db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
-pnpm db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
+pnpm run db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
+pnpm run db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
 ```
 
 Local DBにJSONからcourses/categoriesを入れる
 
 ```bash
-pnpm db:push:local
+pnpm run db:push:local
 ```
 
 HTML->JSON->Local DBを一括で実行
 
 ```bash
-pnpm db:sync:local
+pnpm run db:sync:local
 ```
 
 Remote DBにJSONからcourses/categoriesを入れる
 
 ```bash
-pnpm db:push:remote
+pnpm run db:push:remote
 ```
 
 HTML->JSON->Remote DBを一括で実行
 
 ```bash
-pnpm db:sync:remote
+pnpm run db:sync:remote
 ```
 
 ライセンス出力
