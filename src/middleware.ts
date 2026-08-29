@@ -14,9 +14,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const { url, cookies, redirect, request } = context;
 	const pathname = url.pathname.replace(/\/$/, "");
 
-	// 静的ファイルやAPIはスキップ (Authのエンドポイントもここで確実に通す)
+	// 静的ファイルやAPIはスキップ
 	if (
-		pathname.startsWith("/api/auth") ||
+		pathname.startsWith("/api") ||
 		pathname.startsWith("/_image") ||
 		pathname.startsWith("/_astro") ||
 		NON_TRANSLATED_PAGES.includes(pathname) ||
