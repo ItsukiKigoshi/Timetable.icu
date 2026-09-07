@@ -3,21 +3,20 @@ stages:
 
 sync_courses:
   stage: sync
-  image: mcr.microsoft.com/playwright/python:v1.62.0-noble # Pre-built image with Playwright & Node.js
+  image: node:20-bookworm
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"' # Executed via scheduled pipeline
-    - if: '$CI_PIPELINE_SOURCE == "web"'      # Executed manually via Web UI
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
   variables:
     ICUMAP_USER: $ICUMAP_USER
     ICUMAP_PASSWORD: $ICUMAP_PASSWORD
     CLOUDFLARE_API_TOKEN: $CLOUDFLARE_API_TOKEN
     CLOUDFLARE_ACCOUNT_ID: $CLOUDFLARE_ACCOUNT_ID
   before_script:
-    - apt-get update && apt-get install -y curl
-    - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-    - apt-get install -y nodejs
+    # Install uv and Playwright system dependencies quickly
     - pip install uv
-    - uv sync
+    - uv sync --frozen
+    - uv run playwright install-deps chromium
   script:
     # 1. Fetch HTML from icuMAP
     - uv run python scripts/fetch_icumap.py
