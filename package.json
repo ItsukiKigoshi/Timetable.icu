@@ -14,6 +14,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
+		"db:scrape": "pnpm run db:scrape:icumap",
 		"db:scrape:icumap": "uv run scripts/parse_icumap.py",
 		"db:scrape:ehandbook": "uv run scripts/parse_ehandbook.py",
 		"db:push:local": "pnpm run db:backup:local && uv run scripts/to_sql.py && wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses.sql",
