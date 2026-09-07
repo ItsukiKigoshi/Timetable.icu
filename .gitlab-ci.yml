@@ -4,7 +4,7 @@ stages:
 sync_courses:
   stage: sync
   # Playwright & Python Pre-installed official image
-  image: mcr.microsoft.com/playwright/python:v1.49.0-noble
+  image: mcr.microsoft.com/playwright/python:v1.62.0-noble
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_PIPELINE_SOURCE == "web"'
