@@ -9,12 +9,12 @@ OUTPUT_HTML = "scripts/data/icumap/all_courses.html"
 
 async def main():
     if not USER_ID or not PASSWORD:
-        raise ValueError("Environment variables ICUMAP_USER or ICUMAP_PASSWORD are not set in CI/CD settings.")
+        raise ValueError("Environment variables ICUMAP_USER or ICUMAP_PASSWORD are not set.")
 
     os.makedirs(os.path.dirname(OUTPUT_HTML), exist_ok=True)
 
     async with async_playwright() as p:
-        # Launch Chromium with anti-bot detection flags
+        # Launch Chromium browser with options
         browser = await p.chromium.launch(
             headless=True,
             args=[
@@ -24,7 +24,7 @@ async def main():
             ]
         )
         
-        # Emulate a real desktop browser context
+        # Emulate desktop browser context
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800},
@@ -32,7 +32,7 @@ async def main():
             timezone_id="Asia/Tokyo"
         )
         
-        # Bypass navigator.webdriver detection
+        # Avoid automation detection
         await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
         page = await context.new_page()
@@ -40,40 +40,37 @@ async def main():
         print("1. Navigating to initial page...")
         await page.goto(ICUMAP_URL, wait_until="domcontentloaded")
 
-        # Check for Gluegent Gate SSO authentication page
+        # Handle Gluegent Gate SSO login if present
         if await page.locator("#username_input").count() > 0:
             print("2. Gluegent Gate SSO login detected. Submitting credentials...")
             
             await page.fill("#username_input", USER_ID)
             await page.fill("#password_input", PASSWORD)
             
-            # Click login and wait for navigation response
-            await asyncio.gather(
-                page.wait_for_navigation(wait_until="domcontentloaded", timeout=60000),
-                page.click("#login_button")
-            )
-            print("   Authentication submitted. Waiting for redirection to complete...")
+            # Submit login form and expect navigation
+            async with page.expect_navigation(wait_until="domcontentloaded", timeout=60000):
+                await page.click("#login_button")
 
-        # Explicitly wait for main page element or target URL
+            print("   Credentials submitted. Waiting for SSO redirection to complete...")
+
+        # Wait for the main page selector to load
         try:
-            # Wait until the main container element is rendered
-            await page.wait_for_selector("#ctl00_bdy_base", state="visible", timeout=45000)
+            # Wait for main page element or URL redirect back to icumap
+            await page.wait_for_selector("#ctl00_bdy_base", state="attached", timeout=45000)
             print("   Successfully reached the main page.")
         except Exception as e:
-            # Save screenshot for debugging in CI artifacts if failed
+            # Capture screenshot on failure for debugging
             await page.screenshot(path="error_login.png", full_page=True)
             print(f"❌ Current Page URL: {page.url}")
             print(f"❌ Current Page Title: {await page.title()}")
-            raise RuntimeError(f"Authentication failed: Unable to reach main page. Saved screenshot to error_login.png. Error: {e}")
+            raise RuntimeError(f"Authentication failed: Unable to reach main page. Saved screenshot to error_login.png. Details: {e}")
 
         # Execute search query
         print("3. Executing search query...")
         search_btn = "#ctl00_ContentPlaceHolder1_btn_search"
         if await page.locator(search_btn).count() > 0:
-            await asyncio.gather(
-                page.wait_for_navigation(wait_until="domcontentloaded", timeout=60000),
-                page.click(search_btn)
-            )
+            async with page.expect_navigation(wait_until="domcontentloaded", timeout=60000):
+                await page.click(search_btn)
             print("   Search query executed successfully.")
 
         # Change display limit to ALL
@@ -81,11 +78,10 @@ async def main():
         page_size_selector = "#ctl00_ContentPlaceHolder1_ddlPageSize"
         
         if await page.locator(page_size_selector).count() > 0:
-            await asyncio.gather(
-                page.wait_for_navigation(wait_until="domcontentloaded", timeout=60000),
-                page.select_option(page_size_selector, value="ALL")
-            )
-            # Wait for table rows to be rendered
+            async with page.expect_navigation(wait_until="domcontentloaded", timeout=60000):
+                await page.select_option(page_size_selector, value="ALL")
+            
+            # Wait until table rows are updated
             await page.wait_for_selector("#ctl00_ContentPlaceHolder1_grv_course tr:nth-child(2)", timeout=30000)
             print("   Display limit changed to ALL and records loaded successfully.")
         else:
