@@ -26,16 +26,24 @@ if (!url.searchParams.has("term")) url.searchParams.set("term", selectedTerm);
 
 const { where, page, filters } = getCourseSearchConfig(url, db);
 
-const [allCategories, rawResults] = await Promise.all([
+// Fetch categories, courses, and courseLastUpdatedAt concurrently
+const [allCategories, rawResults, lastUpdateSetting] = await Promise.all([
 	db.select().from(schema.categories).all(),
 	db.query.courses.findMany({
 		where,
 		with: { schedules: true },
-		orderBy: (courses, { asc }) => [asc(courses.courseCode)], // courseCode順, ELAが最初にでないように
+		orderBy: (courses, { asc }) => [asc(courses.courseCode)],
 		limit: limitPerPage + 1,
 		offset: (page - 1) * limitPerPage,
 	}),
+	db
+		.select()
+		.from(schema.metaSettings)
+		.where(eq(schema.metaSettings.key, "courseLastUpdatedAt"))
+		.get(),
 ]);
+
+const lastUpdatedAt = lastUpdateSetting?.value ?? null;
 
 const hasNextPage = rawResults.length > limitPerPage;
 const slicedResults = hasNextPage
@@ -72,6 +80,7 @@ Astro.response.headers.set("Content-Type", "text/html; charset=utf-8");
 			user={user}
 			hasNextPage={hasNextPage}
 			lang={currentLang}
+			lastUpdatedAt={lastUpdatedAt}
 		/>
 	</section>
 </Layout>

@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime, timezone
 
 def escape_sql(val):
     if val is None:
@@ -16,10 +17,10 @@ def generate_sql():
         with open('./scripts/out/dist_courses.json', 'r', encoding='utf-8') as f:
             raw_data = json.load(f)
     except FileNotFoundError:
-        print("❌ dist_courses.json が見つかりません。")
+        print("❌ dist_courses.json not found.")
         return
 
-    # 重複排除
+    # Deduplicate items
     seen_keys = set()
     data = []
     for item in raw_data:
@@ -31,12 +32,12 @@ def generate_sql():
     output = [
         "-- Auto-generated SQL for D1 Sync (Upsert Optimized)",
         "PRAGMA foreign_keys = OFF;",
-        # 空文字のゴミデータだけは最初に掃除
+        "-- Clean up invalid empty records",
         "DELETE FROM courses WHERE rg_no IS NULL OR rg_no = '';"
     ]
 
     for item in data:
-        # 1. パラメータ準備
+        # 1. Prepare parameters
         raw_rg_no = item.get('rgNo', '')
         instructor = item.get('instructor', '')
         course_code = item.get('courseCode', '')
@@ -46,14 +47,13 @@ def generate_sql():
         instr_part = re.sub(r'[^\w]', '', instructor)[:10].upper()
         dummy_rg_no = f"TEMP-{course_code}-{instr_part}".upper()
 
-        # 正式な rgNo があるかどうかの判定
+        # Check if valid rgNo exists
         has_real_rg_no = bool(raw_rg_no and raw_rg_no.strip() != "")
         target_rg_no = raw_rg_no if has_real_rg_no else dummy_rg_no
 
-        # --- SQL生成 ---
+        # --- Generate SQL ---
 
-        # 2. TEMP ID の「昇格」処理
-        # 正式な rgNo が手元にあり、かつDB側にまだ TEMP でしか存在しない場合のみ、rg_noを書き換える
+        # 2. Promote TEMP ID if real rgNo becomes available
         if has_real_rg_no:
             update_temp_sql = f"""
             UPDATE courses SET rg_no = {escape_sql(raw_rg_no)} 
@@ -62,8 +62,7 @@ def generate_sql():
             """
             output.append(update_temp_sql.strip())
 
-        # 3. 本体テーブルへの Upsert
-        # ON CONFLICT(year, rg_no) を使うことで、削除せず既存レコードを更新する
+        # 3. Upsert into main courses table
         course_sql = f"""
         INSERT INTO courses (
             year, term, course_code, rg_no, title_ja, title_en, 
@@ -87,11 +86,11 @@ def generate_sql():
         """
         output.append(course_sql.strip())
 
-        # 共通のID特定用サブクエリ
+        # Subquery for course ID resolution
         course_id_where = f"year={year} AND rg_no={escape_sql(target_rg_no)}"
         course_id_subquery = f"(SELECT id FROM courses WHERE {course_id_where} LIMIT 1)"
 
-        # 4. 子テーブルの更新 (ここは一貫性のために一度消して入れる)
+        # 4. Update child tables
         cat_id = item.get('categoryId')
         if cat_id:
             output.append(f"DELETE FROM course_to_categories WHERE course_id = {course_id_subquery};")
@@ -106,6 +105,17 @@ def generate_sql():
             FROM courses WHERE {course_id_where} LIMIT 1;
             """
             output.append(sch_sql.strip())
+
+    # 5. Save metadata update directly to D1 meta_settings table
+    now_iso = datetime.now(timezone.utc).isoformat()
+    metadata_sql = f"""
+    INSERT INTO meta_settings (key, value, updated_at)
+    VALUES ('courseLastUpdatedAt', '{now_iso}', strftime('%s', 'now'))
+    ON CONFLICT(key) DO UPDATE SET
+        value = excluded.value,
+        updated_at = strftime('%s', 'now');
+    """
+    output.append(metadata_sql.strip())
 
     output.append("PRAGMA foreign_keys = ON;")
 

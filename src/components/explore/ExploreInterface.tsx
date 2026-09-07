@@ -15,7 +15,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
 import Modal from "@/components/common/Modal";
 import { SELECTABLE_DAYS } from "@/constants/time.ts";
-import courseUpdateInfo from "@/db/data/course-last-update.json";
 import type {
 	Categories,
 	OfficialCourseWithDetails,
@@ -55,7 +54,9 @@ interface Props {
 	user?: User | null;
 	hasNextPage: boolean;
 	lang?: string;
+	lastUpdatedAt?: string | null;
 }
+
 export default function ExploreInterface({
 	initialResults,
 	initialFilters,
@@ -64,6 +65,7 @@ export default function ExploreInterface({
 	user,
 	hasNextPage: initialHasNext,
 	lang = DEFAULT_LANG,
+	lastUpdatedAt,
 }: Props) {
 	const { t, isJa } = createTranslationHelper(lang);
 
@@ -109,7 +111,6 @@ export default function ExploreInterface({
 			});
 		},
 		onToggleError: (course, wasRegistered) => {
-			// エラー時は元の状態にロールバック
 			setRegisteredIdList((prev) => {
 				if (wasRegistered) return [...prev, Number(course.id)];
 				return prev.filter((id) => id !== Number(course.id));
@@ -168,14 +169,13 @@ export default function ExploreInterface({
 	};
 
 	const Pagination = () => {
-		// ページ更新用の関数
 		const goToNext = useCallback(() => {
 			if (hasNextPage) update({ page: filters.page + 1 });
 		}, []);
 		const goToPrev = useCallback(() => {
 			if (filters.page > 1) update({ page: filters.page - 1 });
 		}, []);
-		// キーボードイベントの登録
+
 		useEffect(() => {
 			const handleKeyDown = (event: KeyboardEvent) => {
 				if (event.target instanceof HTMLElement) {
@@ -192,7 +192,6 @@ export default function ExploreInterface({
 				}
 			};
 			window.addEventListener("keydown", handleKeyDown);
-			// クリーンアップ関数（コンポーネントが消える時にイベントを解除）
 			return () => {
 				window.removeEventListener("keydown", handleKeyDown);
 			};
@@ -256,16 +255,17 @@ export default function ExploreInterface({
 		if (searchInput) searchInput.value = "";
 	};
 
-	const lastUpdateStr = new Date(
-		courseUpdateInfo.courseLastUpdatedAt,
-	).toLocaleString(isJa ? "ja-JP" : "en-US", {
-		timeZone: "Asia/Tokyo",
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
+	// D1 から受け取った ISO 文字列をもとにフォーマット
+	const lastUpdateStr = lastUpdatedAt
+		? new Date(lastUpdatedAt).toLocaleString(isJa ? "ja-JP" : "en-US", {
+				timeZone: "Asia/Tokyo",
+				year: "numeric",
+				month: "2-digit",
+				day: "2-digit",
+				hour: "2-digit",
+				minute: "2-digit",
+			})
+		: "---";
 
 	const majorCategories = categories.filter(
 		(c) => c.id?.startsWith("M") && c.id !== "MSTH",
@@ -278,7 +278,6 @@ export default function ExploreInterface({
 		<LanguageProvider lang={lang}>
 			<div className="space-y-6">
 				{/* フィルターセクション */}
-				{/* 単語検索（CourseNo, regNo,タイトル，教員名） */}
 				<div className="flex flex-wrap gap-3 items-center">
 					<label className="input input-bordered flex items-center gap-2 w-full max-w-xs shadow-sm bg-base-100/50 backdrop-blur-md">
 						<Search />
@@ -295,7 +294,6 @@ export default function ExploreInterface({
 						/>
 					</label>
 
-					{/* カテゴリ選択 */}
 					<label
 						className={`input input-bordered flex items-center gap-2 w-full max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm group ${filters.categoryId ? "border-primary border-2" : ""}`}
 					>
@@ -323,7 +321,6 @@ export default function ExploreInterface({
 						</select>
 					</label>
 
-					{/* 時限選択 */}
 					<button
 						type="button"
 						className={`btn btn-md flex items-center gap-2 px-2 w-fit max-w-xs bg-base-100/50 backdrop-blur-md shadow-sm font-normal text-base-content transition-all ${
@@ -339,7 +336,6 @@ export default function ExploreInterface({
 						{t("explore.select_slots")}
 					</button>
 
-					{/* 単位数 */}
 					<label
 						className={`input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group transition-all ${filters.units ? "border-primary border-2" : ""}`}
 					>
@@ -359,7 +355,6 @@ export default function ExploreInterface({
 						</select>
 					</label>
 
-					{/*言語選択*/}
 					<label
 						className={`input input-bordered flex items-center gap-2 w-fit bg-base-100/50 backdrop-blur-md shadow-sm group transition-all ${filters.language ? "border-primary border-2" : ""}`}
 					>
@@ -373,14 +368,12 @@ export default function ExploreInterface({
 							<option value="J">{isJa ? "日本語" : "Japanese"}</option>
 							<option value="E">{isJa ? "英語" : "English"}</option>
 							<option value="O">{isJa ? "その他" : "Other"}</option>
-							{/* 明示的に language が設定されていないものを探すための選択肢 */}
 							<option value="null">
 								{isJa ? "言語なし" : "Not Specified"}
 							</option>
 						</select>
 					</label>
 
-					{/* --- 全条件クリアボタン (year, term以外) --- */}
 					<button
 						type="button"
 						onClick={clearFilters}
@@ -411,10 +404,8 @@ export default function ExploreInterface({
 								className="card bg-base-200 shadow-sm border border-base-200 hover:shadow-md transition-shadow"
 							>
 								<div className="card-body p-4 gap-3">
-									{/* ヘッダーセクション: コード，言語，単位数，年度 */}
 									<CourseHeader course={course} showYearTerm={true} />
 
-									{/* アクションセクション */}
 									<nav className="card-actions flex justify-between items-center">
 										<a
 											target="_blank"
@@ -469,7 +460,6 @@ export default function ExploreInterface({
 						<div className="space-y-3">
 							<h3 className="font-bold text-lg">{t("explore.no_results")}</h3>
 
-							{/* 公式シラバスへのリンク */}
 							<p className="text-sm">
 								{t("explore.check_syllabus")
 									.split("{link}")
