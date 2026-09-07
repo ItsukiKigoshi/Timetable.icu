@@ -3,7 +3,7 @@ stages:
 
 sync_courses:
   stage: sync
-  image: mcr.microsoft.com/playwright/python:v1.49.0-noble # Pre-built image with Playwright & Node.js
+  image: mcr.microsoft.com/playwright/python:v1.62.0-noble # Pre-built image with Playwright & Node.js
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"' # Executed via scheduled pipeline
     - if: '$CI_PIPELINE_SOURCE == "web"'      # Executed manually via Web UI
