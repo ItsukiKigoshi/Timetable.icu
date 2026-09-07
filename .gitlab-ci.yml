@@ -3,7 +3,8 @@ stages:
 
 sync_courses:
   stage: sync
-  image: node:20-bookworm
+  # Playwright & Python Pre-installed official image
+  image: mcr.microsoft.com/playwright/python:v1.49.0-noble
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_PIPELINE_SOURCE == "web"'
@@ -13,10 +14,16 @@ sync_courses:
     CLOUDFLARE_API_TOKEN: $CLOUDFLARE_API_TOKEN
     CLOUDFLARE_ACCOUNT_ID: $CLOUDFLARE_ACCOUNT_ID
   before_script:
-    # Install uv and Playwright system dependencies quickly
-    - pip install uv
+    # 1. Install Node.js (Quick Setup)
+    - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    - apt-get install -y nodejs
+    
+    # 2. Install uv (Standalone binary, no pip required)
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    
+    # 3. Sync python environment
     - uv sync --frozen
-    - uv run playwright install-deps chromium
   script:
     # 1. Fetch HTML from icuMAP
     - uv run python scripts/fetch_icumap.py
