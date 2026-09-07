@@ -7,11 +7,6 @@ sync_courses:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: '$CI_PIPELINE_SOURCE == "web"'
-  variables:
-    ICUMAP_USER: $ICUMAP_USER
-    ICUMAP_PASSWORD: $ICUMAP_PASSWORD
-    CLOUDFLARE_API_TOKEN: $CLOUDFLARE_API_TOKEN
-    CLOUDFLARE_ACCOUNT_ID: $CLOUDFLARE_ACCOUNT_ID
   before_script:
     # 1. Install Node.js
     - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
