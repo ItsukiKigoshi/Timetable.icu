@@ -31,6 +31,7 @@ sync_courses:
     - uv run python to_sql.py
 
     # 4. Execute upsert SQL queries on Cloudflare D1
+    - cd ..
     - npx wrangler d1 execute timetable_icu --remote --file=out/sync_courses.sql
 
     # 5. Update last updated timestamp in Cloudflare D1
