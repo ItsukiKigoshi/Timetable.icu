@@ -15,21 +15,23 @@ sync_courses:
     # 2. Install uv binary
     - curl -LsSf https://astral.sh/uv/install.sh | sh
     - export PATH="$HOME/.local/bin:$PATH"
-    
+ 
+    - cd scripts
+
     # 3. Sync dependencies
-    - uv sync --frozen --project scripts
+    - uv sync --frozen
   script:
     # 1. Fetch HTML from icuMAP
     - uv run python scripts/fetch_icumap.py
 
     # 2. Parse HTML to dist_courses.json
-    - uv run python scripts/parse_icumap.py
+    - uv run python parse_icumap.py
 
     # 3. Generate SQL statements from JSON
-    - uv run python scripts/to_sql.py
+    - uv run python to_sql.py
 
     # 4. Execute upsert SQL queries on Cloudflare D1
-    - npx wrangler d1 execute timetable_icu --remote --file=scripts/out/sync_courses.sql
+    - npx wrangler d1 execute timetable_icu --remote --file=out/sync_courses.sql
 
     # 5. Update last updated timestamp in Cloudflare D1
     - |
