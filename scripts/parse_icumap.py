@@ -11,6 +11,7 @@ from utils import (
     get_category_id_from_code,
     TERM_MAP
 )
+import sys
 
 def parse_icumap_html(html_content):
     soup = BeautifulSoup(html_content, 'lxml')
@@ -117,6 +118,10 @@ def run_parser():
 
         print("--- Process Completed ---")
         print(f"Total courses: {len(results)}")
+        
+        if len(results) == 0:
+            print("❌ Error: 0 courses extracted. Aborting pipeline to prevent empty upsert.")
+            sys.exit(1)
         print(f"Output: {os.path.abspath(output_file)}")
         print("icuMAP parsing completed.")
     else:
