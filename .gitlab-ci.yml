@@ -22,7 +22,7 @@ sync_courses:
     - uv sync --frozen
   script:
     # 1. Fetch HTML from icuMAP
-    - uv run python scripts/fetch_icumap.py
+    - uv run python fetch_icumap.py
 
     # 2. Parse HTML to dist_courses.json
     - uv run python parse_icumap.py
