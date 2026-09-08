@@ -33,7 +33,7 @@ sync_courses:
 
     # 5. Update last updated timestamp in Cloudflare D1
     - |
-      TIMESTAMP=$(date -u +"%Y-%m-%d_T%H:%M:%SZ")
+      TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
       npx wrangler d1 execute timetable_icu --remote --command="INSERT INTO meta_settings (key, value) VALUES ('courseLastUpdatedAt', '$TIMESTAMP') ON CONFLICT(key) DO UPDATE SET value=excluded.value;"
 
   artifacts:
