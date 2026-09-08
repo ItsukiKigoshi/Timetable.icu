@@ -1,0 +1,43 @@
+stages:
+  - sync
+
+sync_courses:
+  stage: sync
+  image: mcr.microsoft.com/playwright/python:v1.62.0-noble
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+  before_script:
+    # 1. Install Node.js
+    - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    - apt-get install -y nodejs
+    
+    # 2. Install uv binary
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    
+    # 3. Sync dependencies
+    - uv sync --frozen
+  script:
+    # 1. Fetch HTML from icuMAP
+    - uv run python scripts/fetch_icumap.py
+
+    # 2. Parse HTML to dist_courses.json
+    - uv run python scripts/parse_icumap.py
+
+    # 3. Generate SQL statements from JSON
+    - uv run python scripts/to_sql.py
+
+    # 4. Execute upsert SQL queries on Cloudflare D1
+    - npx wrangler d1 execute timetable_icu --remote --file=scripts/out/sync_courses.sql
+
+    # 5. Update last updated timestamp in Cloudflare D1
+    - |
+      TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      npx wrangler d1 execute timetable_icu --remote --command="INSERT INTO meta_settings (key, value) VALUES ('courseLastUpdatedAt', '$TIMESTAMP') ON CONFLICT(key) DO UPDATE SET value=excluded.value;"
+
+  artifacts:
+    when: on_failure
+    paths:
+      - error_login.png
+    expire_in: 1 week

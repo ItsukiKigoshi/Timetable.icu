@@ -247,6 +247,14 @@ export const courseSchedulesRelations = relations(
 	}),
 );
 
+// --- 4. Meta Settings ---
+// システム設定や最終更新日時などのキー・バリューデータを保持
+export const metaSettings = sqliteTable("meta_settings", {
+	key: text("key").primaryKey(),
+	value: text("value").notNull(),
+	updatedAt: integer("updated_at").default(sql`(unixepoch())`),
+});
+
 // --- Types ---
 // --- Base Types (DBから直接抽出) ---
 export type Course = InferSelectModel<typeof courses>;
