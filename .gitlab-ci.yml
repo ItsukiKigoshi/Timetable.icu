@@ -17,7 +17,7 @@ sync_courses:
     - export PATH="$HOME/.local/bin:$PATH"
     
     # 3. Sync dependencies
-    - uv sync --frozen
+    - uv sync --frozen --project scripts
   script:
     # 1. Fetch HTML from icuMAP
     - uv run python scripts/fetch_icumap.py
