@@ -167,17 +167,39 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 		.getElementById("term-select")
 		?.addEventListener("change", handleYearTermChange);
 
+	import { DEFAULT_LANG, LANGUAGES } from "@/lib/translation/ui.ts";
+
 	// --- 言語切り替えロジック ---
 	document.querySelectorAll("[data-lang-switch]").forEach((btn) => {
 		btn.addEventListener("click", (e) => {
 			const targetLang = (e.currentTarget as HTMLButtonElement).dataset.langSwitch;
 			if (!targetLang) return;
 
-			// Cookieをセット
+			// 1. Cookieをセット
 			setCookie("lang", targetLang);
 
-			// ページをリロード（middlewareのリダイレクトロジックが発動する）
-			window.location.reload();
+			// 2. 現在のURLパスから言語プレフィックスを変更して遷移
+			const url = new URL(window.location.href);
+			let pathname = url.pathname;
+
+			// 既存の言語プレフィックス（/en など）を取得
+			const currentLangInUrl = LANGUAGES.find(
+				(l) => l !== DEFAULT_LANG && pathname.startsWith(`/${l}`),
+			);
+
+			// 既存の言語プレフィックスを除去
+			if (currentLangInUrl) {
+				pathname =
+					pathname.replace(new RegExp(`^\\/${currentLangInUrl}`), "") || "/";
+			}
+
+			// 新しい言語のパスを組み立て
+			if (targetLang !== DEFAULT_LANG) {
+				pathname = `/${targetLang}${pathname === "/" ? "" : pathname}`;
+			}
+
+			url.pathname = pathname;
+			window.location.assign(url.toString());
 		});
 	});
 	// --- ドロップダウンの開閉 ---
