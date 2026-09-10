@@ -1,3 +1,4 @@
+// middleware.ts
 import { defineMiddleware } from "astro:middleware";
 import { env } from "cloudflare:workers";
 import {
@@ -23,10 +24,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return next();
 	}
 
-	// 2. 言語設定の初期取得（Cookieまたはデフォルト）
+	// URL パスから現在の言語を特定 (例: /en -> "en", / -> "ja")
+	const langInPath = LANGUAGES.find(
+		(l) => l !== DEFAULT_LANG && pathname.startsWith(`/${l}`),
+	);
+	const currentLangInUrl = langInPath || DEFAULT_LANG;
+
+	// 2. 言語設定の初期取得（URL指定 > Cookie > デフォルト）
 	const langCookie = cookies.get("lang")?.value as Language | undefined;
+	// URLに明示的な言語指定がある場合はそちらを優先，なければCookieを参照
 	const currentLang =
-		langCookie && LANGUAGES.includes(langCookie) ? langCookie : DEFAULT_LANG;
+		langInPath ||
+		(langCookie && LANGUAGES.includes(langCookie) ? langCookie : DEFAULT_LANG);
 	context.locals.lang = currentLang;
 
 	// 3. 認証処理（APIや通常のページでセッションを取得）
@@ -53,13 +62,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const yearCookie = cookies.get("year")?.value;
 	const termCookie = cookies.get("term")?.value;
 
-	const langInPath = LANGUAGES.find(
-		(l) => l !== DEFAULT_LANG && pathname.startsWith(`/${l}`),
-	);
-	const currentLangInUrl = langInPath || DEFAULT_LANG;
-
-	// --- 6. ターゲットを決定 (URL > Cookie > Default) ---
-	const targetLang = currentLang;
+	// --- 6. ターゲットを決定 (URL指定がある場合はリダイレクトしない) ---
+	// パスに明確な言語設定がある場合はその言語を尊重し，ルート (/) かつ Cookie がある場合のみリダイレクト対象とする
+	const targetLang = langInPath ? langInPath : langCookie || DEFAULT_LANG;
 
 	const targetYear =
 		url.searchParams.get("year") || yearCookie || String(DEFAULT_YEAR);
@@ -86,7 +91,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	context.locals.selectedTerm = targetTerm as (typeof SELECTABLE_TERMS)[number];
 
 	const cookieOptions = { path: "/", maxAge: 60 * 60 * 24 * 365 };
-	if (!langCookie) cookies.set("lang", targetLang, cookieOptions);
+	// Cookieを現在の確定言語に同調させる
+	if (langCookie !== targetLang) cookies.set("lang", targetLang, cookieOptions);
 	if (!yearCookie) cookies.set("year", targetYear, cookieOptions);
 	if (!termCookie) cookies.set("term", targetTerm, cookieOptions);
 
