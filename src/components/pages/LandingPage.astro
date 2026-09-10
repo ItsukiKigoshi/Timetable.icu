@@ -71,6 +71,7 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 				})
 			}
 		</div>
+
 		<!--Hero-->
 		<section
 			class="hero bg-base-200/70 backdrop-blur-xl rounded-[3.5rem] md:p-20 px-2 py-6 shadow-2xl w-full max-w-7xl mx-auto border border-white/20"
@@ -110,6 +111,24 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 				</div>
 			</header>
 		</section>
+
+		<aside
+			class="alert alert-success b text-base-content backdrop-blur-sm shadow-sm rounded-2xl w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4"
+		>
+			<div class="text-xs sm:text-sm">
+				<span class="font-bold block sm:inline mr-2">
+					{t("notice.bugfix.title")}:
+				</span>
+				<span class="opacity-90">
+					{t("notice.bugfix.desc")}
+				</span>
+			</div>
+			<span
+				class="text-[10pt] opacity-60 font-mono shrink-0 self-end sm:self-center"
+			>
+				{t("notice.bugfix.period")}
+			</span>
+		</aside>
 
 		<section
 			class="flex flex-col w-full bg-base-100 border border-base-200 rounded-4xl overflow-hidden shadow-sm"
