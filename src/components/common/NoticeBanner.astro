@@ -78,7 +78,6 @@ const hasContent = activeIncidents.length > 0 || !!latestUpdate;
 					>
 						{/* 上段・メイン部分 (Icon + Status + Title + Detail) */}
 						<header class="flex items-start gap-3 w-full">
-							{/* Icon: 1行目の高さにジャストフィットさせる */}
 							<span class="mt-0.5 shrink-0">
 								{isResolved ? <CheckCircle2 size="20" /> : <AlertTriangle size="20" />}
 							</span>
@@ -102,8 +101,8 @@ const hasContent = activeIncidents.length > 0 || !!latestUpdate;
 								{t("notice.incident.period")}:
 							</span>
 							<time datetime={new Date(item.startedAt * 1000).toISOString()}>
-								{formatDate(item.startedAt)}{" "}
-								{item.endedAt ? `-${formatDate(item.endedAt)}` : "-"}
+								{formatDate(item.startedAt)}
+								{item.endedAt ? ` - ${formatDate(item.endedAt)}` : "-"}
 							</time>
 						</div>
 					</article>
