@@ -5,12 +5,14 @@ import { desc, eq, or, gte, and } from "drizzle-orm";
 import { incidents, updates } from "@/db/schema";
 import * as schema from "@/db/schema";
 import { AlertTriangle, CheckCircle2, Sparkles } from "lucide-astro";
+import { getTranslations } from "@/lib/translation/utils";
 
 interface Props {
 	lang: "ja" | "en";
 }
 
 const { lang } = Astro.props;
+const t = getTranslations(lang);
 
 const db = drizzle(env.timetable_icu, { schema });
 
@@ -23,10 +25,7 @@ const activeIncidents = await db
 		or(
 			eq(incidents.status, "investigating"),
 			eq(incidents.status, "identified"),
-			and(
-				eq(incidents.status, "resolved"),
-				gte(incidents.endedAt, sevenDaysAgo), // 7日以内に復旧したもの
-			),
+			and(eq(incidents.status, "resolved"), gte(incidents.endedAt, sevenDaysAgo)),
 		),
 	)
 	.orderBy(desc(incidents.startedAt))
@@ -64,9 +63,12 @@ const hasContent = activeIncidents.length > 0 || !!latestUpdate;
 				const detail = lang === "ja" ? item.detailJa : item.detailEn;
 				const isResolved = item.status === "resolved";
 
+				const statusKey = `notice.status.${item.status}` as const;
+				const statusLabel = t(statusKey) || item.status;
+
 				return (
 					<article
-						class={`alert shadow-sm rounded-2xl w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border ${
+						class={`alert shadow-sm rounded-2xl w-full flex flex-col justify-between gap-3 p-4 border ${
 							isResolved
 								? "alert-success border-success/30"
 								: item.severity === "critical"
@@ -74,33 +76,43 @@ const hasContent = activeIncidents.length > 0 || !!latestUpdate;
 									: "alert-warning border-warning/30"
 						}`}
 					>
-						<span class="flex items-start gap-3">
+						{/* 上段・メイン部分 (Icon + Status + Title + Detail) */}
+						<header class="flex items-start gap-3 w-full">
+							{/* Icon: 1行目の高さにジャストフィットさせる */}
 							<span class="mt-0.5 shrink-0">
 								{isResolved ? <CheckCircle2 size="20" /> : <AlertTriangle size="20" />}
 							</span>
-							<header class="text-xs sm:text-sm">
-								<h3 class="font-bold flex items-center gap-2 text-sm">
-									<span>{title}</span>
-									<span class="badge badge-sm uppercase text-[9px]">{item.status}</span>
-								</h3>
-								{detail && <p class="opacity-90 mt-0.5">{detail}</p>}
-							</header>
-						</span>
 
-						<time
-							datetime={new Date(item.startedAt * 1000).toISOString()}
-							class="text-[10pt] opacity-70 font-mono shrink-0 self-end sm:self-center"
-						>
-							{formatDate(item.startedAt)}
-							{item.endedAt ? ` - ${formatDate(item.endedAt)}` : " -"}
-						</time>
+							{/* タイトル & 本文エリア */}
+							<div class="flex-1 text-xs sm:text-sm leading-normal">
+								<h3 class="font-bold flex flex-wrap items-center gap-2 text-sm">
+									<span class="badge badge-sm text-[10px] shrink-0 font-medium">
+										{statusLabel}
+									</span>
+									{title}
+								</h3>
+
+								{detail && <p class="opacity-90 mt-1">{detail}</p>}
+							</div>
+						</header>
+
+						{/* 下段: 期間表示 */}
+						<div class="text-[10pt] opacity-70 shrink-0 self-end flex items-center gap-1.5 font-mono">
+							<span class="text-[9pt] font-sans opacity-75">
+								{t("notice.incident.period")}:
+							</span>
+							<time datetime={new Date(item.startedAt * 1000).toISOString()}>
+								{formatDate(item.startedAt)}{" "}
+								{item.endedAt ? `-${formatDate(item.endedAt)}` : "-"}
+							</time>
+						</div>
 					</article>
 				);
 			})}
 
 			{/* --- お知らせ・アップデート履歴エリア --- */}
 			{latestUpdate && (
-				<article class="alert alert-info bg-base-200/60 backdrop-blur-sm border border-base-content/10 text-base-content shadow-sm rounded-2xl w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4">
+				<article class="alert alert-info bg-base-200/60 backdrop-blur-sm border border-base-content/10 text-base-content shadow-sm rounded-2xl w-full flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 p-4">
 					<span class="flex items-start gap-3">
 						<span class="mt-0.5 shrink-0 text-primary">
 							<Sparkles size="20" />
@@ -118,7 +130,7 @@ const hasContent = activeIncidents.length > 0 || !!latestUpdate;
 					</span>
 					<time
 						datetime={new Date(latestUpdate.publishedAt * 1000).toISOString()}
-						class="text-[10pt] opacity-60 font-mono shrink-0 self-end sm:self-center"
+						class="text-[10pt] opacity-60 font-mono shrink-0 self-end"
 					>
 						{formatDate(latestUpdate.publishedAt)}
 					</time>
