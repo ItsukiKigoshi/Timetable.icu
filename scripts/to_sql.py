@@ -2,6 +2,7 @@ import json
 import re
 from datetime import datetime, timezone
 
+
 def escape_sql(val):
     if val is None:
         return "NULL"
@@ -12,9 +13,10 @@ def escape_sql(val):
     safe_val = str(val).replace("'", "''")
     return f"'{safe_val}'"
 
+
 def generate_sql():
     try:
-        with open('./scripts/out/dist_courses.json', 'r', encoding='utf-8') as f:
+        with open("./scripts/out/dist_courses.json", "r", encoding="utf-8") as f:
             raw_data = json.load(f)
     except FileNotFoundError:
         print("❌ dist_courses.json not found.")
@@ -33,18 +35,18 @@ def generate_sql():
         "-- Auto-generated SQL for D1 Sync (Upsert Optimized)",
         "PRAGMA foreign_keys = OFF;",
         "-- Clean up invalid empty records",
-        "DELETE FROM courses WHERE rg_no IS NULL OR rg_no = '';"
+        "DELETE FROM courses WHERE rg_no IS NULL OR rg_no = '';",
     ]
 
     for item in data:
         # 1. Prepare parameters
-        raw_rg_no = item.get('rgNo', '')
-        instructor = item.get('instructor', '')
-        course_code = item.get('courseCode', '')
-        year = item.get('year')
-        units_val = item.get('units', 0.0)
+        raw_rg_no = item.get("rgNo", "")
+        instructor = item.get("instructor", "")
+        course_code = item.get("courseCode", "")
+        year = item.get("year")
+        units_val = item.get("units", 0.0)
 
-        instr_part = re.sub(r'[^\w]', '', instructor)[:10].upper()
+        instr_part = re.sub(r"[^\w]", "", instructor)[:10].upper()
         dummy_rg_no = f"TEMP-{course_code}-{instr_part}".upper()
 
         # Check if valid rgNo exists
@@ -69,10 +71,10 @@ def generate_sql():
             instructor, room, language, status, units, updated_at
         )
         VALUES (
-            {year}, {escape_sql(item['term'])}, {escape_sql(course_code)}, 
-            {escape_sql(target_rg_no)}, {escape_sql(item['titleJa'])}, {escape_sql(item['titleEn'])}, 
-            {escape_sql(instructor)}, {escape_sql(item['room'])}, {escape_sql(item['language'])}, 
-            {escape_sql(item['status'])}, {units_val}, strftime('%s', 'now')
+            {year}, {escape_sql(item["term"])}, {escape_sql(course_code)}, 
+            {escape_sql(target_rg_no)}, {escape_sql(item["titleJa"])}, {escape_sql(item["titleEn"])}, 
+            {escape_sql(instructor)}, {escape_sql(item["room"])}, {escape_sql(item["language"])}, 
+            {escape_sql(item["status"])}, {units_val}, strftime('%s', 'now')
         )
         ON CONFLICT(year, rg_no) DO UPDATE SET 
             course_code=excluded.course_code,
@@ -91,17 +93,23 @@ def generate_sql():
         course_id_subquery = f"(SELECT id FROM courses WHERE {course_id_where} LIMIT 1)"
 
         # 4. Update child tables
-        cat_id = item.get('categoryId')
+        cat_id = item.get("categoryId")
         if cat_id:
-            output.append(f"DELETE FROM course_to_categories WHERE course_id = {course_id_subquery};")
-            output.append(f"INSERT OR IGNORE INTO course_to_categories (course_id, category_id) SELECT id, '{cat_id}' FROM courses WHERE {course_id_where} LIMIT 1;")
+            output.append(
+                f"DELETE FROM course_to_categories WHERE course_id = {course_id_subquery};"
+            )
+            output.append(
+                f"INSERT OR IGNORE INTO course_to_categories (course_id, category_id) SELECT id, '{cat_id}' FROM courses WHERE {course_id_where} LIMIT 1;"
+            )
 
-        output.append(f"DELETE FROM course_schedules WHERE course_id = {course_id_subquery};")
-        for s in item.get('schedules', []):
+        output.append(
+            f"DELETE FROM course_schedules WHERE course_id = {course_id_subquery};"
+        )
+        for s in item.get("schedules", []):
             sch_sql = f"""
             INSERT INTO course_schedules (course_id, day_of_week, start_time, end_time, period, is_long, is_alternative, alt_group_id)
-            SELECT id, {escape_sql(s['dayOfWeek'])}, {escape_sql(s['startTime'])}, {escape_sql(s['endTime'])}, 
-                   {s['period']}, {1 if s.get('isLong') else 0}, {1 if s.get('isAlternative') else 0}, {escape_sql(s.get('altGroupId'))}
+            SELECT id, {escape_sql(s["dayOfWeek"])}, {escape_sql(s["startTime"])}, {escape_sql(s["endTime"])}, 
+                   {s["period"]}, {1 if s.get("isLong") else 0}, {1 if s.get("isAlternative") else 0}, {escape_sql(s.get("altGroupId"))}
             FROM courses WHERE {course_id_where} LIMIT 1;
             """
             output.append(sch_sql.strip())
@@ -119,9 +127,10 @@ def generate_sql():
 
     output.append("PRAGMA foreign_keys = ON;")
 
-    with open('scripts/out/sync_courses.sql', 'w', encoding='utf-8') as f:
+    with open("scripts/out/sync_courses.sql", "w", encoding="utf-8") as f:
         f.write("\n".join(output))
     print(f"✅ Generated sync_courses.sql with Upsert ({len(data)} courses)")
+
 
 if __name__ == "__main__":
     generate_sql()

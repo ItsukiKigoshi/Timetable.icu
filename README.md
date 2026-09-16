@@ -240,7 +240,7 @@ bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mo
 
 などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
 sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
--->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，bun wrangler d1 executeでやらなければいけない場面もありそう．
+-->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，pnpm wrangler d1 executeでやらなければいけない場面もありそう．
 
 Debug with Cloudflare Environment
 

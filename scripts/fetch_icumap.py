@@ -1,5 +1,6 @@
-import os
 import asyncio
+import os
+
 from playwright.async_api import async_playwright
 
 ICUMAP_URL = "https://campus.icu.ac.jp/icumap/ehb/SearchCO.aspx"
@@ -7,9 +8,12 @@ USER_ID = os.environ.get("ICUMAP_USER")
 PASSWORD = os.environ.get("ICUMAP_PASSWORD")
 OUTPUT_HTML = "scripts/data/icumap/all_courses.html"
 
+
 async def main():
     if not USER_ID or not PASSWORD:
-        raise ValueError("Environment variables ICUMAP_USER or ICUMAP_PASSWORD are not set.")
+        raise ValueError(
+            "Environment variables ICUMAP_USER or ICUMAP_PASSWORD are not set."
+        )
 
     os.makedirs(os.path.dirname(OUTPUT_HTML), exist_ok=True)
 
@@ -20,17 +24,19 @@ async def main():
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-blink-features=AutomationControlled",
-            ]
+            ],
         )
-        
+
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800},
             locale="ja-JP",
-            timezone_id="Asia/Tokyo"
+            timezone_id="Asia/Tokyo",
         )
-        
-        await context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+
+        await context.add_init_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
         page = await context.new_page()
 
         print("1. Navigating to initial page...")
@@ -41,7 +47,7 @@ async def main():
             print("2. Gluegent Gate SSO login detected. Submitting credentials...")
             await page.fill("#username_input", USER_ID)
             await page.fill("#password_input", PASSWORD)
-            
+
             await page.click("#login_button")
             # Wait until redirection completes and returns to icumap domain
             await page.wait_for_url("**/SearchCO.aspx*", timeout=60000)
@@ -50,7 +56,9 @@ async def main():
 
         # Ensure main frame / container is loaded
         try:
-            await page.wait_for_selector("#ctl00_bdy_base", state="attached", timeout=45000)
+            await page.wait_for_selector(
+                "#ctl00_bdy_base", state="attached", timeout=45000
+            )
             print("   Successfully reached the main page.")
         except Exception as e:
             await page.screenshot(path="error_login.png", full_page=True)
@@ -65,7 +73,9 @@ async def main():
         if await page.locator(search_btn).count() > 0:
             await page.click(search_btn)
             # ASP.NET PostBack: wait explicitly for the page size dropdown element to appear
-            await page.wait_for_selector(page_size_selector, state="visible", timeout=45000)
+            await page.wait_for_selector(
+                page_size_selector, state="visible", timeout=45000
+            )
             print("   Search query executed successfully.")
         else:
             await page.screenshot(path="error_login.png", full_page=True)
@@ -76,11 +86,11 @@ async def main():
         if await page.locator(page_size_selector).count() > 0:
             # Selecting option triggers ASP.NET PostBack
             await page.select_option(page_size_selector, value="ALL")
-            
+
             # Wait for table to reload with all records
             table_selector = "#ctl00_ContentPlaceHolder1_grv_course"
             await page.wait_for_selector(table_selector, state="visible", timeout=60000)
-            
+
             # Give short buffer for DOM rendering in headless Linux runner
             await page.wait_for_load_state("networkidle")
             await asyncio.sleep(2)
@@ -96,6 +106,7 @@ async def main():
 
         print(f"5. HTML content successfully saved to: {OUTPUT_HTML}")
         await browser.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -6,8 +6,10 @@
 import json
 import os
 import re
+
 from bs4 import BeautifulSoup
-from utils import parse_full_schedule, parse_units, get_category_id_from_code, TERM_MAP, save_course_update_metadata
+from utils import TERM_MAP, get_category_id_from_code, parse_full_schedule, parse_units
+
 
 def generate_unique_key(item):
     """
@@ -15,31 +17,38 @@ def generate_unique_key(item):
     個体を識別できるユニークキーを生成する。
     """
     # 記号や空白による不一致を防ぐため正規化
-    instructor = re.sub(r'[\s,]', '', item.get('instructor', '')).lower()
-    return f"{item['rgNo']}-{item['courseCode']}-{instructor}-{item['year']}{item['term']}"
+    instructor = re.sub(r"[\s,]", "", item.get("instructor", "")).lower()
+    return (
+        f"{item['rgNo']}-{item['courseCode']}-{instructor}-{item['year']}{item['term']}"
+    )
+
 
 def parse_ehandbook_html(html_content, is_english=True):
-    soup = BeautifulSoup(html_content, 'lxml')
-    table_id = "ctl00_ContentPlaceHolder1_grv_course_e" if is_english else "ctl00_ContentPlaceHolder1_grv_course_j"
-    table = soup.find('table', id=table_id)
+    soup = BeautifulSoup(html_content, "lxml")
+    table_id = (
+        "ctl00_ContentPlaceHolder1_grv_course_e"
+        if is_english
+        else "ctl00_ContentPlaceHolder1_grv_course_j"
+    )
+    table = soup.find("table", id=table_id)
 
     if not table:
         return []
 
-    rows = table.find_all('tr')[1:]  # ヘッダーをスキップ
+    rows = table.find_all("tr")[1:]  # ヘッダーをスキップ
     data_list = []
 
     for row in rows:
-        cols = row.find_all('td')
+        cols = row.find_all("td")
         if len(cols) < 8:
             continue
 
         # 1. rgNoの抽出
-        link_tag = cols[2].find('a')
+        link_tag = cols[2].find("a")
         rgno = ""
-        if link_tag and 'href' in link_tag.attrs:
-            href_value = str(link_tag['href'])
-            match = re.search(r'regno=([0-9]+)', href_value)
+        if link_tag and "href" in link_tag.attrs:
+            href_value = str(link_tag["href"])
+            match = re.search(r"regno=([0-9]+)", href_value)
             if match:
                 rgno = match.group(1)
 
@@ -65,14 +74,15 @@ def parse_ehandbook_html(html_content, is_english=True):
 
     return data_list
 
+
 def merge_and_format(en_list, ja_list):
     # 日本語データを検索しやすいように辞書化
-    ja_lookup = {item['_merge_key']: item['title'] for item in ja_list}
+    ja_lookup = {item["_merge_key"]: item["title"] for item in ja_list}
 
     final_results = []
     for en_item in en_list:
         # キーを使用して日本語タイトルを取得
-        title_ja = ja_lookup.get(en_item['_merge_key'], en_item['title'])
+        title_ja = ja_lookup.get(en_item["_merge_key"], en_item["title"])
 
         course_obj = {
             "rgNo": en_item["rgNo"],
@@ -87,11 +97,12 @@ def merge_and_format(en_list, ja_list):
             "language": en_item["language"],
             "categoryId": get_category_id_from_code(en_item["courseCode"]),
             "units": parse_units(en_item["units_raw"]),
-            "schedules": parse_full_schedule(en_item["schedule_raw"])
+            "schedules": parse_full_schedule(en_item["schedule_raw"]),
         }
         final_results.append(course_obj)
 
     return final_results
+
 
 def run_parser():
     base_dir = "scripts/data/ehandbook"
@@ -99,10 +110,10 @@ def run_parser():
     target_files = [
         ("all_courses_cla_en.html", "all_courses_cla_ja.html", "CLA"),
         ("all_courses_master_en.html", "all_courses_master_ja.html", "Master"),
-        ("all_courses_doctor_en.html", "all_courses_doctor_ja.html", "Doctor")
+        ("all_courses_doctor_en.html", "all_courses_doctor_ja.html", "Doctor"),
     ]
 
-    output_file = 'scripts/out/dist_courses.json'
+    output_file = "scripts/out/dist_courses.json"
     all_combined_results = []
     total_found_files = 0
 
@@ -139,7 +150,7 @@ def run_parser():
     unique_dict = {}
     for c in all_combined_results:
         # rgNoがあれば優先、なければ予備のキーを使う
-        key = c['rgNo'] if c['rgNo'] else generate_unique_key(c)
+        key = c["rgNo"] if c["rgNo"] else generate_unique_key(c)
         # まだ登録されていないか、既存データが空文字で今回データがrgNo持ちなら上書き
         if key not in unique_dict:
             unique_dict[key] = c
@@ -147,14 +158,13 @@ def run_parser():
 
     # 保存
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(final_list, f, ensure_ascii=False, indent=2)
-
-    save_course_update_metadata()
 
     print("--- Process Completed ---")
     print(f"Total processed items (after deduplication): {len(final_list)}")
     print(f"Output: {os.path.abspath(output_file)}")
+
 
 if __name__ == "__main__":
     run_parser()

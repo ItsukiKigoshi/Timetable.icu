@@ -6,7 +6,7 @@ export default defineConfig({
 		baseURL: "http://localhost:4321",
 	},
 	webServer: {
-		command: "bun run dev",
+		command: "pnpm run dev",
 		url: "http://localhost:4321",
 		reuseExistingServer: !process.env.CI,
 	},

@@ -4,10 +4,10 @@ pre-commit:
     # 1. Prettier (Astro)
     prettier:
       glob: "*.astro"
-      run: bunx prettier --write {staged_files}
+      run: pnpm prettier --write {staged_files}
       stage_fixed: true
     # 2. Biome (JS/TS)
     biome:
       glob: "*.{js,ts,jsx,tsx,json}"
-      run: bunx biome check --write {staged_files}
+      run: pnpm biome check --write {staged_files}
       stage_fixed: true
