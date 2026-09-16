@@ -255,6 +255,55 @@ export const metaSettings = sqliteTable("meta_settings", {
 	updatedAt: integer("updated_at").default(sql`(unixepoch())`),
 });
 
+// --- 5. 障害情報 (Incidents) ---
+export const incidents = sqliteTable(
+	"incidents",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		titleJa: text("title_ja").notNull(),
+		titleEn: text("title_en").notNull(),
+		detailJa: text("detail_ja"),
+		detailEn: text("detail_en"),
+		status: text("status", {
+			enum: ["investigating", "identified", "resolved"],
+		})
+			.notNull()
+			.default("investigating"),
+		severity: text("severity", {
+			enum: ["info", "warning", "critical"],
+		})
+			.notNull()
+			.default("warning"),
+		startedAt: integer("started_at").notNull(), // Unix timestamp
+		endedAt: integer("ended_at"), // Unix timestamp (復旧時にセット)
+		createdAt: integer("created_at").default(sql`(unixepoch())`),
+	},
+	(table) => [
+		index("incidents_status_idx").on(table.status),
+		index("incidents_started_idx").on(table.startedAt),
+	],
+);
+
+// --- 6. アップデート・更新履歴 (Updates) ---
+export const updates = sqliteTable(
+	"updates",
+	{
+		id: integer("id").primaryKey({ autoIncrement: true }),
+		titleJa: text("title_ja").notNull(),
+		titleEn: text("title_en").notNull(),
+		detailJa: text("detail_ja"),
+		detailEn: text("detail_en"),
+		category: text("category", {
+			enum: ["feature", "maintenance", "bugfix", "other"],
+		})
+			.notNull()
+			.default("feature"),
+		publishedAt: integer("published_at").notNull(), // Unix timestamp
+		createdAt: integer("created_at").default(sql`(unixepoch())`),
+	},
+	(table) => [index("updates_published_idx").on(table.publishedAt)],
+);
+
 // --- Types ---
 // --- Base Types (DBから直接抽出) ---
 export type Course = InferSelectModel<typeof courses>;
@@ -271,6 +320,9 @@ export type UserCourseMetadata = Pick<
 	UserCourse,
 	"isVisible" | "selectedAltGroupId" | "colorCustom" | "memo"
 >;
+
+export type Incident = InferSelectModel<typeof incidents>;
+export type UpdateLog = InferSelectModel<typeof updates>;
 
 // --- Final Types ---
 // 公式コース + ユーザーのカスタム設定 (isVisible, colorCustom など)

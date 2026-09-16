@@ -10,6 +10,7 @@ import {
 } from "lucide-astro";
 import Logo from "@/assets/Logo.svg";
 import Layout from "@/components/layout/Layout.astro";
+import NoticeBanner from "@/components/common/NoticeBanner.astro";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 import { LANGUAGES } from "@/lib/translation/ui";
 
@@ -112,23 +113,9 @@ const { t, l, currentLang } = createTranslationHelper(lang);
 			</header>
 		</section>
 
-		<aside
-			class="alert alert-success b text-base-content backdrop-blur-sm shadow-sm rounded-2xl w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4"
-		>
-			<div class="text-xs sm:text-sm">
-				<span class="font-bold block sm:inline mr-2">
-					{t("notice.bugfix.title")}:
-				</span>
-				<span class="opacity-90">
-					{t("notice.bugfix.desc")}
-				</span>
-			</div>
-			<span
-				class="text-[10pt] opacity-60 font-mono shrink-0 self-end sm:self-center"
-			>
-				{t("notice.bugfix.period")}
-			</span>
-		</aside>
+		<NoticeBanner server:defer lang={currentLang}>
+			<span slot="fallback"></span>
+		</NoticeBanner>
 
 		<section
 			class="flex flex-col w-full bg-base-100 border border-base-200 rounded-4xl overflow-hidden shadow-sm"

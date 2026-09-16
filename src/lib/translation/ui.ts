@@ -6,10 +6,10 @@ const ja = {
 	"site.description":
 		"ICU生の時間割・履修計画アプリの決定版．公式シラバス全コースの検索，Long 4-7等の特殊なコマ割対応，マルチデバイス同期で，国際基督教大学での学生生活をより快適に．ICU学生チームが愛を込めて開発中！",
 
-	"notice.bugfix.title": "障害復旧のお知らせ",
-	"notice.bugfix.desc":
-		"ログイン時に時間割の編集ができない不具合を修正しました",
-	"notice.bugfix.period": "対象期間: 2026/8/29-9/10",
+	"notice.incident.period": "影響期間",
+	"notice.status.investigating": "調査中",
+	"notice.status.identified": "原因特定",
+	"notice.status.resolved": "復旧済み",
 
 	"auth.login": "ログイン",
 	"auth.logout": "ログアウト",
@@ -79,7 +79,9 @@ const ja = {
 	"explore.select_slots": "時限を選択",
 	"explore.reset_selection": "リセット",
 	"explore.no_results": "該当する授業が見つかりませんでした．",
-	"explore.check_syllabus": "最新の授業情報は {link} をご確認ください．",
+	"explore.check_course_offerings":
+		"最新の授業情報は {link} をご確認ください．",
+	"explore.course_offerings": "コースオファリングス",
 	"explore.disclaimer_cancelled":
 		"※休講（Cancelled）および Co-Listing 科目は表示されません．",
 	"explore.colisting_desc":
@@ -147,10 +149,10 @@ const en = {
 	"site.description":
 		"The ultimate academic planning　tool for International Christian University students. Search all courses, manage Long 4-7 schedules, and sync across devices.",
 
-	"notice.bugfix.title": "Issue Resolved",
-	"notice.bugfix.desc":
-		"Fixed an issue where logged-in users were unable to edit their timetables.",
-	"notice.bugfix.period": "Affected Period: Aug 29 – Sep 10, 2026",
+	"notice.incident.period": "Period",
+	"notice.status.investigating": "Investigating",
+	"notice.status.identified": "Identified",
+	"notice.status.resolved": "Resolved",
 
 	// Auth
 	"auth.login": "Login",
@@ -222,8 +224,9 @@ const en = {
 	"explore.units": "Units",
 	"explore.reset_selection": "Reset",
 	"explore.no_results": "No courses found matching your criteria.",
-	"explore.check_syllabus":
+	"explore.check_course_offerings":
 		"Please refer to the {link} for latest information.",
+	"explore.course_offerings": "Course Offerings",
 	"explore.disclaimer_cancelled":
 		"*Cancelled and Co-Listing courses are not shown here.",
 	"explore.colisting_desc":
