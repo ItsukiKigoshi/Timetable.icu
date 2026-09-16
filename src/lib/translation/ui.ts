@@ -79,7 +79,9 @@ const ja = {
 	"explore.select_slots": "時限を選択",
 	"explore.reset_selection": "リセット",
 	"explore.no_results": "該当する授業が見つかりませんでした．",
-	"explore.check_syllabus": "最新の授業情報は {link} をご確認ください．",
+	"explore.check_course_offerings":
+		"最新の授業情報は {link} をご確認ください．",
+	"explore.course_offerings": "コースオファリングス",
 	"explore.disclaimer_cancelled":
 		"※休講（Cancelled）および Co-Listing 科目は表示されません．",
 	"explore.colisting_desc":
@@ -222,8 +224,9 @@ const en = {
 	"explore.units": "Units",
 	"explore.reset_selection": "Reset",
 	"explore.no_results": "No courses found matching your criteria.",
-	"explore.check_syllabus":
+	"explore.check_course_offerings":
 		"Please refer to the {link} for latest information.",
+	"explore.course_offerings": "Course Offerings",
 	"explore.disclaimer_cancelled":
 		"*Cancelled and Co-Listing courses are not shown here.",
 	"explore.colisting_desc":

@@ -461,7 +461,7 @@ export default function ExploreInterface({
 							<h3 className="font-bold text-lg">{t("explore.no_results")}</h3>
 
 							<p className="text-sm">
-								{t("explore.check_syllabus")
+								{t("explore.check_course_offerings")
 									.split("{link}")
 									.map((part, i, arr) => (
 										<span key={`no-result-${part}`}>
@@ -509,7 +509,7 @@ export default function ExploreInterface({
 						>
 							<div className="space-y-2">
 								<p className="text-sm leading-relaxed">
-									{t("explore.check_syllabus")
+									{t("explore.check_course_offerings")
 										.split("{link}")
 										.map((part, i, arr) => (
 											<span key={`dropdown-${part}`}>
@@ -521,7 +521,7 @@ export default function ExploreInterface({
 														rel="noopener"
 														className="link font-semibold mx-1"
 													>
-														{t("explore.syllabus")}
+														{t("explore.course_offerings")}
 													</a>
 												)}
 											</span>
