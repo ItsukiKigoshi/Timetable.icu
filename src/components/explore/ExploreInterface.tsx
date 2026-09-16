@@ -378,7 +378,7 @@ export default function ExploreInterface({
 						type="button"
 						onClick={clearFilters}
 						aria-label="Reset search"
-						className="btn btn-md btn-outline flex items-center gap-2 text-error"
+						className="btn btn-md btn-outline btn-error flex items-center gap-2"
 					>
 						<X size={18} />
 						<span className="inline font-medium">
