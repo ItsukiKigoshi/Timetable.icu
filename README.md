@@ -234,7 +234,7 @@ bun run db:migrate:remote
 
 もし外部キー制約が通らない場合
 
-```shell
+```bash
 bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
 ```
 
