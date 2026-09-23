@@ -10,7 +10,7 @@
 		"dev": "astro dev",
 		"format:prettier": "prettier \"**/*.astro\" --write",
 		"format:biome": "biome check --write",
-		"format": "bun run format:prettier; bun run format:biome",
+		"format": "pnpm run format:prettier; pnpm run format:biome",
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
@@ -23,8 +23,8 @@
 		"db:sync:remote": "pnpm run db:scrape && pnpm run db:push:remote",
 		"db:backup:local": "mkdir -p backup && wrangler d1 export timetable_icu --output=./backup/local_$(date +%Y%m%d_%H%M%S).sql",
 		"db:backup:remote": "mkdir -p backup && wrangler d1 export timetable_icu --remote --output=./backup/remote_$(date +%Y%m%d_%H%M%S).sql",
-		"db:migrate:local": "bun run db:backup:local && wrangler d1 migrations apply timetable_icu",
-		"db:migrate:remote": "bun run db:backup:remote && wrangler d1 migrations apply timetable_icu --remote"
+		"db:migrate:local": "pnpm run db:backup:local && wrangler d1 migrations apply timetable_icu",
+		"db:migrate:remote": "pnpm run db:backup:remote && wrangler d1 migrations apply timetable_icu --remote"
 	},
 	"dependencies": {
 		"@astrojs/check": "0.9.10",
@@ -47,11 +47,11 @@
 		"@biomejs/biome": "2.4.11",
 		"@playwright/test": "^1.63.0",
 		"@tailwindcss/typography": "^0.5.20",
-		"@types/bun": "^1.4.2",
+		"@types/better-sqlite3": "^9.6.0",
 		"@types/node": "^25.9.7",
 		"better-sqlite3": "^12.11.1",
-		"bun-types": "^1.4.2",
 		"daisyui": "^5.7.38",
+		"drizzle-kit": "^0.31.11",
 		"drizzle-orm": "^0.45.2",
 		"lefthook": "^2.1.14",
 		"prettier": "^3.9.7",
