@@ -114,6 +114,7 @@ const CourseDetailContent = ({
 					type="button"
 					onClick={() => handleToggle(course)}
 					disabled={isSubmitting === cId}
+					aria-label="Delete course"
 					className="btn btn-md btn-error col-span-1 gap-2"
 				>
 					{isSubmitting === cId ? (

@@ -1,0 +1,45 @@
+{
+	"cookies": [
+		{
+			"name": "timetable-icu-auth.session_token",
+			"value": "hUzkovJlvuLxT1NayGLgEh4BOAlAmoyQ.bLVcvdj8F/fzgB+Fqo8XNci8HnjdZg89SCcDR7t8ROk=",
+			"domain": "localhost",
+			"path": "/",
+			"expires": 1790727534,
+			"httpOnly": true,
+			"secure": false,
+			"sameSite": "Lax"
+		},
+		{
+			"name": "lang",
+			"value": "ja",
+			"domain": "localhost",
+			"path": "/",
+			"expires": 1821658734.752364,
+			"httpOnly": false,
+			"secure": false,
+			"sameSite": "Lax"
+		},
+		{
+			"name": "year",
+			"value": "2026",
+			"domain": "localhost",
+			"path": "/",
+			"expires": 1821658734.752624,
+			"httpOnly": false,
+			"secure": false,
+			"sameSite": "Lax"
+		},
+		{
+			"name": "term",
+			"value": "Autumn",
+			"domain": "localhost",
+			"path": "/",
+			"expires": 1821658734.752758,
+			"httpOnly": false,
+			"secure": false,
+			"sameSite": "Lax"
+		}
+	],
+	"origins": []
+}

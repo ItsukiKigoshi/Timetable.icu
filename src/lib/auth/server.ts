@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
+import { testUtils } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "@/db/schema";
@@ -10,6 +11,8 @@ import { createTranslationHelper } from "../translation/utils";
 export const getAuth = (env: Env, lang: string = DEFAULT_LANG) => {
 	const { l } = createTranslationHelper(lang);
 
+	const isTestEnv = process.env.NODE_ENV === "test";
+
 	return betterAuth({
 		baseURL: env.BETTER_AUTH_URL,
 		trustedOrigins: ["https://timetable.icu", "http://localhost:4321"],
@@ -18,10 +21,11 @@ export const getAuth = (env: Env, lang: string = DEFAULT_LANG) => {
 			schema: schema,
 		}),
 		secret: env.BETTER_AUTH_SECRET,
+		plugins: isTestEnv ? [testUtils()] : [],
 		advanced: {
 			cookiePrefix: "timetable-icu-auth",
 			ipAddress: {
-				ipAddressHeaders: ["cf-connecting-ip"], // Cloudflare specific header
+				ipAddressHeaders: ["cf-connecting-ip"],
 			},
 		},
 		socialProviders: {

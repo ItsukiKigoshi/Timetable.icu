@@ -39,3 +39,9 @@ backup/
 
 # Playwright test results
 test-results/
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

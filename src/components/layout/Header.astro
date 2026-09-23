@@ -63,6 +63,10 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 				type="button"
 				class="btn btn-circle w-10 h-10 shadow-inner ring-1 ring-base-content/10"
 				id="dropdown-button"
+				aria-label={isLoggedIn
+					? "User Menu (Logged In)"
+					: "User Menu (Not Logged In)"}
+				data-testid="user-dropdown-button"
 			>
 				{
 					user ? (
