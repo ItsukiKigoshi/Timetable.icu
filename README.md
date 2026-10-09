@@ -119,7 +119,7 @@ ICU生の時間割・履修計画アプリの決定版
 - [Playwright](https://playwright.dev/)
 
 ### Runtime/Package Manager
-- [pnpm](https://pnpm.dev/)
+- [Bun](https://bun.com/)
 
 技術構成はこちらの記事でも解説されています: [国際基督教大学の非公式時間割/履修計画アプリ「ICUのじかんわり」をAstro+Cloudflare Workers+D1でつくりました | Zenn](https://zenn.dev/itsukikigoshi/articles/timetable-icu)
 
@@ -167,27 +167,27 @@ All commands are run from the root of the project, from a terminal:
 
 | Command               | Action                                           |
 |:----------------------|:-------------------------------------------------|
-| `pnpm install`        | Installs dependencies                            |
-| `pnpm dev`            | Starts local dev server at `localhost:4321`      |
-| `pnpm run build`      | Build your production site to `./dist/`          |
-| `pnpm preview`        | Preview your build locally, before deploying     |
-| `pnpm astro ...`      | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help`| Get help using the Astro CLI                     |
+| `bun install`        | Installs dependencies                            |
+| `bun dev`            | Starts local dev server at `localhost:4321`      |
+| `bun run build`      | Build your production site to `./dist/`          |
+| `bun preview`        | Preview your build locally, before deploying     |
+| `bun astro ...`      | Run CLI commands like `astro add`, `astro check` |
+| `bun astro -- --help`| Get help using the Astro CLI                     |
 
 Run Test
 ```bash
-pnpm exec playwright test
+bun exec playwright test
 ```
 
 Format Code
 ```bash
-pnpm run format
+bun run format
 ```
 
 Create types from wrangler.jsonc
 
 ```bash
-pnpm exec wrangler types
+bun wrangler types
 ```
 
 ### Schema Definition, Migration
@@ -195,20 +195,20 @@ pnpm exec wrangler types
 Create schema for BetterAuth
 
 ```bash
-pnpm dlx auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
+bun dlx auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
 ```
 
 Create migration file by Drizzle Kit
 `--custom` Create Empty Migration File
 `--name=clear_user_name_image` Set Custom Name on Migration File
 ```bash
-pnpm exec drizzle-kit generate
+bun exec drizzle-kit generate
 ```
 
 一度生成したmigrationファイルをなかったことにする
 
 ```bash
-pnpm exec drizzle-kit drop
+bun exec drizzle-kit drop
 ```
 
 Migration to D1
@@ -216,41 +216,41 @@ Migration to D1
 はじめに一度のみ，コースのカテゴリーを入れてあげる必要がある
 ```bash
 # Local
-pnpm wrangler d1 execute timetable_icu --file=./src/db/data/seed_categories.sql
+bun wrangler d1 execute timetable_icu --file=./src/db/data/seed_categories.sql
 # Remote
-pnpm wrangler d1 execute timetable_icu --remote --file=./src/db/data/seed_categories.sql
+bun wrangler d1 execute timetable_icu --remote --file=./src/db/data/seed_categories.sql
 ```
 
 
 Remoteは1度目は通らないことがあるが2回目やればいけるときがある
 
 ```bash
-pnpm run db:migrate:local
+bun run db:migrate:local
 ```
 
 ```bash
-pnpm run db:migrate:remote
+bun run db:migrate:remote
 ```
 
 もし外部キー制約が通らない場合
 
 ```bash
-pnpm wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
+bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
 ```
 
 などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
 sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
--->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，pnpm wrangler d1 executeでやらなければいけない場面もありそう．
+-->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，bun wrangler d1 executeでやらなければいけない場面もありそう．
 
 Debug with Cloudflare Environment
 
 ```bash
-pnpm run build && bun x wrangler dev
+bun run build && bun x wrangler dev
 ```
 
 D1でのSQL文実行例
 ```bash
-pnpm wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
+bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 ```
 
 ### Corse data insertion
@@ -258,42 +258,42 @@ pnpm wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
 Create JSON from HTML
 
 ```bash
-pnpm run db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
-pnpm run db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
+bun run db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
+bun run db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
 ```
 
 Local DBにJSONからcourses/categoriesを入れる
 
 ```bash
-pnpm run db:push:local
+bun run db:push:local
 ```
 
 HTML->JSON->Local DBを一括で実行
 
 ```bash
-pnpm run db:sync:local
+bun run db:sync:local
 ```
 
 Remote DBにJSONからcourses/categoriesを入れる
 
 ```bash
-pnpm run db:push:remote
+bun run db:push:remote
 ```
 
 HTML->JSON->Remote DBを一括で実行
 
 ```bash
-pnpm run db:sync:remote
+bun run db:sync:remote
 ```
 
 ライセンス出力
 
 ```bash
-pnpm dlx generate-license-file --input package.json --output CREDITS
+bun x generate-license-file --input package.json --output CREDITS
 ```
 
 リモートのログ出力
 
 ```bash
-pnpm wrangler tail
+bun wrangler tail
 ```
