@@ -18,14 +18,13 @@
 			"invocation_logs": true
 		}
 	},
-	"d1_databases": [
-		{
-			"binding": "timetable_icu",
-			"database_name": "timetable-icu",
-			"database_id": "8cc30ad7-e926-4318-bfc7-888691eeac9f",
-			"migrations_dir": "migrations"
-		}
-	],
+  "d1_databases": [
+    {
+      "binding": "timetable_icu_tokyo",
+      "database_name": "timetable-icu-tokyo",
+      "database_id": "a6d88a6f-b0de-47c5-a481-8864f556a514"
+    }
+  ],
 	"vars": {
 		"BETTER_AUTH_URL": "https://timetable.icu",
 		"PUBLIC_BASE_URL": "https://timetable.icu"
