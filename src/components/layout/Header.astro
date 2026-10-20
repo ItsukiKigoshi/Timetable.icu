@@ -2,6 +2,7 @@
 import { CloudCheck, LogIn } from "@lucide/astro";
 import Logo from "@/assets/Logo.svg";
 import LoginButton from "@/components/common/LoginButton.tsx";
+import IcalActions from "@/components/timetable/IcalActions.tsx";
 import { SELECTABLE_TERMS, SELECTABLE_YEARS } from "@/constants/time.ts";
 import { DEFAULT_LANG, LANGUAGES } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
@@ -57,7 +58,14 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 			</select>
 		</label>
 	</div>
-	<nav class="navbar-end">
+	<nav class="navbar-end flex items-center gap-1 sm:gap-2">
+		<IcalActions
+			client:load
+			user={user}
+			lang={lang}
+			selectedYear={Number(selectedYear)}
+			selectedTerm={selectedTerm}
+		/>
 		<div class="dropdown dropdown-end" id="user-dropdown">
 			<button
 				type="button"

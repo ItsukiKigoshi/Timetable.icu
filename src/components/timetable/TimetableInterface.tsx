@@ -148,7 +148,15 @@ export default function TimetableInterface({
 		return () => window.removeEventListener("popstate", handlePopState);
 	}, []);
 
-	// モバイルで表示中のモードをSearch Parameterで管理
+	// iCalインポート等で時間割が更新された際に再読み込み
+	useEffect(() => {
+		const handleTimetableUpdate = () => {
+			window.location.reload();
+		};
+		window.addEventListener("timetable:updated", handleTimetableUpdate);
+		return () =>
+			window.removeEventListener("timetable:updated", handleTimetableUpdate);
+	}, []);
 	useEffect(() => {
 		const handlePopState = () => {
 			const params = new URLSearchParams(window.location.search);
