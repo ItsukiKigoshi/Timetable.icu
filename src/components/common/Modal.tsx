@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { DEFAULT_LANG } from "@/lib/translation/ui";
 import { getTranslations } from "@/lib/translation/utils";
 
@@ -21,16 +22,31 @@ export default function Modal({
 }: ModalProps) {
 	const t = getTranslations(lang);
 	const dialogRef = useRef<HTMLDialogElement>(null);
+	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		if (isOpen) {
-			dialogRef.current?.showModal();
-		} else {
-			dialogRef.current?.close();
-		}
-	}, [isOpen]);
+		setMounted(true);
+	}, []);
 
-	return (
+	useEffect(() => {
+		if (!mounted) return;
+		const dialog = dialogRef.current;
+		if (!dialog) return;
+
+		if (isOpen) {
+			if (!dialog.open) {
+				dialog.showModal();
+			}
+		} else {
+			if (dialog.open) {
+				dialog.close();
+			}
+		}
+	}, [isOpen, mounted]);
+
+	if (!mounted) return null;
+
+	return createPortal(
 		<dialog
 			ref={dialogRef}
 			className="modal modal-bottom sm:modal-middle"
@@ -71,6 +87,7 @@ export default function Modal({
 					close
 				</button>
 			</form>
-		</dialog>
+		</dialog>,
+		document.body,
 	);
 }

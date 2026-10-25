@@ -2,6 +2,7 @@ import type { User } from "better-auth";
 import { CalendarPlus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import Modal from "@/components/common/Modal.tsx";
+import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time.ts";
 import type { UserCourseWithDetails } from "@/db/schema";
 import {
 	downloadICSFile,
@@ -14,15 +15,15 @@ import { createTranslationHelper } from "@/lib/translation/utils.ts";
 interface Props {
 	user?: User | null;
 	lang?: string;
-	selectedYear: number;
-	selectedTerm: string;
+	selectedYear?: number;
+	selectedTerm?: string;
 }
 
 export default function IcalActions({
 	user,
 	lang = DEFAULT_LANG,
-	selectedYear,
-	selectedTerm,
+	selectedYear = DEFAULT_YEAR,
+	selectedTerm = DEFAULT_TERM,
 }: Props) {
 	const { t } = createTranslationHelper(lang);
 
