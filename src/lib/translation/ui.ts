@@ -107,7 +107,8 @@ const ja = {
 	"timetable.create.custom": "授業/予定を作成",
 
 	// iCal
-	"ical.export": "iCalエクスポート",
+	"ical.export": "カレンダーに追加",
+	"ical.add_to_calendar": "カレンダーに追加",
 	"ical.export_title": "時間割のエクスポート",
 	"ical.export_subtitle": "カレンダーアプリ用のICSファイルを書き出します",
 	"ical.start_date": "開始日",
@@ -262,7 +263,8 @@ const en = {
 	"timetable.create.custom": "Create Course/Schedule",
 
 	// iCal
-	"ical.export": "Export iCal",
+	"ical.export": "Add to Calendar",
+	"ical.add_to_calendar": "Add to Calendar",
 	"ical.export_title": "Export Timetable",
 	"ical.export_subtitle": "Export ICS file for your calendar app",
 	"ical.start_date": "Start Date",

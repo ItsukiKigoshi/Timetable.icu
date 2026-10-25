@@ -1,5 +1,5 @@
 import type { User } from "better-auth";
-import { CalendarArrowUp } from "lucide-react";
+import { CalendarPlus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import Modal from "@/components/common/Modal.tsx";
 import type { UserCourseWithDetails } from "@/db/schema";
@@ -131,19 +131,24 @@ export default function IcalActions({
 	const termLabel = t(termTranslationKey) || selectedTerm;
 
 	return (
-		<>
-			{/* Action button left to logout/user icon */}
+		<div className="w-full">
+			{/* Action button in user dropdown */}
 			<button
 				type="button"
 				onClick={() => {
+					document
+						.getElementById("user-dropdown")
+						?.classList.remove("dropdown-open");
+					if (document.activeElement instanceof HTMLElement) {
+						document.activeElement.blur();
+					}
 					setExportError(null);
 					setIsExportOpen(true);
 				}}
-				className="btn btn-circle w-10 h-10 shadow-inner ring-1 ring-base-content/10"
-				title={t("ical.export")}
-				aria-label={t("ical.export")}
+				className="btn bg-white text-black border-[#e5e5e5] w-full"
 			>
-				<CalendarArrowUp size={20} className="pointer-events-none" />
+				<CalendarPlus size={16} />
+				{t("ical.add_to_calendar")}
 			</button>
 
 			{/* Export Modal */}
@@ -228,11 +233,11 @@ export default function IcalActions({
 						onClick={handleGenerateICS}
 						className="btn btn-primary btn-md flex items-center justify-center gap-2 mt-2 w-full"
 					>
-						<CalendarArrowUp size={18} />
+						<CalendarPlus size={18} />
 						<span className="font-bold">{t("ical.export_btn")}</span>
 					</button>
 				</div>
 			</Modal>
-		</>
+		</div>
 	);
 }

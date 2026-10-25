@@ -58,14 +58,7 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 			</select>
 		</label>
 	</div>
-	<nav class="navbar-end flex items-center gap-1 sm:gap-2">
-		<IcalActions
-			client:load
-			user={user}
-			lang={lang}
-			selectedYear={Number(selectedYear)}
-			selectedTerm={selectedTerm}
-		/>
+	<nav class="navbar-end">
 		<div class="dropdown dropdown-end" id="user-dropdown">
 			<button
 				type="button"
@@ -89,8 +82,15 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 							{isLoggedIn ? t("header.synced") : t("header.login_to_sync")}
 						</h3>
 					</li>
-					<li class="w-full">
+					<li class="w-full flex flex-col gap-2">
 						<LoginButton client:load isLoggedIn={isLoggedIn} lang={lang} />
+						<IcalActions
+							client:load
+							user={user}
+							lang={lang}
+							selectedYear={Number(selectedYear)}
+							selectedTerm={selectedTerm}
+						/>
 					</li>
 					<li class="w-full -my-2">
 						<div class="divider opacity-20 w-full my-0"></div>
