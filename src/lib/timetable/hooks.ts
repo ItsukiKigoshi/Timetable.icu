@@ -29,8 +29,13 @@ export function useTimetable({
 			const cached = localStorage.getItem("guest_timetable");
 			if (cached) {
 				try {
-					const parsed = JSON.parse(cached);
-					setCourses(parsed);
+					const parsed = JSON.parse(cached) as UserCourseWithDetails[];
+					// 安全管理: ゲスト時は公式科目の教室情報を強制的に除去
+					const sanitized = parsed.map((c) => ({
+						...c,
+						room: c.type === "custom" ? c.room : null,
+					}));
+					setCourses(sanitized);
 				} catch (_e) {
 					setCourses(initialCourses);
 				}

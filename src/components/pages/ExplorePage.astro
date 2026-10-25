@@ -50,8 +50,11 @@ const slicedResults = hasNextPage
 	? rawResults.slice(0, limitPerPage)
 	: rawResults;
 
+const isAllowed = Boolean(user?.email?.endsWith("@icu.ac.jp"));
+
 const results = slicedResults.map((course) => ({
 	...course,
+	room: isAllowed ? course.room : null,
 	type: "official" as const,
 }));
 

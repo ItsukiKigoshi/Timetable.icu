@@ -57,6 +57,7 @@ export const useToggleCourse = ({
 				} else {
 					const newCourse: UserCourseWithDetails = {
 						...course,
+						room: course.type === "custom" ? course.room : null,
 						isVisible: true,
 					};
 					guestCourses.push(newCourse);

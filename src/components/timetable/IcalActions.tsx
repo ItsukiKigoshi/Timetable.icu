@@ -68,11 +68,16 @@ export default function IcalActions({
 				if (cached) {
 					try {
 						const parsed = JSON.parse(cached) as UserCourseWithDetails[];
-						const filtered = parsed.filter(
-							(c) =>
-								Number(c.year) === Number(selectedYear) &&
-								c.term === selectedTerm,
-						);
+						const filtered = parsed
+							.filter(
+								(c) =>
+									Number(c.year) === Number(selectedYear) &&
+									c.term === selectedTerm,
+							)
+							.map((c) => ({
+								...c,
+								room: c.type === "custom" ? c.room : null,
+							}));
 						setCoursesToExport(filtered);
 					} catch (e) {
 						console.error("Failed to parse guest_timetable", e);
