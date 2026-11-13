@@ -1,4 +1,5 @@
 import {
+	CalendarPlus,
 	Eye,
 	EyeOff,
 	Pencil,
@@ -6,12 +7,14 @@ import {
 	StickyNote,
 	Trash2,
 } from "lucide-react";
+import { useState } from "react";
+import CalendarExportModal from "@/components/timetable/CalendarExportModal.tsx";
 import { SWATCHES } from "@/constants/config.ts";
 import type { UserCourseWithDetails } from "@/db/schema";
 import { getSyllabusUrl } from "@/lib/course/utils.ts";
 import { useTranslation } from "@/lib/translation/context.tsx";
 
-// --- 授業の詳細: メモ, シラバス，表示非表示，削除 ---
+// --- 授業の詳細: メモ, シラバス，表示非表示，削除，カレンダー追加 ---
 const CourseDetailContent = ({
 	course,
 	toggleVisibility,
@@ -27,9 +30,10 @@ const CourseDetailContent = ({
 	updateColor: (course: UserCourseWithDetails, color: string | null) => void;
 	isSubmitting: number | string | null;
 }) => {
-	const { t, l } = useTranslation();
+	const { t, l, currentLang } = useTranslation();
 	const cId = course.id;
 	const isCustom = typeof course.id === "string";
+	const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
 
 	return (
 		<div className="flex flex-col gap-4 py-2">
@@ -123,6 +127,25 @@ const CourseDetailContent = ({
 					)}
 				</button>
 			</div>
+
+			{/* カレンダーに追加ボタン */}
+			<button
+				type="button"
+				onClick={() => setIsCalendarModalOpen(true)}
+				className="btn btn-md normal-case flex items-center justify-center gap-2 w-full border-base-300"
+			>
+				<CalendarPlus size={16} />
+				<span>{t("ical.add_to_calendar")}</span>
+			</button>
+
+			<CalendarExportModal
+				isOpen={isCalendarModalOpen}
+				onClose={() => setIsCalendarModalOpen(false)}
+				courses={[course]}
+				selectedYear={course.year}
+				selectedTerm={course.term}
+				lang={currentLang}
+			/>
 		</div>
 	);
 };

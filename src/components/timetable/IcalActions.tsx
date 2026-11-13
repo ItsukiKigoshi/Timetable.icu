@@ -1,14 +1,9 @@
 import type { User } from "better-auth";
 import { CalendarPlus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import Modal from "@/components/common/Modal.tsx";
+import CalendarExportModal from "@/components/timetable/CalendarExportModal.tsx";
 import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time.ts";
 import type { UserCourseWithDetails } from "@/db/schema";
-import {
-	downloadICSFile,
-	generateTimetableICS,
-	getDefaultTermDates,
-} from "@/lib/timetable/ical.ts";
 import { DEFAULT_LANG } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
@@ -27,29 +22,14 @@ export default function IcalActions({
 }: Props) {
 	const { t } = createTranslationHelper(lang);
 
-	// Export state
 	const [isExportOpen, setIsExportOpen] = useState(false);
-	const defaultDates = getDefaultTermDates(selectedYear, selectedTerm);
-	const [startDate, setStartDate] = useState(defaultDates.start);
-	const [endDate, setEndDate] = useState(defaultDates.end);
 	const [coursesToExport, setCoursesToExport] = useState<
 		UserCourseWithDetails[]
 	>([]);
 	const [isLoadingCourses, setIsLoadingCourses] = useState(false);
-	const [exportError, setExportError] = useState<string | null>(null);
-	const [isExporting, setIsExporting] = useState(false);
 
-	// Year / Term changed -> reset default dates
-	useEffect(() => {
-		const dates = getDefaultTermDates(selectedYear, selectedTerm);
-		setStartDate(dates.start);
-		setEndDate(dates.end);
-	}, [selectedYear, selectedTerm]);
-
-	// Load courses for export
 	const loadExportCourses = useCallback(async () => {
 		setIsLoadingCourses(true);
-		setExportError(null);
 		try {
 			if (user) {
 				const res = await fetch(
@@ -59,7 +39,10 @@ export default function IcalActions({
 					const data = (await res.json()) as {
 						courses?: UserCourseWithDetails[];
 					};
-					setCoursesToExport(data.courses || []);
+					const visibleCourses = (data.courses || []).filter(
+						(c) => c.isVisible !== false,
+					);
+					setCoursesToExport(visibleCourses);
 				} else {
 					setCoursesToExport([]);
 				}
@@ -72,7 +55,8 @@ export default function IcalActions({
 							.filter(
 								(c) =>
 									Number(c.year) === Number(selectedYear) &&
-									c.term === selectedTerm,
+									c.term === selectedTerm &&
+									c.isVisible !== false,
 							)
 							.map((c) => ({
 								...c,
@@ -95,50 +79,14 @@ export default function IcalActions({
 		}
 	}, [user, selectedYear, selectedTerm]);
 
-	// When export modal opens, load courses
 	useEffect(() => {
 		if (isExportOpen) {
 			loadExportCourses();
 		}
 	}, [isExportOpen, loadExportCourses]);
 
-	// Generate and download ICS
-	const handleGenerateICS = () => {
-		setExportError(null);
-		if (new Date(startDate) > new Date(endDate)) {
-			const msg = t("ical.date_error");
-			setExportError(msg);
-			alert(msg);
-			return;
-		}
-
-		setIsExporting(true);
-		try {
-			const icsContent = generateTimetableICS(coursesToExport, {
-				year: selectedYear,
-				term: selectedTerm,
-				startDateStr: startDate,
-				endDateStr: endDate,
-			});
-			const filename = `timetable_y${selectedYear}_${selectedTerm}.ics`;
-			downloadICSFile(icsContent, filename);
-			setIsExportOpen(false);
-		} catch (e: unknown) {
-			const msg =
-				e instanceof Error ? e.message : "Failed to generate ICS file.";
-			setExportError(msg);
-			alert(msg);
-		} finally {
-			setIsExporting(false);
-		}
-	};
-
-	const termTranslationKey = `term.${selectedTerm}` as Parameters<typeof t>[0];
-	const termLabel = t(termTranslationKey) || selectedTerm;
-
 	return (
 		<div className="w-full">
-			{/* Action button in user dropdown */}
 			<button
 				type="button"
 				onClick={() => {
@@ -148,7 +96,6 @@ export default function IcalActions({
 					if (document.activeElement instanceof HTMLElement) {
 						document.activeElement.blur();
 					}
-					setExportError(null);
 					setIsExportOpen(true);
 				}}
 				className="btn bg-white text-black border-[#e5e5e5] w-full"
@@ -157,93 +104,15 @@ export default function IcalActions({
 				{t("ical.add_to_calendar")}
 			</button>
 
-			{/* Export Modal */}
-			<Modal
+			<CalendarExportModal
 				isOpen={isExportOpen}
 				onClose={() => setIsExportOpen(false)}
-				title={t("ical.export_title")}
-				subtitle={`${selectedYear} ${termLabel}`}
+				courses={coursesToExport}
+				isLoading={isLoadingCourses}
+				selectedYear={selectedYear}
+				selectedTerm={selectedTerm}
 				lang={lang}
-			>
-				<div className="flex flex-col gap-4 py-2">
-					<div className="bg-base-200/60 p-3 rounded-lg border border-base-300">
-						<p className="font-semibold text-xs text-base-content/70 mb-1">
-							{t("ical.courses_to_export")}
-						</p>
-						{isLoadingCourses ? (
-							<div className="flex items-center gap-2 text-xs py-1">
-								<span className="loading loading-spinner loading-xs" />
-								<span>Loading...</span>
-							</div>
-						) : coursesToExport.length > 0 ? (
-							<div className="flex flex-col gap-1 max-h-32 overflow-y-auto">
-								<p className="text-sm font-bold">
-									{coursesToExport.length} 件の科目が対象です
-								</p>
-								<ul className="text-xs opacity-75 list-disc pl-4 space-y-0.5">
-									{coursesToExport.map((c) => (
-										<li key={`${c.type}-${c.id}`} className="truncate">
-											{("titleJa" in c && c.titleJa) ||
-												("titleEn" in c && c.titleEn) ||
-												("title" in c && c.title) ||
-												"Untitled"}
-										</li>
-									))}
-								</ul>
-							</div>
-						) : (
-							<p className="text-xs text-error font-medium">
-								{t("ical.no_courses_to_export")}
-							</p>
-						)}
-					</div>
-
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-						<label className="form-control w-full">
-							<span className="label py-1">
-								<span className="label-text font-bold text-xs">
-									{t("ical.start_date")}
-								</span>
-							</span>
-							<input
-								type="date"
-								value={startDate}
-								onChange={(e) => setStartDate(e.target.value)}
-								className="input input-bordered input-sm md:input-md w-full"
-							/>
-						</label>
-						<label className="form-control w-full">
-							<span className="label py-1">
-								<span className="label-text font-bold text-xs">
-									{t("ical.end_date")}
-								</span>
-							</span>
-							<input
-								type="date"
-								value={endDate}
-								onChange={(e) => setEndDate(e.target.value)}
-								className="input input-bordered input-sm md:input-md w-full"
-							/>
-						</label>
-					</div>
-
-					{exportError && (
-						<div className="text-error text-xs font-semibold px-1">
-							{exportError}
-						</div>
-					)}
-
-					<button
-						type="button"
-						disabled={coursesToExport.length === 0 || isExporting}
-						onClick={handleGenerateICS}
-						className="btn btn-primary btn-md flex items-center justify-center gap-2 mt-2 w-full"
-					>
-						<CalendarPlus size={18} />
-						<span className="font-bold">{t("ical.export_btn")}</span>
-					</button>
-				</div>
-			</Modal>
+			/>
 		</div>
 	);
 }
