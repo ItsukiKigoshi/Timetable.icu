@@ -107,15 +107,7 @@ const ja = {
 	"timetable.create.custom": "授業/予定を作成",
 
 	// iCal
-	"ical.add_to_calendar": "カレンダーに追加",
-	"ical.export_title": "カレンダーに追加",
-	"ical.select_app": "追加先のカレンダーを選択",
-	"ical.google": "Google カレンダー",
-	"ical.apple": "Apple カレンダー",
-	"ical.microsoft": "Microsoft Outlook",
 	"ical.download_ics": "iCal (.ics) ダウンロード",
-	"ical.courses_to_export": "対象の科目",
-	"ical.courses_count": "{count} 件の科目が対象です",
 	"ical.no_courses_to_export": "この学期に登録されている科目がありません。",
 
 	"custom.create": "授業/予定を作成",
@@ -263,15 +255,7 @@ const en = {
 	"timetable.create.custom": "Create Course/Schedule",
 
 	// iCal
-	"ical.add_to_calendar": "Add to Calendar",
-	"ical.export_title": "Add to Calendar",
-	"ical.select_app": "Choose Calendar App",
-	"ical.google": "Google Calendar",
-	"ical.apple": "Apple Calendar",
-	"ical.microsoft": "Microsoft Outlook",
 	"ical.download_ics": "Download iCal (.ics)",
-	"ical.courses_to_export": "Target Courses",
-	"ical.courses_count": "{count} course(s) will be added",
 	"ical.no_courses_to_export": "No courses found for this term.",
 
 	"custom.create": "Create Course/Schedule",

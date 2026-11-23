@@ -1,9 +1,9 @@
 import type { User } from "better-auth";
 import { CalendarPlus } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import CalendarExportModal from "@/components/timetable/CalendarExportModal.tsx";
+import { useState } from "react";
 import { DEFAULT_TERM, DEFAULT_YEAR } from "@/constants/time.ts";
 import type { UserCourseWithDetails } from "@/db/schema";
+import { downloadICSFile, generateTimetableICS } from "@/lib/timetable/ical.ts";
 import { DEFAULT_LANG } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
 
@@ -21,16 +21,21 @@ export default function IcalActions({
 	selectedTerm = DEFAULT_TERM,
 }: Props) {
 	const { t } = createTranslationHelper(lang);
+	const [isExporting, setIsExporting] = useState(false);
 
-	const [isExportOpen, setIsExportOpen] = useState(false);
-	const [coursesToExport, setCoursesToExport] = useState<
-		UserCourseWithDetails[]
-	>([]);
-	const [isLoadingCourses, setIsLoadingCourses] = useState(false);
+	const handleInstantDownload = async () => {
+		if (isExporting) return;
 
-	const loadExportCourses = useCallback(async () => {
-		setIsLoadingCourses(true);
+		// ドロップダウンを閉じる
+		document.getElementById("user-dropdown")?.classList.remove("dropdown-open");
+		if (document.activeElement instanceof HTMLElement) {
+			document.activeElement.blur();
+		}
+
+		setIsExporting(true);
 		try {
+			let coursesToExport: UserCourseWithDetails[] = [];
+
 			if (user) {
 				const res = await fetch(
 					`/api/user-courses?year=${selectedYear}&term=${selectedTerm}`,
@@ -39,80 +44,62 @@ export default function IcalActions({
 					const data = (await res.json()) as {
 						courses?: UserCourseWithDetails[];
 					};
-					const visibleCourses = (data.courses || []).filter(
+					coursesToExport = (data.courses || []).filter(
 						(c) => c.isVisible !== false,
 					);
-					setCoursesToExport(visibleCourses);
-				} else {
-					setCoursesToExport([]);
 				}
 			} else {
 				const cached = localStorage.getItem("guest_timetable");
 				if (cached) {
-					try {
-						const parsed = JSON.parse(cached) as UserCourseWithDetails[];
-						const filtered = parsed
-							.filter(
-								(c) =>
-									Number(c.year) === Number(selectedYear) &&
-									c.term === selectedTerm &&
-									c.isVisible !== false,
-							)
-							.map((c) => ({
-								...c,
-								room: c.type === "custom" ? c.room : null,
-							}));
-						setCoursesToExport(filtered);
-					} catch (e) {
-						console.error("Failed to parse guest_timetable", e);
-						setCoursesToExport([]);
-					}
-				} else {
-					setCoursesToExport([]);
+					const parsed = JSON.parse(cached) as UserCourseWithDetails[];
+					coursesToExport = parsed
+						.filter(
+							(c) =>
+								Number(c.year) === Number(selectedYear) &&
+								c.term === selectedTerm &&
+								c.isVisible !== false,
+						)
+						.map((c) => ({
+							...c,
+							room: c.type === "custom" ? c.room : null,
+						}));
 				}
 			}
-		} catch (e) {
-			console.error("Failed to load export courses", e);
-			setCoursesToExport([]);
-		} finally {
-			setIsLoadingCourses(false);
-		}
-	}, [user, selectedYear, selectedTerm]);
 
-	useEffect(() => {
-		if (isExportOpen) {
-			loadExportCourses();
+			if (coursesToExport.length === 0) {
+				alert(t("ical.no_courses_to_export"));
+				return;
+			}
+
+			const icsContent = generateTimetableICS(coursesToExport, {
+				year: selectedYear,
+				term: selectedTerm,
+			});
+			const filename = `timetable_y${selectedYear}_${selectedTerm}.ics`;
+			downloadICSFile(icsContent, filename);
+		} catch (e) {
+			console.error("Failed to export iCal file:", e);
+			alert(e instanceof Error ? e.message : "Failed to generate ICS file.");
+		} finally {
+			setIsExporting(false);
 		}
-	}, [isExportOpen, loadExportCourses]);
+	};
 
 	return (
 		<div className="w-full">
 			<button
 				type="button"
-				onClick={() => {
-					document
-						.getElementById("user-dropdown")
-						?.classList.remove("dropdown-open");
-					if (document.activeElement instanceof HTMLElement) {
-						document.activeElement.blur();
-					}
-					setIsExportOpen(true);
-				}}
+				disabled={isExporting}
+				onClick={handleInstantDownload}
 				className="btn bg-white text-black border-[#e5e5e5] w-full"
 			>
-				<CalendarPlus size={16} />
-				{t("ical.add_to_calendar")}
+				{isExporting ? (
+					<span className="loading loading-spinner loading-xs" />
+				) : (
+					<CalendarPlus size={16} />
+				)}
+				{t("ical.download_ics")}
 			</button>
-
-			<CalendarExportModal
-				isOpen={isExportOpen}
-				onClose={() => setIsExportOpen(false)}
-				courses={coursesToExport}
-				isLoading={isLoadingCourses}
-				selectedYear={selectedYear}
-				selectedTerm={selectedTerm}
-				lang={lang}
-			/>
 		</div>
 	);
 }
