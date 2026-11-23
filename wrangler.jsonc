@@ -19,12 +19,12 @@
 		}
 	},
 	"d1_databases": [
-    {
-      "binding": "timetable_icu",
-      "database_name": "timetable-icu",
-      "database_id": "ba560c43-1e90-4f32-84fc-6547180bf478"
-    }
-  ],
+		{
+			"binding": "timetable_icu",
+			"database_name": "timetable-icu",
+			"database_id": "ba560c43-1e90-4f32-84fc-6547180bf478"
+		}
+	],
 	"vars": {
 		"BETTER_AUTH_URL": "https://timetable.icu",
 		"PUBLIC_BASE_URL": "https://timetable.icu"
