@@ -30,7 +30,6 @@ scripts/out/*.json
 scripts/out/*.sql
 ## But still keeps the samle data
 !scripts/out/dist_courses_sample.json
-!scripts/out/sync_courses_sample.sql
 
 
 *.html
