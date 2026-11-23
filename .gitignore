@@ -25,8 +25,12 @@ pnpm-debug.log*
 
 .wrangler/
 
+# Remove Generated Data
 scripts/out/*.json
 scripts/out/*.sql
+## But still keeps the samle data
+!scripts/out/dist_courses_sample.json
+
 
 *.html
 !public/*.html

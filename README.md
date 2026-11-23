@@ -123,6 +123,51 @@ ICU生の時間割・履修計画アプリの決定版
 
 技術構成はこちらの記事でも解説されています: [国際基督教大学の非公式時間割/履修計画アプリ「ICUのじかんわり」をAstro+Cloudflare Workers+D1でつくりました | Zenn](https://zenn.dev/itsukikigoshi/articles/timetable-icu)
 
+---
+
+## 🛠️ Getting Started (開発環境のセットアップ)
+
+### 1. Bun・uv のインストール（未インストールの場合）
+公式ドキュメントの手順に従ってインストールしてください:
+- **Bun**: https://bun.com/docs/installation
+- **uv** (Pythonスクリプト実行用): https://docs.astral.sh/uv/getting-started/installation/
+
+### 2. プロジェクトディレクトリへ移動 & 依存関係のインストール
+```bash
+cd {path to where the project exist on your computer}
+bun install
+```
+
+### 3. ローカル SQLite (D1) インスタンスの作成とマイグレーション
+```bash
+bun run db:migrate:local
+```
+\* 実行中に `Your database may not be available to serve requests during the migration, continue? …` と聞かれたら `y` を押してください
+
+### 4. カテゴリーデータの初期投入
+```bash
+bun wrangler d1 execute timetable_icu --file=./src/db/data/seed_categories.sql
+```
+
+### 5. サンプルデータの変換と投入
+サンプルのJSONデータからSQLファイルを生成します:
+```bash
+uv run --project scripts python scripts/to_sql.py -i dist_courses_sample.json -o sync_courses_sample.sql
+```
+
+生成したSQLを実行して，ローカルのSQLiteにサンプルデータをUpsertします:
+```bash
+bun run wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses_sample.sql
+```
+
+### 6. ローカル開発サーバーの起動
+```bash
+bun run dev
+```
+起動後，`http://localhost:4321` で確認できます。
+
+---
+
 ## 🚀 Project Structure
 
 ```text
