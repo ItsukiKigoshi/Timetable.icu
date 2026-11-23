@@ -6,9 +6,7 @@ Timetable.icuの開発に興味を持っていただきありがとうござい�
 ## 🛠️ Getting Started: 開発環境のセットアップ
 
 ### 1. GitLabへのSSHキー登録（未設定の場合）
-リポジトリのクローンやプッシュをスムーズに行うため，あらかじめGitLabアカウントにSSHキーを登録してください．
-手順は以下の公式ドキュメントを参照してください:
-- **GitLab 公式ドキュメント**: [GitLabアカウントにSSHキーを追加する](https://docs.gitlab.com/ja-jp/user/ssh/#add-an-ssh-key-to-your-gitlab-account)
+リポジトリのクローンやプッシュをスムーズに行うため，あらかじめGitLabアカウントにSSHキーを登録してください: [GitLabアカウントにSSHキーを追加する](https://docs.gitlab.com/ja-jp/user/ssh/#add-an-ssh-key-to-your-gitlab-account)
 
 ### 2. Bun・uv のインストール（未インストールの場合）
 公式ドキュメントの手順に従ってインストールしてください:
@@ -17,7 +15,7 @@ Timetable.icuの開発に興味を持っていただきありがとうござい�
 
 ### 3. リポジトリのクローン＆依存関係のインストール
 ```bash
-git clone git@gitlab.com:<group-or-user>/timetable-icu.git
+git clone git@gitlab.com:ItsukiKigoshi/timetable.icu.git
 cd timetable-icu
 bun install
 ```
@@ -127,7 +125,7 @@ bun run db:migrate:remote
 
 ---
 
-## Course Data Insertion （授業データの更新フロー）
+## 授業データの挿入/更新
 
 シラバスのHTMLからJSONを生成し，D1データベースへ同期する手順です．
 
