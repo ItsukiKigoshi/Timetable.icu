@@ -107,7 +107,6 @@ const ja = {
 	"timetable.create.custom": "授業/予定を作成",
 
 	// iCal
-	"ical.export": "カレンダーに追加",
 	"ical.add_to_calendar": "カレンダーに追加",
 	"ical.export_title": "カレンダーに追加",
 	"ical.select_app": "追加先のカレンダーを選択",
@@ -264,7 +263,6 @@ const en = {
 	"timetable.create.custom": "Create Course/Schedule",
 
 	// iCal
-	"ical.export": "Add to Calendar",
 	"ical.add_to_calendar": "Add to Calendar",
 	"ical.export_title": "Add to Calendar",
 	"ical.select_app": "Choose Calendar App",
