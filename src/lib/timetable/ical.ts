@@ -1,18 +1,10 @@
 import ical, { ICalEventRepeatingFreq } from "ical-generator";
-import academicCalendarData from "@/constants/academic-calendar.json";
-import { PERIODS } from "@/constants/time";
+import {
+	ACADEMIC_CALENDAR,
+	PERIODS,
+	type TermCalendarInfo,
+} from "@/constants/time";
 import type { UserCourseWithDetails } from "@/db/schema";
-
-export interface TermCalendarInfo {
-	startDate: string;
-	endDate: string;
-	holidays: string[];
-}
-
-const academicCalendar = academicCalendarData as Record<
-	string,
-	Record<string, TermCalendarInfo | undefined> | undefined
->;
 
 const DAY_TO_INT: Record<string, number> = {
 	mon: 1,
@@ -39,7 +31,7 @@ export function getTermCalendarInfo(
 	year: number,
 	term: string,
 ): TermCalendarInfo {
-	const entry = academicCalendar[String(year)]?.[term];
+	const entry = ACADEMIC_CALENDAR[String(year)]?.[term];
 	if (entry) return entry;
 
 	const [startDate, endDate] = (FALLBACK_DATES[term] ?? FALLBACK_DATES.Spring)(
@@ -166,7 +158,7 @@ export function generateTimetableICS(
 	const calendar = ical({
 		name: `Timetable ${year} ${term}`,
 		prodId: {
-			company: "timetable.icu",
+			company: "Timetable.icu Team",
 			product: "Timetable.icu",
 			language: "JA",
 		},
