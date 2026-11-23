@@ -2,12 +2,12 @@
 ICU生の時間割・履修計画アプリの決定版
 
 ## できること
-### 🔎あなたにピッタリのコースを見つける
+### 🔎 あなたにピッタリのコースを見つける
 - 公式授業一覧から取得されたすべてのコースを検索
-### 📅完璧な時間割を組む
--  Long 4, 5, 6, 7など、ICUならではのコマ割りも表示
-### 🔄マルチデバイス同期
--  ログインしてすべてのデバイスで最新の時間割を共有
+### 📅 完璧な時間割を組む
+- Long 4, 5, 6, 7など，ICUならではのコマ割りも表示
+### 🔄 マルチデバイス同期
+- ログインしてすべてのデバイスで最新の時間割を共有
 
 ## Screenshots
 | Page | Screenshots |
@@ -16,329 +16,80 @@ ICU生の時間割・履修計画アプリの決定版
 | Explore | ![Explore](https://gitlab.com/-/project/81459553/uploads/9cc6a871a66a6ae2102d1c736075e34c/Screen_Shot_2026-04-23_at_23.58.59.png) |
 | Timetable | ![Timetable](https://gitlab.com/-/project/81459553/uploads/e1528b102b0561314df2642b05f54a64/Screen_Shot_2026-04-23_at_23.58.54.png) |
 
-# 目標
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** [Astro](https://astro.build/), [React](https://react.dev/), [Tailwind CSS](https://tailwindcss.com/), [DaisyUI](https://daisyui.com/), TypeScript
+- **Backend:** [Astro](https://astro.build/), [BetterAuth](https://better-auth.com/) (Google OAuth), [Drizzle ORM](https://orm.drizzle.team/)
+- **Infra:** [Cloudflare Workers](https://www.cloudflare.com/developer-platform/products/workers/), [Cloudflare D1](https://developers.cloudflare.com/d1/)
+- **Test / Runtime:** [Playwright](https://playwright.dev/), [Bun](https://bun.com/)
+
+> 技術構成はこちらの記事でも解説されています:
+> [国際基督教大学の非公式時間割/履修計画アプリ「ICUのじかんわり」をAstro+Cloudflare Workers+D1でつくりました | Zenn](https://zenn.dev/itsukikigoshi/articles/timetable-icu)
+
+---
+
+## 💻 Development & Contributing
+
+開発環境のセットアップ，データベースのマイグレーション手順，授業データのスクレイピング方法などの詳細は **[CONTRIBUTING.md](./CONTRIBUTING.md)** をご覧ください
+
+---
+
+## 🎯 目標
 
 <!-- - [ ] ようこに卒業までつかってもらう -->
 - [x] 100人のTermly Active UserをICU内で獲得する
     - [ ] Google / DuckDuckGoで「ICU 履修登録」「ICU 時間割」「ICU academic planning」「ICU registration」で1番目
--  [x] 私が卒業しても自動で更新される状態にする
+- [x] 私が卒業しても自動で更新される状態にする
   - [x] 授業データを公開情報のみで構築する
     - [x] 教室情報は各自に打ち込んでもらえるように
     - [x] regnoはsyllabus公開後にリンクから取得
-    - [ ] GitLab CI/CD?
-      
-# 大切にしたいこと
+    - [x] GitLab CI/CD
 
-- [x] とにかく時間割作成に使いやすいものである
+### 大切にしたいこと
+- [x] **とにかく時間割作成に使いやすいものである**
     - [x] long時間割対応 (しょうもないことだがアイデンティティ)
     - [x] 軽量 (めざせ 全ページPageSpeedInsights 100): 全ページ97点以上達成，充分だろう
-- [x] ICUらしくある
+- [x] **ICUらしくある**
     - [x] いろいろなものがひしめくリベラルアーツの感じを楽しく表現する
     <!-- - [x] 隠し要素 --> 
-- [ ] プロジェクトとして持続可能なものである
+- [ ] **プロジェクトとして持続可能なものである**
     - [ ] 後輩に引き継ぐ前提で作る，その価値があるものにする
-    - [ ] 後進育成
-      - [ ] Web/アプリ開発入門
-      - [ ] ハッカソン
+    - [ ] 後進育成（Web/アプリ開発入門，ハッカソン）
     - [x] オープンソース
-    - [ ] ICUのいろいろな団体とコラボする
-    - [ ] できればCTLなどでも使ってもらいたい
+    - [ ] ICUのいろいろな団体とコラボする / CTLなどでも使ってもらいたい
     - [x] 木越が責任を持って取り組む
-- [ ] Transparency
+- [ ] **Transparency**
     - [ ] Share Issues, Feature Requests
     - [ ] 透明性のある予算と，ちゃんと収支均衡を取る
 
-# 挑戦したいこと
-
-- [ ] PR
-    - [ ] 対面で宣伝
-    - [ ] Instagram等でICU関連の団体/個人に宣伝してもらう
-    - [ ] 受験生にリーチ
-        - [ ] 「こんなサイトを学生が作る大学なんだ！」+入学後に使ってもらう
-- [ ] コンポーネントテスト
+### 挑戦したいこと
+- [ ] PR（対面宣伝，Instagram等での連携，受験生へのリーチ）
+- [ ] コンポーネントテストの拡充
 - [x] ちゃんと[Webアナリティクス](https://www.cloudflare.com/application-services/products/analytics/)を取って開発の励みにする
 
-# ライバル
+---
 
+<details>
+<summary>歴代ICU時間割アプリの歴史・競合調査・参考情報</summary>
+
+### ライバル
 - [ICUrriculum](https://icu-courses.com)
-- [Timetable4ICU](https://www.timetable4icu.com/): 2026のスケジュールは更新されていない
+- [Timetable4ICU](https://www.timetable4icu.com/): ~~2026のスケジュールは更新されていない~~
 - すごい時間割
 - Penmark
 
-# 参考
+### 歴代のTimetable for ICU
+- **過去のTimetable for ICU**
+  - **1代目「ICUTTABLE」**: 不明
+  - **2代目「ICUTTABLE#2」**: [開発者インタビュー](http://weeklygiants.co/?p=1805) / 新井友朗さん（ID17-18か？）
+  - **3代目「Timetable For ICU」**: [私の芽―ICU時間割アプリを作る](http://weeklygiants.co/?p=8872) / 千葉彌平さん（ID19） ([GitHub](https://github.com/YasuChiba/TimeTableForICU-ios-public) / [Twitter](https://x.com/TimeTableForICU) / [Facebook](https://www.facebook.com/timetableforicu/))
+  - **4代目「Timetable4ICU」**: Kohshi Yamaguchi (ID24-25?) ([Site](https://www.timetable4icu.com/) / [GitHub](https://github.com/kohshi54/Timetable4ICU) / [Twitter](https://x.com/timetable4icu))
 
+### 参考になりそうなサイト
 - [Hupass](https://hupass.hu-jagajaga.com/)
 - [現在の時間割](https://www.icu.ac.jp/news/2406181000.html)
 - Twinte
 - [Webサービス公開前のチェックリスト](https://zenn.dev/catnose99/articles/547cbf57e5ad28)
-- 過去のTimetable for icu
-  - 1代目「ICUTTABLE」
-    - 不明
-  - 2代目「ICUTTABLE#2」: [ICU生向け時間割アプリ「ICUTTABLE#2」開発者インタビュー](http://weeklygiants.co/?p=1805)
-    - 新井友朗さん（ID17-18か？）
-  - 3代目「Timetable For ICU」:  [私の芽―ICU時間割アプリを作る](http://weeklygiants.co/?p=8872)
-    - 千葉彌平さん（ID19; お会いしたことある, 確か平島大先生のご紹介?） 
-        - 課題: Apple Developers Programの登録料を賄えない
-    - [GitHub](https://github.com/YasuChiba/TimeTableForICU-ios-public)
-    - [Twitter](https://x.com/TimeTableForICU)
-    - [Facebook](https://www.facebook.com/timetableforicu/)
-  - 4代目 : [Timetable4ICU - 国際基督教大学の時間割アプリ](https://www.timetable4icu.com/)
-    - Kohshi Yamaguchi (ID24-25?; お会いしたことある)
-      - Apple Developers Programの登録料は気にならないとお会いしたときに仰っていた
-    - 3代目のスクリーンショットと比較する限り，3代目を引き継いだ？
-    - [GitHub](https://github.com/kohshi54/Timetable4ICU)
-    - [Twitter](https://x.com/timetable4icu)
-
----
-
-# Development
-
-## 技術選定
-
-### Frontend
-
-- [Astro](https://astro.build/)
-- [React](https://react.dev/)
-- [Tailwindcss](https://tailwindcss.com/)
-- [DaisyUI](https://daisyui.com/)
-- [TypeScript](https://www.typescriptlang.org/)
-
-### Backend
-
-- [Astro](https://astro.build/)
-- [BetterAuth](https://better-auth.com/) (Google OAuth)
-- [Drizzle ORM](https://orm.drizzle.team/)
-- [TypeScript](https://www.typescriptlang.org/)
-
-### Infra
-
-- [Cloudflare Workers](https://www.cloudflare.com/developer-platform/products/workers/)
-- [Cloudflare D1](https://developers.cloudflare.com/d1/)
-
-### Test
-- [Playwright](https://playwright.dev/)
-
-### Runtime/Package Manager
-- [Bun](https://bun.com/)
-
-技術構成はこちらの記事でも解説されています: [国際基督教大学の非公式時間割/履修計画アプリ「ICUのじかんわり」をAstro+Cloudflare Workers+D1でつくりました | Zenn](https://zenn.dev/itsukikigoshi/articles/timetable-icu)
-
----
-
-## 🛠️ Getting Started (開発環境のセットアップ)
-
-### 1. Bun・uv のインストール（未インストールの場合）
-公式ドキュメントの手順に従ってインストールしてください:
-- **Bun**: https://bun.com/docs/installation
-- **uv** (Pythonスクリプト実行用): https://docs.astral.sh/uv/getting-started/installation/
-
-### 2. プロジェクトディレクトリへ移動 & 依存関係のインストール
-```bash
-cd {path to where the project exist on your computer}
-bun install
-```
-
-### 3. ローカル SQLite (D1) インスタンスの作成とマイグレーション
-```bash
-bun run db:migrate:local
-```
-\* 実行中に `Your database may not be available to serve requests during the migration, continue? …` と聞かれたら `y` を押してください
-
-### 4. カテゴリーデータの初期投入
-```bash
-bun wrangler d1 execute timetable_icu --file=./src/db/data/seed_categories.sql
-```
-
-### 5. サンプルデータの変換と投入
-サンプルのJSONデータからSQLファイルを生成します:
-```bash
-uv run --project scripts python scripts/to_sql.py -i dist_courses_sample.json -o sync_courses_sample.sql
-```
-
-生成したSQLを実行して，ローカルのSQLiteにサンプルデータをUpsertします:
-```bash
-bun run wrangler d1 execute timetable_icu --file=./scripts/out/sync_courses_sample.sql
-```
-
-### 6. ローカル開発サーバーの起動
-```bash
-bun run dev
-```
-起動後，`http://localhost:4321` で確認できます。
-
----
-
-## 🚀 Project Structure
-
-```text
-/
-├── migrations/
-│   └── migration.sql
-├── public/
-│   └── favicon.svg
-├── scripts/
-│   ├── data/
-│   │   ├── ehandbook/  // 一般公開されているシラバスページ（HTML）はここに入れる
-│   │   └── icumap/     // 学生向けのシラバスページ（HTML）はここに入れる
-│   └── parser.py
-├── src/
-│   ├── assets/
-│   │   └── astro.svg
-│   ├── components/
-│   │   └── Component.astro
-│   ├── constants/
-│   │   └── config.ts // Constants used globally
-│   ├── db/
-│   │   ├── data/
-│   │   └── schema/
-│   ├── lib/
-│   │   └── server.ts // schema definitions, auth-related files
-│   ├── pages/
-│   │   ├── api/
-│   │   │   └── api.ts
-│   │   ├── index.astro
-│   │   └── en/
-│   │       └── index.astro
-│   ├── styles/
-│   │   └── global.css
-│   ├── env.d.ts // Type for Astro
-│   └── middleware.ts
-└── package.json
-```
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command               | Action                                           |
-|:----------------------|:-------------------------------------------------|
-| `bun install`        | Installs dependencies                            |
-| `bun dev`            | Starts local dev server at `localhost:4321`      |
-| `bun run build`      | Build your production site to `./dist/`          |
-| `bun preview`        | Preview your build locally, before deploying     |
-| `bun astro ...`      | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help`| Get help using the Astro CLI                     |
-
-Run Test
-```bash
-bun exec playwright test
-```
-
-Format Code
-```bash
-bun run format
-```
-
-Create types from wrangler.jsonc
-
-```bash
-bun wrangler types
-```
-
-### Schema Definition, Migration
-
-Create schema for BetterAuth
-
-```bash
-bun dlx auth@latest generate --config=./src/lib/auth/cli.ts --output=./src/db/schema/auth.ts
-```
-
-Create migration file by Drizzle Kit
-`--custom` Create Empty Migration File
-`--name=clear_user_name_image` Set Custom Name on Migration File
-```bash
-bun exec drizzle-kit generate
-```
-
-一度生成したmigrationファイルをなかったことにする
-
-```bash
-bun exec drizzle-kit drop
-```
-
-Migration to D1
-
-はじめに一度のみ，コースのカテゴリーを入れてあげる必要がある
-```bash
-# Local
-bun wrangler d1 execute timetable_icu --file=./src/db/data/seed_categories.sql
-# Remote
-bun wrangler d1 execute timetable_icu --remote --file=./src/db/data/seed_categories.sql
-```
-
-
-Remoteは1度目は通らないことがあるが2回目やればいけるときがある
-
-```bash
-bun run db:migrate:local
-```
-
-```bash
-bun run db:migrate:remote
-```
-
-もし外部キー制約が通らない場合
-
-```bash
-bun wrangler d1 execute timetable_icu --remote --file=./migrations/0012_smart_mojo.sql
-```
-
-などとしてmigration出来るが，これではD1のmigration履歴が残らないため，上記execute後に上記
-sqlファイルの中身を一旦空にしてapplyする方法がある．私は一度これをやってPasskey Tableを消してしまったので推奨しない．
--->しかし，wrangler applyではPRAGMA foreign_keys = OFF;が勝手に無効化されることがあるので，bun wrangler d1 executeでやらなければいけない場面もありそう．
-
-Debug with Cloudflare Environment
-
-```bash
-bun run build && bun x wrangler dev
-```
-
-D1でのSQL文実行例
-```bash
-bun wrangler d1 execute timetable_icu --file=scripts/out/sync_courses.sql
-```
-
-### Corse data insertion
-
-Create JSON from HTML
-
-```bash
-bun run db:scrape:icumap    # 学生専用サイトからダウンロードしたHTMLがある前提
-bun run db:scrape:ehandbook # 公開情報からダウンロードしたHTMLがある前提
-```
-
-Local DBにJSONからcourses/categoriesを入れる
-
-```bash
-bun run db:push:local
-```
-
-HTML->JSON->Local DBを一括で実行
-
-```bash
-bun run db:sync:local
-```
-
-Remote DBにJSONからcourses/categoriesを入れる
-
-```bash
-bun run db:push:remote
-```
-
-HTML->JSON->Remote DBを一括で実行
-
-```bash
-bun run db:sync:remote
-```
-
-ライセンス出力
-
-```bash
-bun x generate-license-file --input package.json --output CREDITS
-```
-
-リモートのログ出力
-
-```bash
-bun wrangler tail
-```
+</details>
