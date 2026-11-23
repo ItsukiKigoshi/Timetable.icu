@@ -108,7 +108,6 @@ const ja = {
 
 	// iCal
 	"ical.download_ics": "カレンダーに追加 (.ics)",
-	"ical.no_courses_to_export": "この学期に登録されている科目がありません．",
 	"ical.error_generate": "予定ファイルの生成に失敗しました。",
 
 	"custom.create": "授業/予定を作成",
@@ -257,7 +256,6 @@ const en = {
 
 	// iCal
 	"ical.download_ics": "Export to Calendar (.ics)",
-	"ical.no_courses_to_export": "No courses found for this term.",
 	"ical.error_generate": "Failed to generate schedule file.",
 
 	"custom.create": "Create Course/Schedule",
