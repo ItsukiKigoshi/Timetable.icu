@@ -1,4 +1,9 @@
+# Usage: python to_sql.py [-i INPUT_FILE] [-o OUTPUT_FILE]
+# Defaults: -i dist_courses.json -o sync_courses.sql (under scripts/out)
+
+import argparse
 import json
+import os
 import re
 from datetime import datetime, timezone
 
@@ -14,12 +19,16 @@ def escape_sql(val):
     return f"'{safe_val}'"
 
 
-def generate_sql():
+def generate_sql(input_file="dist_courses.json", output_file="sync_courses.sql"):
+    base_dir = "scripts/out"
+    input_path = os.path.join(base_dir, os.path.basename(input_file))
+    output_path = os.path.join(base_dir, os.path.basename(output_file))
+
     try:
-        with open("./scripts/out/dist_courses.json", "r", encoding="utf-8") as f:
+        with open(input_path, "r", encoding="utf-8") as f:
             raw_data = json.load(f)
     except FileNotFoundError:
-        print("❌ dist_courses.json not found.")
+        print(f"❌ {os.path.basename(input_path)} not found.")
         return
 
     # Deduplicate items
@@ -127,10 +136,24 @@ def generate_sql():
 
     output.append("PRAGMA foreign_keys = ON;")
 
-    with open("scripts/out/sync_courses.sql", "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(output))
-    print(f"✅ Generated sync_courses.sql with Upsert ({len(data)} courses)")
+    print(f"✅ Generated {output_path} with Upsert ({len(data)} courses)")
 
 
 if __name__ == "__main__":
-    generate_sql()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-i",
+        "--input",
+        default="dist_courses.json",
+        help="Input JSON filename inside scripts/out",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default="sync_courses.sql",
+        help="Output SQL filename inside scripts/out",
+    )
+    args = parser.parse_args()
+    generate_sql(args.input, args.output)
