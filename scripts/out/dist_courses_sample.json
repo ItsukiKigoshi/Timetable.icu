@@ -1,0 +1,122 @@
+[
+	{
+		"rgNo": "10101",
+		"status": "active",
+		"year": 2026,
+		"term": "Spring",
+		"courseCode": "GEM101",
+		"titleJa": "Ｍ１：魔法学入門",
+		"titleEn": "M1: Introduction to Magic Studies",
+		"instructor": "Minerva McGonagall",
+		"room": "Transfiguration",
+		"language": "E",
+		"categoryId": "C003",
+		"units": 3.0,
+		"schedules": [
+			{
+				"dayOfWeek": "Mon",
+				"startTime": "08:50",
+				"endTime": "10:05",
+				"period": 1,
+				"isLong": false,
+				"isAlternative": false,
+				"altGroupId": null
+			},
+			{
+				"dayOfWeek": "Wed",
+				"startTime": "08:50",
+				"endTime": "10:05",
+				"period": 1,
+				"isLong": false,
+				"isAlternative": false,
+				"altGroupId": null
+			},
+			{
+				"dayOfWeek": "Fri",
+				"startTime": "08:50",
+				"endTime": "10:05",
+				"period": 1,
+				"isLong": false,
+				"isAlternative": false,
+				"altGroupId": null
+			}
+		]
+	},
+	{
+		"rgNo": "20201",
+		"status": "active",
+		"year": 2026,
+		"term": "Autumn",
+		"courseCode": "GED101",
+		"titleJa": "D1: 探偵学入門",
+		"titleEn": "D1: Introduction to Detective Studies",
+		"instructor": "John H. Watson",
+		"room": "221B",
+		"language": "J",
+		"categoryId": "C003",
+		"units": 3.0,
+		"schedules": [
+			{
+				"dayOfWeek": "Tue",
+				"startTime": "13:20",
+				"endTime": "15:15",
+				"period": 4,
+				"isLong": true,
+				"isAlternative": false,
+				"altGroupId": null
+			},
+			{
+				"dayOfWeek": "Thu",
+				"startTime": "13:20",
+				"endTime": "15:15",
+				"period": 4,
+				"isLong": true,
+				"isAlternative": false,
+				"altGroupId": null
+			}
+		]
+	},
+	{
+		"rgNo": "30301",
+		"status": "active",
+		"year": 2026,
+		"term": "Winter",
+		"courseCode": "ISC399",
+		"titleJa": "コンピュータアニメーション入門",
+		"titleEn": "Introduction to Computer Animation",
+		"instructor": "Brad Bird",
+		"room": "A113",
+		"language": "E",
+		"categoryId": "MISC",
+		"units": 3.0,
+		"schedules": [
+			{
+				"dayOfWeek": "Tue",
+				"startTime": "11:35",
+				"endTime": "12:50",
+				"period": 3,
+				"isLong": false,
+				"isAlternative": false,
+				"altGroupId": null
+			},
+			{
+				"dayOfWeek": "Thu",
+				"startTime": "10:10",
+				"endTime": "11:25",
+				"period": 2,
+				"isLong": false,
+				"isAlternative": false,
+				"altGroupId": null
+			},
+			{
+				"dayOfWeek": "Thu",
+				"startTime": "11:35",
+				"endTime": "12:50",
+				"period": 3,
+				"isLong": false,
+				"isAlternative": false,
+				"altGroupId": null
+			}
+		]
+	}
+]
