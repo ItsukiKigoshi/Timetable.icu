@@ -1,6 +1,7 @@
-import { Eye, EyeOff, Trash2 } from "lucide-react";
+import { CalendarPlus, Eye, EyeOff, Trash2 } from "lucide-react";
 import CourseHeader from "@/components/common/CourseHeader.tsx";
 import type { UserCourseWithDetails } from "@/db/schema";
+import { downloadICSFile, generateTimetableICS } from "@/lib/timetable/ical.ts";
 import { useTranslation } from "@/lib/translation/context.tsx";
 
 interface CourseListProps {
@@ -23,6 +24,21 @@ const CourseList = ({
 }: CourseListProps) => {
 	const { t } = useTranslation();
 
+	const visibleItems = items.filter((c) => c.isVisible !== false);
+
+	const handleDownloadICS = () => {
+		if (visibleItems.length === 0) return;
+		try {
+			const year = Number(visibleItems[0].year);
+			const term = visibleItems[0].term;
+			const icsContent = generateTimetableICS(visibleItems, { year, term });
+			downloadICSFile(icsContent, `timetable_y${year}_${term}.ics`);
+		} catch (e) {
+			console.error("Failed to export iCal file:", e);
+			alert(t("ical.error_generate"));
+		}
+	};
+
 	// コース選択時 (CourseListなどで)
 	const handleCourseSelect = (course: UserCourseWithDetails | null) => {
 		setSelectedCourse(course);
@@ -43,8 +59,23 @@ const CourseList = ({
 			)?.showModal();
 		}
 	};
+
 	return (
 		<div className={`flex flex-col gap-2 w-full ${padding ? "p-2" : ""}`}>
+			{items.length > 0 && (
+				<div className="flex justify-end">
+					<button
+						type="button"
+						onClick={handleDownloadICS}
+						disabled={visibleItems.length === 0}
+						className="btn"
+					>
+						<CalendarPlus size={14} />
+						<span>{t("ical.download_ics")}</span>
+					</button>
+				</div>
+			)}
+
 			{items.map((course) => {
 				return (
 					<div

@@ -2,7 +2,6 @@
 import { CloudCheck, LogIn } from "@lucide/astro";
 import Logo from "@/assets/Logo.svg";
 import LoginButton from "@/components/common/LoginButton.tsx";
-import IcalActions from "@/components/timetable/IcalActions.tsx";
 import { SELECTABLE_TERMS, SELECTABLE_YEARS } from "@/constants/time.ts";
 import { DEFAULT_LANG, LANGUAGES } from "@/lib/translation/ui.ts";
 import { createTranslationHelper } from "@/lib/translation/utils.ts";
@@ -82,15 +81,8 @@ const formUrl = `${baseUrl}?usp=pp_url&entry.1846364970=${encodeURIComponent(cur
 							{isLoggedIn ? t("header.synced") : t("header.login_to_sync")}
 						</h3>
 					</li>
-					<li class="w-full flex flex-col gap-2">
+					<li class="w-full">
 						<LoginButton client:load isLoggedIn={isLoggedIn} lang={lang} />
-						<IcalActions
-							client:load
-							user={user}
-							lang={lang}
-							selectedYear={Number(selectedYear)}
-							selectedTerm={selectedTerm}
-						/>
 					</li>
 					<li class="w-full -my-2">
 						<div class="divider opacity-20 w-full my-0"></div>

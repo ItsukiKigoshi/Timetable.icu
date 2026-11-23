@@ -107,8 +107,9 @@ const ja = {
 	"timetable.create.custom": "授業/予定を作成",
 
 	// iCal
-	"ical.download_ics": "iCal (.ics) ダウンロード",
-	"ical.no_courses_to_export": "この学期に登録されている科目がありません。",
+	"ical.download_ics": "カレンダーに追加 (.ics)",
+	"ical.no_courses_to_export": "この学期に登録されている科目がありません．",
+	"ical.error_generate": "予定ファイルの生成に失敗しました。",
 
 	"custom.create": "授業/予定を作成",
 	"custom.edit": "授業/予定を編集",
@@ -255,8 +256,9 @@ const en = {
 	"timetable.create.custom": "Create Course/Schedule",
 
 	// iCal
-	"ical.download_ics": "Download iCal (.ics)",
+	"ical.download_ics": "Export to Calendar (.ics)",
 	"ical.no_courses_to_export": "No courses found for this term.",
+	"ical.error_generate": "Failed to generate schedule file.",
 
 	"custom.create": "Create Course/Schedule",
 	"custom.edit": "Edit Course/Schedule",
