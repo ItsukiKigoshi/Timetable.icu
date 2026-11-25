@@ -39,7 +39,7 @@ const CourseDetailContent = ({
 				<button
 					type="button"
 					onClick={() => updateColor(course, null)}
-					className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95 bg-primary 
+					className={`w-full h-8 aspect-square rounded border border-black/5 active:scale-95 bg-primary
                                ${course.colorCustom == null ? "ring-2 ring-primary ring-offset-2" : ""}`}
 				/>
 

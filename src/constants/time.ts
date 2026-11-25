@@ -30,3 +30,48 @@ export const TIMETABLE_CONFIG = {
 	END_TIME: 20 * 60, // 20:00
 	HEADER_HEIGHT: 20,
 } as const;
+
+export interface TermCalendarInfo {
+	startDate: string;
+	endDate: string;
+	holidays: string[];
+}
+
+export const ACADEMIC_CALENDAR: Record<
+	string,
+	Record<string, TermCalendarInfo | undefined> | undefined
+> = {
+	"2026": {
+		Spring: {
+			startDate: "2026-04-11",
+			endDate: "2026-06-17",
+			holidays: ["2026-05-02", "2026-05-04", "2026-05-05", "2026-05-06"],
+		},
+		Autumn: {
+			startDate: "2026-09-05",
+			endDate: "2026-11-10",
+			holidays: ["2026-10-10", "2026-10-12", "2026-10-13"],
+		},
+		Winter: {
+			startDate: "2026-12-04",
+			endDate: "2027-02-22",
+			holidays: [
+				"2026-12-23",
+				"2026-12-24",
+				"2026-12-25",
+				"2026-12-26",
+				"2026-12-28",
+				"2026-12-29",
+				"2026-12-30",
+				"2026-12-31",
+				"2027-01-01",
+				"2027-01-02",
+				"2027-01-04",
+				"2027-01-05",
+				"2027-01-11",
+				"2027-02-05",
+				"2027-02-06",
+			],
+		},
+	},
+};

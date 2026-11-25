@@ -106,6 +106,10 @@ const ja = {
 	"timetable.units": "単位",
 	"timetable.create.custom": "授業/予定を作成",
 
+	// iCal
+	"ical.download_ics": "カレンダーに追加 (.ics)",
+	"ical.error_generate": "予定ファイルの生成に失敗しました。",
+
 	"custom.create": "授業/予定を作成",
 	"custom.edit": "授業/予定を編集",
 	"custom.necessary": "必須",
@@ -249,6 +253,10 @@ const en = {
 	"timetable.edit": "Edit",
 	"timetable.units": "Units",
 	"timetable.create.custom": "Create Course/Schedule",
+
+	// iCal
+	"ical.download_ics": "Export to Calendar (.ics)",
+	"ical.error_generate": "Failed to generate schedule file.",
 
 	"custom.create": "Create Course/Schedule",
 	"custom.edit": "Edit Course/Schedule",
