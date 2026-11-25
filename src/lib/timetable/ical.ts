@@ -59,6 +59,7 @@ const withTime = (base: Date, timeStr: string): Date => {
 const formatYMD = (d: Date): string =>
 	`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
+// メモ欄に「＠」か「@」で始まる行があれば教室情報として処理
 export const getMemoRoomOverride = (memo?: string | null): string | null =>
 	memo?.match(/^[＠@](.*)$/m)?.[1].trim() || null;
 
